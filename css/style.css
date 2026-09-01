@@ -14,7 +14,10 @@
 html, body {
   height: 100%;
   width: 100%;
-  overflow-x: hidden;
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
 }
 
 body {
@@ -28,13 +31,12 @@ body {
 
 .page {
   display: none;
-  width: 100%;
-  min-height: 100vh;
-  position: relative;
-}
-
-.page.active {
-  display: block;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow: hidden;
 }
 
 /* =============================================
@@ -58,14 +60,8 @@ body {
 
 #page-password {
   background: #ffe993;
-  min-height: 100vh;
-  display: flex;
   align-items: center;
   justify-content: center;
-}
-
-#page-password.active {
-  display: flex;
 }
 
 .password-scene {
@@ -120,6 +116,7 @@ body {
   border-radius: 0;
   -webkit-appearance: none;
   appearance: none;
+  caret-color: transparent;
 }
 
 .password-input::placeholder {
@@ -168,7 +165,6 @@ body {
 
 #page-save-the-date {
   background: #7c752f;
-  min-height: 100vh;
 }
 
 .std-scene {
