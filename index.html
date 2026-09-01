@@ -58,7 +58,28 @@
       80%{transform:translateX(5px)}
     }
     .shake { animation:shake 0.38s ease; }
-    @media (max-width:600px) { .card { width:min(85vw,300px); } }
+    @media (max-width:600px) {
+      /* Password mobile — card left-aligned like Figma */
+      .screen {
+        align-items: center;
+        justify-content: center;
+      }
+      .card {
+        width: 61.4vw;
+        align-items: flex-start;
+      }
+      .photo {
+        width: 100%;
+      }
+      #wrap {
+        width: 81.8vw !important;
+        margin-top: 7.3vh !important;
+        margin-left: calc(-10.1vw) !important; /* shift left to align with Figma left=9% */
+      }
+      .pw-cursor {
+        left: calc(50% + 55px);
+      }
+    }
   
     .pw-cursor { position:absolute; top:50%; left:calc(50% + 74px); transform:translateY(-50%); width:1px; height:15px; background:#7f214d; pointer-events:none; animation:blink 1.1s ease-in-out infinite; }
     .pw-cursor.hidden { display:none; }
@@ -82,6 +103,7 @@
     var error = document.getElementById('error');
     var wrap  = document.getElementById('wrap');
     var cursor = document.getElementById('cursor');
+    var realPw = '';
     var maskTimer = null;
 
     setTimeout(function(){ input.focus(); }, 100);
@@ -93,14 +115,35 @@
     input.addEventListener('input', function() {
       error.classList.remove('show');
 
-      // Briefly show last character, then re-mask
-      clearTimeout(maskTimer);
-      input.type = 'text';
-      maskTimer = setTimeout(function() {
-        input.type = 'password';
-      }, 500);
+      var displayed = input.value;
+      var newLen = displayed.length;
+      var oldLen = realPw.length;
 
-      if (input.value.length > 0) {
+      if (newLen > oldLen) {
+        // Character added — last displayed char is the new one
+        var newChar = displayed[newLen - 1];
+        realPw += newChar;
+        // Show dots for all previous + new char briefly
+        input.value = '•'.repeat(newLen - 1) + newChar;
+        clearTimeout(maskTimer);
+        maskTimer = setTimeout(function() {
+          input.value = '•'.repeat(realPw.length);
+        }, 500);
+      } else if (newLen < oldLen) {
+        // Character deleted
+        var diff = oldLen - newLen;
+        realPw = realPw.slice(0, realPw.length - diff);
+        input.value = '•'.repeat(realPw.length);
+        clearTimeout(maskTimer);
+      } else {
+        // Same length — ignore (e.g. autocomplete weirdness)
+        input.value = '•'.repeat(realPw.length);
+      }
+
+      // Move caret to end
+      input.setSelectionRange(input.value.length, input.value.length);
+
+      if (realPw.length > 0) {
         cursor.classList.add('hidden');
       } else {
         cursor.classList.remove('hidden');
@@ -115,6 +158,7 @@
         void wrap.offsetWidth;
         wrap.classList.add('shake');
         input.value = '';
+        realPw = '';
         wrap.addEventListener('animationend', function f() {
           wrap.classList.remove('shake');
           wrap.removeEventListener('animationend', f);
