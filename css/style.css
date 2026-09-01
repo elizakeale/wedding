@@ -1,0 +1,281 @@
+/* =============================================
+   E & L WEDDING — SAVE THE DATE
+   Fonts: Cormorant Upright, Cormorant Infant
+   ============================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,300;0,400;1,300;1,400&family=Cormorant+Upright:wght@300;400&display=swap');
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  background: #ffe993;
+  font-family: 'Cormorant Upright', serif;
+}
+
+/* =============================================
+   PAGE WRAPPERS
+   ============================================= */
+
+.page {
+  display: none;
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+}
+
+.page.active {
+  display: block;
+}
+
+/* =============================================
+   SHARED: FULL-BLEED BACKGROUND IMAGE
+   ============================================= */
+
+.bg-cover {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* =============================================
+   PASSWORD PAGE
+   ============================================= */
+
+#page-password {
+  background: #ffe993;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#page-password.active {
+  display: flex;
+}
+
+.password-scene {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.password-card {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  width: min(329px, 90vw);
+}
+
+.couple-photo {
+  width: 100%;
+  aspect-ratio: 329 / 215;
+  object-fit: cover;
+  display: block;
+  border-radius: 2px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+}
+
+.password-input-wrap {
+  width: 100%;
+  position: relative;
+  margin-top: 8px;
+}
+
+.password-input {
+  width: 100%;
+  background: #ffe993;
+  border: none;
+  outline: none;
+  font-family: 'Cormorant Upright', serif;
+  font-size: 16px;
+  font-weight: 300;
+  letter-spacing: 1px;
+  color: #7f214d;
+  text-align: center;
+  text-transform: uppercase;
+  padding: 8px 16px;
+  height: 40px;
+  cursor: text;
+  border-radius: 0;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.password-input::placeholder {
+  color: #7f214d;
+  opacity: 1;
+}
+
+.password-input:focus {
+  background: #fff5c0;
+}
+
+/* Error state */
+.password-error {
+  display: none;
+  font-family: 'Cormorant Infant', serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: 13px;
+  color: #7f214d;
+  letter-spacing: 0.5px;
+  text-align: center;
+  margin-top: 10px;
+  opacity: 0.9;
+}
+
+.password-error.visible {
+  display: block;
+}
+
+/* Shake animation on wrong password */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-8px); }
+  40%       { transform: translateX(8px); }
+  60%       { transform: translateX(-6px); }
+  80%       { transform: translateX(6px); }
+}
+
+.shake {
+  animation: shake 0.4s ease;
+}
+
+/* =============================================
+   SAVE THE DATE PAGE
+   ============================================= */
+
+#page-save-the-date {
+  background: #7c752f;
+  min-height: 100vh;
+}
+
+.std-scene {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.std-content {
+  position: relative;
+  z-index: 10;
+  padding: 0 5.8vw;
+  /* Vertical rhythm — bottom-anchored design */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 100vh;
+  padding-bottom: clamp(40px, 8vh, 100px);
+}
+
+.std-date {
+  font-family: 'Cormorant Upright', serif;
+  font-weight: 300;
+  font-size: clamp(18px, 2.5vw, 30px);
+  color: #ffe993;
+  letter-spacing: clamp(1px, 0.15vw, 1.5px);
+  text-transform: uppercase;
+  margin-bottom: clamp(12px, 2vh, 24px);
+}
+
+.std-title {
+  font-family: 'Cormorant Infant', serif;
+  font-weight: 300;
+  font-size: clamp(48px, 7.5vw, 90px);
+  color: #ffffff;
+  letter-spacing: clamp(2px, 0.4vw, 4.5px);
+  text-transform: uppercase;
+  line-height: 1.1;
+  margin-bottom: clamp(12px, 2vh, 24px);
+}
+
+.std-location {
+  font-family: 'Cormorant Upright', serif;
+  font-weight: 300;
+  font-size: clamp(20px, 2.8vw, 40px);
+  color: #ffffff;
+  letter-spacing: clamp(1px, 0.15vw, 2px);
+  text-transform: uppercase;
+  margin-bottom: clamp(8px, 1.5vh, 16px);
+}
+
+.std-tagline {
+  font-family: 'Cormorant Infant', serif;
+  font-weight: 300;
+  font-style: italic;
+  font-size: clamp(14px, 1.5vw, 20px);
+  color: #ffffff;
+  letter-spacing: clamp(0.5px, 0.08vw, 1px);
+}
+
+/* =============================================
+   RESPONSIVE — TABLET (iPad)
+   ============================================= */
+
+@media (max-width: 1024px) {
+  .std-content {
+    padding-left: 5vw;
+    padding-right: 5vw;
+  }
+
+  .couple-photo {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+/* =============================================
+   RESPONSIVE — MOBILE
+   ============================================= */
+
+@media (max-width: 600px) {
+  .std-content {
+    padding-left: 6vw;
+    padding-right: 6vw;
+    padding-bottom: clamp(32px, 8vh, 60px);
+    justify-content: flex-end;
+  }
+
+  .std-date {
+    font-size: clamp(14px, 4.5vw, 20px);
+    letter-spacing: 1px;
+  }
+
+  .std-title {
+    font-size: clamp(40px, 13vw, 64px);
+    letter-spacing: 2px;
+  }
+
+  .std-location {
+    font-size: clamp(16px, 5vw, 28px);
+    letter-spacing: 1px;
+  }
+
+  .std-tagline {
+    font-size: clamp(13px, 3.5vw, 16px);
+  }
+
+  .password-card {
+    width: min(300px, 86vw);
+  }
+}
