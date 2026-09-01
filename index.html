@@ -37,7 +37,7 @@
       background:#ffe993; border:none; outline:none;
       font-family:'Cormorant Upright',serif; font-weight:300;
       font-size:15px; letter-spacing:1px;
-      color:#7f214d; text-align:center; text-transform:uppercase;
+      color:#7f214d; text-align:center;
       padding:0 12px; -webkit-appearance:none; appearance:none;
       border-radius:0; caret-color:transparent;
     }
@@ -81,17 +81,29 @@
     var input = document.getElementById('input');
     var error = document.getElementById('error');
     var wrap  = document.getElementById('wrap');
+    var cursor = document.getElementById('cursor');
+    var maskTimer = null;
+
     setTimeout(function(){ input.focus(); }, 100);
+
     input.addEventListener('keydown', function(e) {
       if (e.key === 'Enter') { e.preventDefault(); check(); }
     });
+
     input.addEventListener('input', function() {
       error.classList.remove('show');
-      var cur = document.getElementById('cursor');
+
+      // Briefly show last character, then re-mask
+      clearTimeout(maskTimer);
+      input.type = 'text';
+      maskTimer = setTimeout(function() {
+        input.type = 'password';
+      }, 500);
+
       if (input.value.length > 0) {
-        cur.classList.add('hidden');
+        cursor.classList.add('hidden');
       } else {
-        cur.classList.remove('hidden');
+        cursor.classList.remove('hidden');
       }
     });
     function check() {
