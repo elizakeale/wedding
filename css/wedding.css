@@ -93,6 +93,67 @@ img { display: block; max-width: 100%; }
 
 .banner--tall .banner__inner { padding-bottom: 4.125rem; }
 
+/* ---------- Pinned nav bar (phase 2) ----------
+   Appears once the banner has scrolled past. It carries a slice of the same
+   orchid photo, anchored the same way the banner is, so it reads as the top
+   of the banner staying put rather than a new bar sliding in.
+
+   --topbar-scrim darkens that slice slightly. The top of the photo is very
+   pale, and white nav text on it sits near the legibility floor; set the
+   value to `transparent` on both stops to match the Figma frame exactly. */
+
+:root { --topbar-h: 4.5rem; }   /* 72px */
+
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  height: var(--topbar-h);
+  display: flex;
+  align-items: center;
+  background: #efe6e6 url('../orchid.jpg') top center / cover no-repeat;
+  transform: translateY(-100%);
+  visibility: hidden;           /* also keeps the links out of the tab order */
+  transition: transform 0.32s ease, visibility 0s linear 0.32s;
+}
+
+.topbar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* Measured, not guessed: the bare orchid slice puts white nav text at
+     1.71:1 at its palest, well under the 3:1 floor. This lands it at ~3.8:1
+     worst case / ~5:1 average while the photo still reads through. */
+  background: linear-gradient(rgba(70, 40, 55, 0.60), rgba(70, 40, 55, 0.50));
+  pointer-events: none;
+}
+
+.topbar.is-pinned {
+  transform: none;
+  visibility: visible;
+  transition: transform 0.32s ease, visibility 0s;
+}
+
+.topbar__nav {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  font-size: 1.25rem;
+  letter-spacing: 0.0625rem;
+  text-transform: uppercase;
+}
+
+.topbar__nav a { color: var(--white); text-decoration: none; }
+.topbar__nav a[aria-current="page"] { opacity: 0.72; }
+
+@media (prefers-reduced-motion: reduce) {
+  .topbar { transition: none; }
+}
+
 /* ---------- Nav ---------- */
 
 .nav {

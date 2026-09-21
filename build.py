@@ -5,7 +5,7 @@ E & L Wedding — static site generator.
 
 Run:
   python3 build.py            build the live site for the current PHASE
-  python3 build.py --preview  build the FULL site into _preview/ to look at,
+  python3 build.py --phase2   build phase 2 into _phase2/ to look at,
                               without changing or publishing anything live
 
 Reads every piece of copy from content.py and writes the HTML pages for the
@@ -27,10 +27,13 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 # Where pages get written. Normally the repo root; the preview build points it
 # at _preview/ so the full site can be looked at without touching what ships.
 OUT_DIR = HERE
-PREVIEW_DIR = os.path.join(HERE, "_preview")
+PHASE2_DIR = os.path.join(HERE, "_phase2")
+# Older/renamed output folders, cleaned up on build so a stray copy can't be
+# served by Live Server or picked up by git.
+LEGACY_OUT_DIRS = ["_preview", "preview", "Preview"]
 
 # Files the preview copies alongside the generated pages so it renders properly.
-PREVIEW_ASSETS = ["css", "js", "orchid.jpg", "surfing.jpg",
+PHASE2_ASSETS = ["css", "js", "orchid.jpg", "surfing.jpg",
                   "og-image.jpg", "favicon.ico", "favicon.png"]
 
 GENERATED_BANNER = (
@@ -41,7 +44,9 @@ GENERATED_BANNER = (
     "-->\n"
 )
 
-FULL = C.PHASE == "full"
+# "full" is still accepted as a synonym so an older content.py keeps working.
+PHASE_2_NAMES = ("phase-2", "phase2", "full")
+FULL = C.PHASE in PHASE_2_NAMES
 
 
 # ---------------------------------------------------------------------------
@@ -134,7 +139,6 @@ def banner(current, tall, save_the_date=False):
         </p>
         <p class="stdate__tagline">{C.SAVE_THE_DATE['tagline']}</p>
       </div>
-      <span class="scroll-cue" aria-hidden="true"></span>
 """
     else:
         body = f"""      <div>
@@ -145,10 +149,39 @@ def banner(current, tall, save_the_date=False):
       </div>
 """
 
+    # The pulsing cue belongs to any full-height hero — it exists to say
+    # "there is more below the fold". The short 260px banners open straight
+    # onto their content, so a cue there would point at nothing.
+    cue = '      <span class="scroll-cue" aria-hidden="true"></span>\n' if tall else ""
+
     return f"""  <header class="{classes}" id="top">
     <div class="wrap banner__inner">
-{nav(current)}{body}    </div>
+{nav(current)}{body}{cue}    </div>
   </header>"""
+
+
+def topbar(current):
+    """The nav pinned to the top of the window once the banner scrolls away.
+
+    Carries a slice of the same orchid photo as its background, so it reads as
+    the top of the banner staying behind rather than a new element arriving.
+    """
+    if not FULL:
+        return ""
+    rows = []
+    for label, href in C.NAV:
+        aria = ' aria-current="page"' if href == current else ""
+        rows.append(f'      <a href="{href}"{aria}>{label}</a>')
+    links = "\n".join(rows)
+    # No aria-hidden: the bar is hidden with `visibility`, which already takes
+    # it out of the tab order, and flipping aria-hidden on a focusable nav is
+    # how you end up with links a screen reader can reach but not announce.
+    return f"""  <div class="topbar" id="topbar">
+    <nav class="topbar__nav wrap" aria-label="Site">
+{links}
+    </nav>
+  </div>
+"""
 
 
 def contact_block():
@@ -203,15 +236,16 @@ def footer():
 
 
 def page(filename, title, main, tall=False, save_the_date=False, scripts=""):
+    site_js = '\n  <script src="js/site.js"></script>' if FULL else ""
     html = f"""<!DOCTYPE html>
 <html lang="en">
 {GENERATED_BANNER}{head(title, filename)}
 <body>
-{banner(filename, tall, save_the_date)}
+{topbar(filename)}{banner(filename, tall, save_the_date)}
 
 {main}
 
-{footer()}{scripts}
+{footer()}{site_js}{scripts}
 </body>
 </html>
 """
@@ -331,13 +365,14 @@ def build(preview=False):
     global FULL, OUT_DIR
 
     if preview:
-        FULL, OUT_DIR = True, PREVIEW_DIR
-        shutil.rmtree(PREVIEW_DIR, ignore_errors=True)
-        os.makedirs(PREVIEW_DIR, exist_ok=True)
-        print("PREVIEW BUILD — full site, written to _preview/ only.")
+        FULL, OUT_DIR = True, PHASE2_DIR
+        for stale_dir in LEGACY_OUT_DIRS + ["_phase2"]:
+            shutil.rmtree(os.path.join(HERE, stale_dir), ignore_errors=True)
+        os.makedirs(PHASE2_DIR, exist_ok=True)
+        print("PHASE 2 PREVIEW — written to _phase2/ only.")
         print("Nothing here is committed or published.\n")
     else:
-        FULL, OUT_DIR = C.PHASE == "full", HERE
+        FULL, OUT_DIR = C.PHASE in PHASE_2_NAMES, HERE
         print(f"PHASE = {C.PHASE!r}")
 
     if FULL:
@@ -377,11 +412,11 @@ def build(preview=False):
     live = list(live) + ["homepage.html"]
 
     if preview:
-        for name in PREVIEW_ASSETS:
+        for name in PHASE2_ASSETS:
             src = os.path.join(HERE, name)
             if not os.path.exists(src):
                 continue
-            dst = os.path.join(PREVIEW_DIR, name)
+            dst = os.path.join(PHASE2_DIR, name)
             if os.path.isdir(src):
                 shutil.copytree(src, dst, dirs_exist_ok=True)
             else:
@@ -390,10 +425,11 @@ def build(preview=False):
         # the site rather than making you retype the password each reload.
         print("\n  copied assets (css, js, images)")
         print("\n  Open it with either of these:")
-        print("    VS Code   — right-click _preview/home.html, 'Open with Live Server'")
-        print(f"    Terminal  — cd '{HERE}/_preview' && python3 -m http.server 8080")
+        print("    VS Code   — right-click _phase2/home.html, 'Open with Live Server'")
+        print(f"    Terminal  — cd '{HERE}/_phase2' && python3 -m http.server 8080")
         print("                then go to http://localhost:8080/home.html")
-        print("\n  _preview/ is gitignored. Delete it any time; rebuild with --preview.")
+        print("\n  _phase2/ is gitignored. Rebuild any time with: python3 build.py --phase2")
+        print("  Don't rename it — the leading underscore is what keeps it out of git.")
         print("\nDone.")
         return
 
@@ -454,9 +490,10 @@ def update_gate():
 
 if __name__ == "__main__":
     args = set(sys.argv[1:])
-    if args - {"--preview"}:
+    flags = {"--phase2", "--preview"}          # --preview kept as an alias
+    if args - flags:
         print(__doc__)
         print("Usage:\n  python3 build.py            build the live site\n"
-              "  python3 build.py --preview  build the full site into _preview/")
+              "  python3 build.py --phase2   build phase 2 into _phase2/ to look at")
         sys.exit(1)
-    build(preview="--preview" in args)
+    build(preview=bool(args & flags))

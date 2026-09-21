@@ -16,17 +16,18 @@ the next build will overwrite it.
 #                    Itinerary and recommendations are NOT generated at all,
 #                    so nothing about the wedding week is discoverable.
 #
-#   "full"           home.html = hero + nav + RSVP form.
-#                    Itinerary, recommendations and FAQs each get their own
-#                    page and the nav appears everywhere.
+#   "phase-2"        home.html = hero + nav + RSVP form, with the pinned nav
+#                    bar. Itinerary, recommendations and FAQs each get their
+#                    own page and the nav appears everywhere.
 #
-# To launch the full site: change this to "full", run build.py, commit, push.
+# To launch phase 2: change this to "phase-2", run build.py, commit, push.
+# To look at phase 2 without launching it: python3 build.py --phase2
 # ---------------------------------------------------------------------------
 PHASE = "save-the-date"
 
 # Bump this when css/wedding.css or the favicons change, so browsers don't
 # serve a stale copy.
-ASSET_VERSION = 5
+ASSET_VERSION = 6
 
 # The page the password gate sends people to.
 ENTRY_PAGE = "home.html"
