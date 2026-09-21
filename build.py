@@ -381,6 +381,73 @@ FULL_PAGES = ["home.html", "itinerary.html", "recommendations.html", "faqs.html"
 ALL_PAGES = sorted(set(SAVE_THE_DATE_PAGES + FULL_PAGES) | {"homepage.html"})
 
 
+RSVP_DEMO_JS = """/* Fake RSVP backend — LOCAL PREVIEW ONLY.
+ *
+ * build.py writes this file into _phase2/ and nowhere else, so it cannot
+ * reach the real site. It exists so the whole RSVP flow can be clicked
+ * through before the Apps Script is deployed.
+ *
+ * A handful of real parties, enough to exercise every path:
+ *   BAILEY   four adults
+ *   CASS     three, one of them a child
+ *   ETHAN    a party of one
+ *   LORETTA  six, the largest on the list
+ *   USED     already RSVP'd — shows the locked message
+ *
+ * Anything else gives the not-found message. Submitting locks that code for
+ * the rest of the page's life, so you can test the lock by submitting and
+ * then entering the same code again.
+ */
+(function () {
+  var PARTIES = {
+    bailey:  { code: 'BAILEY',  leader: 'Karen',   names: ['Karen', 'Perry', 'Brendon', 'Jaiden'] },
+    cass:    { code: 'CASS',    leader: 'Cass',    names: ['Cass', 'Alessia', 'Carsten'], child: 'Alessia' },
+    ethan:   { code: 'ETHAN',   leader: 'Ethan',   names: ['Ethan'] },
+    loretta: { code: 'LORETTA', leader: 'Loretta', names: ['Loretta', 'Tobi', 'Elijah', 'Isaiah', 'Brielle', 'Judas'] }
+  };
+  var locked = { used: true };
+
+  function wait(ms, value) {
+    return new Promise(function (res) { setTimeout(function () { res(value); }, ms); });
+  }
+
+  window.RSVP_DEMO = function (kind, payload) {
+    var key = String(payload.code || '').trim().toLowerCase();
+
+    if (kind === 'lookup') {
+      if (locked[key]) {
+        return wait(350, { ok: false, locked: true,
+          error: 'This code has already been used to RSVP. If you need to change your '
+               + 'answer, email elizakeale@gmail.com and we\\u2019ll reopen it for you.' });
+      }
+      var p = PARTIES[key];
+      if (!p) {
+        return wait(350, { ok: false,
+          error: 'We couldn\\u2019t find that code. Check your invitation, or text us.' });
+      }
+      return wait(350, { ok: true, party: {
+        code: p.code,
+        leader: p.leader,
+        greeting: 'Found you \\u2014 ' + p.leader + '\\u2019s party.',
+        guests: p.names.map(function (n) {
+          return { id: key + '|' + n.toLowerCase(), name: n,
+                   child: p.child === n ? 'child' : '', attending: false, dietary: '' };
+        })
+      }});
+    }
+
+    locked[key] = true;
+    var going = (payload.guests || []).filter(function (g) { return g.attending; });
+    console.log('[RSVP demo] would write to the sheet:',
+                JSON.parse(JSON.stringify(payload)));
+    return wait(450, { ok: true, attending: going.length });
+  };
+
+  console.log('[RSVP demo] active — try BAILEY, CASS, ETHAN, LORETTA, or USED (locked).');
+})();
+"""
+
+
 def build(preview=False):
     global FULL, OUT_DIR
 
@@ -396,12 +463,18 @@ def build(preview=False):
         print(f"PHASE = {C.PHASE!r}")
 
     if FULL:
+        # The demo backend loads before rsvp.js and only in the preview, so
+        # the real site can never pick it up.
+        rsvp_scripts = '\n  <script src="js/rsvp.js"></script>'
+        if preview:
+            rsvp_scripts = ('\n  <script src="js/rsvp-demo.js"></script>'
+                            '\n  <script src="js/rsvp.js"></script>')
         page("home.html", "E &amp; L Wedding",
              section("RSVP", rsvp_form(),
                      note=f"We kindly ask you to RSVP by {C.WEDDING['rsvp_deadline']}.",
                      extra_class="rsvp"),
              tall=True,
-             scripts='\n  <script src="js/rsvp.js"></script>')
+             scripts=rsvp_scripts)
         page("itinerary.html", "Itinerary &mdash; E &amp; L Wedding", itinerary_section())
         page("recommendations.html", "Recommendations &mdash; E &amp; L Wedding",
              section("Recommendations", rows(C.RECOMMENDATIONS)))
@@ -443,7 +516,11 @@ def build(preview=False):
                 shutil.copy2(src, dst)
         # The gate is skipped on purpose: the preview drops you straight onto
         # the site rather than making you retype the password each reload.
+        with open(os.path.join(PHASE2_DIR, "js", "rsvp-demo.js"), "w", encoding="utf-8") as f:
+            f.write(RSVP_DEMO_JS)
         print("\n  copied assets (css, js, images)")
+        print("  wrote _phase2/js/rsvp-demo.js  — fake backend, preview only")
+        print("     try codes: BAILEY  CASS  ETHAN  LORETTA  USED(locked)  NOPE(not found)")
         print("\n  Open it with either of these:")
         print("    VS Code   — right-click _phase2/home.html, 'Open with Live Server'")
         print(f"    Terminal  — cd '{HERE}/_phase2' && python3 -m http.server 8080")

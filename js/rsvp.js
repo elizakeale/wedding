@@ -19,6 +19,31 @@
   // Paste the Apps Script /exec URL here. See rsvp-backend/README.md.
   var ENDPOINT = '';
 
+  /* Every call to the backend goes through here.
+   *
+   * With no ENDPOINT set, the preview build supplies window.RSVP_DEMO — a
+   * fake backend with a few sample parties — so the whole flow can be clicked
+   * through before the Apps Script is deployed. The demo file is only ever
+   * written into the local preview; it is never generated for the real site,
+   * so the live page with no ENDPOINT still says "not open yet" rather than
+   * quietly accepting RSVPs into nothing. */
+  function request(kind, payload) {
+    if (!ENDPOINT) {
+      if (window.RSVP_DEMO) return window.RSVP_DEMO(kind, payload);
+      return Promise.resolve({ ok: false, notOpen: true,
+        error: 'RSVP isn’t open yet — please check back soon.' });
+    }
+    if (kind === 'lookup') {
+      return fetch(ENDPOINT + '?action=lookup&code=' + encodeURIComponent(payload.code))
+        .then(function (r) { return r.json(); });
+    }
+    return fetch(ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },  // avoids CORS preflight
+      body: JSON.stringify(payload)
+    }).then(function (r) { return r.json(); });
+  }
+
   var form     = document.getElementById('rsvp-form');
   if (!form) return;
 
@@ -127,16 +152,10 @@
     var code = (codeField.value || '').trim();
     if (!code || busy) return;
 
-    if (!ENDPOINT) {
-      say('RSVP isn’t open yet — please check back soon.', 'error');
-      return;
-    }
-
     busy = true;
     say('Looking for you…');
 
-    fetch(ENDPOINT + '?action=lookup&code=' + encodeURIComponent(code))
-      .then(function (r) { return r.json(); })
+    request('lookup', { code: code })
       .then(function (data) {
         busy = false;
         if (!data.ok) {
@@ -176,17 +195,12 @@
     submitBtn.disabled = true;
     say('Sending…');
 
-    fetch(ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },  // avoids CORS preflight
-      body: JSON.stringify({
-        code: party.code,
-        guests: party.guests.map(function (g) {
-          return { id: g.id, attending: !!g.attending, dietary: g.dietary || '' };
-        })
+    request('rsvp', {
+      code: party.code,
+      guests: party.guests.map(function (g) {
+        return { id: g.id, attending: !!g.attending, dietary: g.dietary || '' };
       })
     })
-      .then(function (r) { return r.json(); })
       .then(function (data) {
         busy = false;
         if (!data.ok) {
