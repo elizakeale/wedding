@@ -10,7 +10,7 @@
  */
 window.ELW = window.ELW || {};
 
-window.ELW.ENDPOINT = '';
+window.ELW.ENDPOINT = 'https://script.google.com/macros/s/AKfycbzV_Pz9_JUaxIG6OHyeQba0Oa99Be2kJihEg1-qkdWIr8E3PqYVZrrpZ1KTJZ44_EDK4g/exec';
 
 /* The shared password. Still works alongside party codes, so you can send the
  * link to a plus-one, a vendor, or someone not on the sheet yet — and so the
