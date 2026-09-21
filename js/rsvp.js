@@ -169,7 +169,7 @@
         party = data.party;
         renderParty();
         reveal(true);
-        say(party.greeting || '');
+        say('');
         if (intro) intro.classList.add('is-hidden');
         stepGuest.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       })
@@ -185,6 +185,21 @@
   });
   codeField.addEventListener('blur', function () { if (!party) lookup(); });
   if (goBtn) goBtn.addEventListener('click', lookup);
+
+  /* Codes are printed in caps, so the field types in caps. CSS uppercases what
+   * you see; this uppercases the actual value, which matters because otherwise
+   * the two disagree — you'd see BAILEY and send bailey. Caret position is
+   * preserved so typing into the middle of a code doesn't jump to the end.
+   * (The lookup itself is case-insensitive; this is about matching the card
+   * in someone's hand.) */
+  codeField.addEventListener('input', function () {
+    var start = codeField.selectionStart, end = codeField.selectionEnd;
+    var up = codeField.value.toUpperCase();
+    if (up !== codeField.value) {
+      codeField.value = up;
+      try { codeField.setSelectionRange(start, end); } catch (ignored) {}
+    }
+  });
 
   /* ------------------------------------------------------------- submit */
 

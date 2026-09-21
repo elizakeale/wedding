@@ -527,7 +527,12 @@ html { scroll-padding-top: var(--hdr-h); }
 /* ---------- Party code entry ---------- */
 
 .code-entry { position: relative; margin-top: 1.25rem; max-width: 39.375rem; }
-.code-entry__field { margin-top: 0; width: 100%; padding-right: 4.5rem; }
+.code-entry__field {
+  margin-top: 0;
+  width: 100%;
+  padding-right: 4.5rem;
+  text-transform: uppercase;   /* js/rsvp.js uppercases the value to match */
+}
 
 /* The arrow sits inside the field's right edge. It's a real button so it can
    be tabbed to and pressed — the field's own Enter key does the same thing. */
