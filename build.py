@@ -3,7 +3,10 @@
 """
 E & L Wedding — static site generator.
 
-Run:  python3 build.py
+Run:
+  python3 build.py            build the live site for the current PHASE
+  python3 build.py --preview  build the FULL site into _preview/ to look at,
+                              without changing or publishing anything live
 
 Reads every piece of copy from content.py and writes the HTML pages for the
 current PHASE. Pages that don't belong to the current phase are reported as
@@ -14,11 +17,21 @@ All *.html files except index.html are generated. Edit content.py, not HTML.
 
 import os
 import re
+import shutil
 import sys
 
 import content as C
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+
+# Where pages get written. Normally the repo root; the preview build points it
+# at _preview/ so the full site can be looked at without touching what ships.
+OUT_DIR = HERE
+PREVIEW_DIR = os.path.join(HERE, "_preview")
+
+# Files the preview copies alongside the generated pages so it renders properly.
+PREVIEW_ASSETS = ["css", "js", "orchid.jpg", "surfing.jpg",
+                  "og-image.jpg", "favicon.ico", "favicon.png"]
 
 GENERATED_BANNER = (
     "<!--\n"
@@ -152,28 +165,27 @@ def contact_block():
 
 
 def footer():
+    """One footer for every page.
+
+    The save-the-date footer is the reference: contact block on the left,
+    photo on the right, back-to-top underneath. The full site uses exactly
+    that and adds a nav row above it — so the two phases never diverge
+    visually, which is the whole point of generating them from one place.
+    """
     photo = ('      <div class="footer__photo">'
              '<img src="surfing.jpg" alt="Eliza and Lucas paddling out" /></div>')
 
+    links = ""
     if FULL:
         by_label = {label: href for label, href in C.NAV}
-        links = "\n".join(
-            f'            <a href="{by_label[label]}">{label}</a>'
+        rows = "\n".join(
+            f'          <a href="{by_label[label]}">{label}</a>'
             for label in C.FOOTER_NAV_ORDER
         )
-        cols = f"""      <div class="footer__cols">
-        <nav class="footer__links">
-{links}
-        </nav>
-        <div></div>
-{photo}
-      </div>
-{contact_block()}"""
-    else:
-        cols = f"""      <div class="footer__cols footer__cols--stdate">
-{contact_block()}
-{photo}
-      </div>"""
+        links = f"""      <nav class="footer__links">
+{rows}
+      </nav>
+"""
 
     return f"""  <footer class="footer">
     <div class="wrap">
@@ -181,7 +193,10 @@ def footer():
         <p class="footer__name">{C.WEDDING['names_short']}</p>
         {meta_line(date_first=True)}
       </div>
-{cols}
+{links}      <div class="footer__cols footer__cols--stdate">
+{contact_block()}
+{photo}
+      </div>
       <p class="back-to-top"><a href="#top"><span class="back-to-top__rule"></span>Back to top</a></p>
     </div>
   </footer>"""
@@ -204,10 +219,11 @@ def page(filename, title, main, tall=False, save_the_date=False, scripts=""):
 
 
 def write(filename, html):
-    path = os.path.join(HERE, filename)
+    path = os.path.join(OUT_DIR, filename)
+    os.makedirs(os.path.dirname(path) or OUT_DIR, exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
         f.write(html)
-    print(f"  wrote {filename}")
+    print(f"  wrote {os.path.relpath(path, HERE)}")
 
 
 # ---------------------------------------------------------------------------
@@ -311,8 +327,18 @@ FULL_PAGES = ["home.html", "itinerary.html", "recommendations.html", "faqs.html"
 ALL_PAGES = sorted(set(SAVE_THE_DATE_PAGES + FULL_PAGES) | {"homepage.html"})
 
 
-def build():
-    print(f"PHASE = {C.PHASE!r}")
+def build(preview=False):
+    global FULL, OUT_DIR
+
+    if preview:
+        FULL, OUT_DIR = True, PREVIEW_DIR
+        shutil.rmtree(PREVIEW_DIR, ignore_errors=True)
+        os.makedirs(PREVIEW_DIR, exist_ok=True)
+        print("PREVIEW BUILD — full site, written to _preview/ only.")
+        print("Nothing here is committed or published.\n")
+    else:
+        FULL, OUT_DIR = C.PHASE == "full", HERE
+        print(f"PHASE = {C.PHASE!r}")
 
     if FULL:
         page("home.html", "E &amp; L Wedding",
@@ -349,6 +375,27 @@ def build():
 </html>
 """)
     live = list(live) + ["homepage.html"]
+
+    if preview:
+        for name in PREVIEW_ASSETS:
+            src = os.path.join(HERE, name)
+            if not os.path.exists(src):
+                continue
+            dst = os.path.join(PREVIEW_DIR, name)
+            if os.path.isdir(src):
+                shutil.copytree(src, dst, dirs_exist_ok=True)
+            else:
+                shutil.copy2(src, dst)
+        # The gate is skipped on purpose: the preview drops you straight onto
+        # the site rather than making you retype the password each reload.
+        print("\n  copied assets (css, js, images)")
+        print("\n  Open it with either of these:")
+        print("    VS Code   — right-click _preview/home.html, 'Open with Live Server'")
+        print(f"    Terminal  — cd '{HERE}/_preview' && python3 -m http.server 8080")
+        print("                then go to http://localhost:8080/home.html")
+        print("\n  _preview/ is gitignored. Delete it any time; rebuild with --preview.")
+        print("\nDone.")
+        return
 
     stale = [p for p in ALL_PAGES if p not in live and os.path.exists(os.path.join(HERE, p))]
     if stale:
@@ -406,4 +453,10 @@ def update_gate():
 
 
 if __name__ == "__main__":
-    build()
+    args = set(sys.argv[1:])
+    if args - {"--preview"}:
+        print(__doc__)
+        print("Usage:\n  python3 build.py            build the live site\n"
+              "  python3 build.py --preview  build the full site into _preview/")
+        sys.exit(1)
+    build(preview="--preview" in args)
