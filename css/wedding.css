@@ -529,6 +529,10 @@ html { scroll-padding-top: var(--hdr-h); }
 
 .diet .field { margin-top: 0; width: 26.375rem; }  /* 422px */
 
+/* Shown in place of the dietary rows until someone is ticked as attending —
+   the question only makes sense once there's a person to ask it about. */
+.diet__empty { opacity: 0.7; font-style: italic; margin-top: 0; }
+
 .submit {
   display: inline-flex;
   align-items: center;
@@ -569,6 +573,7 @@ html { scroll-padding-top: var(--hdr-h); }
 }
 
 .form-msg--error { color: var(--yellow); }
+.form-msg--done  { color: var(--pink); }
 
 /* ---------- Footer ---------- */
 

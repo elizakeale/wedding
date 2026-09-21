@@ -308,11 +308,19 @@ def faq_section():
 
 
 def rsvp_form():
+    """The RSVP form.
+
+    Only the code row is present at the start; the attending and dietary rows
+    are revealed by js/rsvp.js once a code comes back from the server. They
+    carry is-hidden in the markup rather than being injected later so the page
+    doesn't reflow when they appear, and so the form still reads sensibly if
+    the script fails to load.
+    """
     return f"""      <form id="rsvp-form" class="rows" novalidate>
         <div class="row">
           <div class="row__rule"></div>
           <div class="row__body">
-            <p class="row__text">Please enter your party code (found in the email). If you&rsquo;re
+            <p class="row__text" id="rsvp-intro">Please enter your party code (found in the email). If you&rsquo;re
               responding for you and a guest (or your family), you&rsquo;ll be able to RSVP for your
               entire group.</p>
             <input class="field" id="party-code" name="code" type="text" autocomplete="off"
@@ -339,7 +347,7 @@ def rsvp_form():
         <div class="row">
           <div></div>
           <div class="row__body">
-            <button class="submit" id="rsvp-submit" type="submit">Submit <span class="arrow"></span></button>
+            <button class="submit is-hidden" id="rsvp-submit" type="submit">Submit <span class="arrow"></span></button>
             <p class="form-msg" id="rsvp-msg" role="status" aria-live="polite"></p>
           </div>
         </div>

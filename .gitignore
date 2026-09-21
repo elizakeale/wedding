@@ -8,3 +8,14 @@ _phase2/
 _preview/
 preview/
 Preview/
+
+# GUEST DATA — this repo is PUBLIC (GitHub Pages serves it). The guest list
+# lives in the Google Sheet and is read server-side by the Apps Script.
+# Never commit names, emails or codes here.
+guests*.csv
+guest*.csv
+*guest-list*
+*guestlist*
+rsvp-export*.csv
+responses*.csv
+*.xlsx
