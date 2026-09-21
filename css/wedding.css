@@ -66,7 +66,13 @@ img { display: block; max-width: 100%; }
 
 .banner {
   position: relative;
-  background: #d8c9c0 url('../orchid.jpg') center 22% / cover no-repeat;
+  /* Anchored to the TOP, not centred. Derived from Figma, not guessed:
+     the tall banner is 1512x1007 (ratio 1.5015) and orchid.jpg is cut to the
+     same ratio, so `cover` shows the frame edge to edge with nothing cropped.
+     The short banner is 1512x260 — 25.8% of 1007 — and Figma shows exactly the
+     top 25.8% of the same photo, which is what `top` reproduces. Changing this
+     to `center` silently re-crops every banner away from the design. */
+  background: #efe6e6 url('../orchid.jpg') top center / cover no-repeat;
 }
 
 .banner--tall  { min-height: 62.9375rem; }  /* 1007px */
@@ -486,6 +492,11 @@ img { display: block; max-width: 100%; }
 
   .banner--tall  { min-height: 54.5625rem; }  /* 873px */
   .banner--short { min-height: 11.875rem; }
+
+  /* On a 402px-wide frame Figma scales the photo to 1311px and pushes it to
+     x = -216, so the visible strip starts 216px into 909px of overflow.
+     216 / (1311 - 402) = 23.76%. Centring here would show the wrong flower. */
+  .banner { background-position: 23.76% top; }
 
   .banner__inner { padding-top: 1.5rem; padding-bottom: 1.75rem; }
   .banner--tall .banner__inner { padding-bottom: 2rem; }
