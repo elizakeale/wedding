@@ -99,23 +99,34 @@ img { display: block; max-width: 100%; }
 
 /* ---------- Page header (phase 2) ----------
    One fixed element carries the nav and the wordmark for the whole page.
-   There is no second bar that slides in: the wordmark starts pushed down to
-   its hero position and rides up with the scroll until it rests beside the
-   nav. Same element throughout, so there is no handoff to go wrong.
-
-   Figma puts the nav at y=60 in both the tall frame and the compact one, so
-   the nav itself never moves. Only the wordmark travels — 464px to 112px,
-   i.e. 22rem — which is what --hdr-drop animates.
-
-   js/site.js sets --hdr-drop and --hdr-bg from the scroll position. With no
-   JS the header simply renders in its resting (compact) state, which is a
-   perfectly usable page. */
+   There is no second bar that slides in: the wordmark starts big and low, at
+   its hero position, and rides up while shrinking until it settles beside the
+   nav — at which point the header IS the bar. Same element throughout, so
+   there is nothing to hand off and nothing to keep in sync. */
 
 :root {
-  --hdr-h:        16.25rem;   /* 260px — the compact bar, per Figma */
-  --hdr-travel:   22rem;      /* 352px — how far the wordmark drops on a hero */
-  --hdr-drop:     0px;        /* set by js/site.js, 0 .. --hdr-travel */
-  --hdr-bg:       0;          /* set by js/site.js, 0 .. 1 */
+  /* Everything below is derived from --hdr-p, the scroll progress of the
+     header: 0 = full hero, 1 = settled into the bar. js/site.js sets only
+     --hdr-p and --hdr-bg; the rest is calc, so the two states are described
+     once, here, rather than duplicated in JS.
+
+     Numbers come from the two Figma frames:
+       hero    (Homepage 6:29) nav y=17,  wordmark y=464, 90px / 4.5px track
+       compact (FAQs     67:32) nav y=24, wordmark y=76,  40px / 2px  track
+       bar height 156px */
+  --hdr-p:          0;
+  --hdr-bg:         0;
+
+  --hdr-h:          9.75rem;     /* 156px */
+  --hdr-travel:     24.6875rem;  /* 395px: 388 of travel + the 7px the nav shifts */
+
+  --hdr-nav-top-hi: 1.0625rem;   /* 17px, hero */
+  --hdr-nav-top-lo: 1.5rem;      /* 24px, settled */
+
+  --hdr-word-hi:    5.625rem;    /* 90px */
+  --hdr-word-lo:    2.5rem;      /* 40px */
+  --hdr-track-hi:   0.28125rem;  /* 4.5px */
+  --hdr-track-lo:   0.125rem;    /* 2px */
 }
 
 .pageheader {
@@ -128,13 +139,20 @@ img { display: block; max-width: 100%; }
   pointer-events: none;       /* the photo below stays selectable */
 }
 
-.pageheader__inner { position: relative; z-index: 1; padding-top: 3.75rem; }
+.pageheader__inner {
+  position: relative;
+  z-index: 1;
+  padding-top: calc(var(--hdr-nav-top-hi) +
+                    (var(--hdr-nav-top-lo) - var(--hdr-nav-top-hi)) * var(--hdr-p));
+}
+
 .pageheader .nav,
 .pageheader .wordmark { pointer-events: auto; }
 
 /* The orchid slice, revealed only once real content is passing underneath.
    While the banner is still behind the header this stays at 0, so the
-   banner's own photo shows through uninterrupted and there is no seam. */
+   banner's own photo shows through uninterrupted and there is no seam.
+   No scrim over it — the bar reads exactly as the top of the banner does. */
 .pageheader__bg {
   position: absolute;
   inset: 0;
@@ -143,25 +161,28 @@ img { display: block; max-width: 100%; }
   will-change: opacity;
 }
 
-.pageheader__bg::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  /* Measured, not guessed: the bare orchid slice puts white nav text at
-     1.71:1 at its palest, well under the 3:1 floor. This lands it at ~3.8:1
-     worst case / ~5:1 average while the photo still reads through.
-     Set to `transparent` to match the Figma frame exactly. */
-  background: linear-gradient(rgba(70, 40, 55, 0.60), rgba(70, 40, 55, 0.50));
-}
-
+/* The wordmark rides up and shrinks at the same time, so it arrives as the
+   bar rather than being replaced by it. font-size is animated rather than
+   transform: scale() on purpose — scaling text up from its small size
+   renders it soft, and the settled state is where people spend their time.
+   The header is position:fixed, so relayout is confined to these few nodes
+   and never touches the document. */
 .pageheader__wordmark {
-  transform: translate3d(0, var(--hdr-drop), 0);
+  /* 17px clear of the nav, which is what puts the settled wordmark at y=76. */
+  margin-top: 1.0625rem;
+  transform: translate3d(0, calc((1 - var(--hdr-p)) * var(--hdr-travel)), 0);
   will-change: transform;
 }
 
-/* A tall hero is the only case where the wordmark has anywhere to travel
-   from; on the short-banner pages it is already at rest. */
-.pageheader--tall { --hdr-drop: var(--hdr-travel); }
+.pageheader__wordmark .wordmark__name {
+  font-size:      calc(var(--hdr-word-hi) +
+                       (var(--hdr-word-lo) - var(--hdr-word-hi)) * var(--hdr-p));
+  letter-spacing: calc(var(--hdr-track-hi) +
+                       (var(--hdr-track-lo) - var(--hdr-track-hi)) * var(--hdr-p));
+}
+
+/* Short-banner pages have nowhere to travel from: they open settled. */
+.pageheader:not(.pageheader--tall) { --hdr-p: 1; }
 
 /* Anchors (Back to top) shouldn't land under the fixed header. */
 html { scroll-padding-top: var(--hdr-h); }
@@ -277,6 +298,10 @@ html { scroll-padding-top: var(--hdr-h); }
   background: rgba(255, 255, 255, 0.75);
   margin-top: 5.5rem;
   transform-origin: top center;
+  /* Fades out as the header settles — once the bar has formed there is
+     nothing left to cue. filter rather than opacity so it multiplies with
+     the pulse keyframes instead of fighting them for the same property. */
+  filter: opacity(clamp(0, calc(1 - var(--hdr-p, 0) * 2), 1));
   /* Same motion and cadence as the Studio Fritz hero cue: a single pulse in
      the front slice of a 5s cycle, then it holds at rest. Timing copied from
      that stylesheet unchanged (5s / ease-out / 0.6s delay, keyframes at
@@ -299,6 +324,21 @@ html { scroll-padding-top: var(--hdr-h); }
 /* ---------- Sections ---------- */
 
 .section { padding: 5.25rem 0 3.75rem; }
+
+/* Phase 2 spacing, straight off the updated frames. Scoped to .phase2 so the
+   live save-the-date keeps the spacing it already has.
+   Inner pages: bar ends 156, "FAQs" title at 338  -> 182px
+   Homepage:    hero ends 1007, "RSVP" title at 1140 -> 133px, the extra room
+                that lets the header finish settling before content arrives. */
+.phase2 .section { padding-top: 11.375rem; }              /* 182px */
+.phase2 .banner--tall + .section { padding-top: 8.3125rem; }  /* 133px */
+
+/* Cue sits 43px off the bottom of the hero (Figma: y=853, h=111, of 1007). */
+.phase2 .banner--tall .banner__inner { padding-bottom: 2.6875rem; }
+
+/* The inner-page banner is now exactly the height of the header that sits on
+   it, so the bar and the photo strip behind it are the same band. */
+.phase2 .banner--short { min-height: var(--hdr-h); }   /* 156px */
 
 .section__title {
   font-size: 2.5rem;

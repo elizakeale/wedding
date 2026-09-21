@@ -248,10 +248,11 @@ def footer():
 
 def page(filename, title, main, tall=False, save_the_date=False, scripts=""):
     site_js = '\n  <script src="js/site.js"></script>' if FULL else ""
+    body_class = ' class="phase2"' if FULL else ""
     html = f"""<!DOCTYPE html>
 <html lang="en">
 {GENERATED_BANNER}{head(title, filename)}
-<body>
+<body{body_class}>
 {pageheader(filename, tall)}{banner(filename, tall, save_the_date)}
 
 {main}

@@ -1,21 +1,23 @@
 /* E & L Wedding — phase 2 header behaviour.
  *
  * The header is one fixed element holding the nav and the wordmark. On a tall
- * hero the wordmark starts pushed down to its hero position and rides up with
- * the scroll until it rests beside the nav — at which point the header IS the
- * compact bar. Nothing slides in and nothing crossfades; it is the same words
- * the whole way.
+ * hero the wordmark starts big and low — its hero position — and as you scroll
+ * it rides up and shrinks until it settles beside the nav, at which point the
+ * header IS the compact bar. Same element throughout, so there is no crossfade
+ * and nothing to keep in sync.
  *
- * Two values are handed to CSS, which does all the painting:
- *   --hdr-drop  how far the wordmark is still pushed down, in px
- *   --hdr-bg    opacity of the orchid slice behind the bar, 0..1
+ * This file publishes just two numbers and lets CSS derive everything else:
  *
- * Reads are batched into a rAF so a scroll never triggers a synchronous
- * layout, and both properties drive compositor-friendly work (transform and
- * opacity), so this does not repaint the page on every frame.
+ *   --hdr-p    0 = full hero, 1 = settled. Drives position, size and tracking.
+ *   --hdr-bg   opacity of the orchid slice behind the bar, 0..1.
  *
- * With JS off the header stays in its resting state — nav and wordmark in the
- * compact bar — which is still a correct, readable page.
+ * Keeping the two states described in CSS (rather than computing pixel values
+ * here) means the Figma numbers live in one place, and they keep scaling with
+ * the viewport-relative root font size for free.
+ *
+ * Scroll reads are batched into a rAF so scrolling never forces a synchronous
+ * layout. With JS off the header renders settled, which is still a correct and
+ * readable page.
  */
 (function () {
   'use strict';
@@ -24,27 +26,29 @@
   var banner = document.querySelector('.banner');
   if (!header || !banner) return;
 
+  // Short-banner pages open settled (CSS pins --hdr-p to 1 for them) but they
+  // still need the bar background, or content scrolls through the header.
   var isTall = header.classList.contains('pageheader--tall');
 
-  // How far the wordmark drops on a hero, and how tall the resting bar is.
-  // Read from CSS so the two stay in one place and keep scaling with the
-  // viewport-relative root font size.
-  function readPx(name, el) {
-    var v = getComputedStyle(el || header).getPropertyValue(name).trim();
-    if (v.slice(-2) === 'px') return parseFloat(v);
-    if (v.slice(-3) === 'rem') {
-      return parseFloat(v) * parseFloat(getComputedStyle(document.documentElement).fontSize);
-    }
-    return parseFloat(v) || 0;
-  }
-
-  var travel = 0, settleAt = 0, fadeOver = 80;
+  var root = document.documentElement;
+  var travel = 0, settleAt = 0;
+  var FADE_OVER = 80;   // px of scroll the bar background fades in across
 
   function measure() {
-    travel = isTall ? readPx('--hdr-travel') : 0;
+    // How far the wordmark has to travel, in px at the current root size.
+    // Zero on a short-banner page: it is already settled.
+    if (isTall) {
+      var rem = parseFloat(getComputedStyle(root).fontSize) || 16;
+      var declared = getComputedStyle(header).getPropertyValue('--hdr-travel').trim();
+      travel = declared.slice(-3) === 'rem' ? parseFloat(declared) * rem : parseFloat(declared);
+      if (!travel || travel < 1) travel = 388;
+    } else {
+      travel = 0;
+    }
+
     // The banner sits behind the header until its bottom reaches the bar's
     // bottom. Until then the bar background stays off, so the banner's own
-    // photo shows through and there is no seam between the two.
+    // photo shows through and the two never show a seam.
     settleAt = Math.max(0, banner.offsetHeight - header.offsetHeight);
   }
 
@@ -52,19 +56,15 @@
 
   function apply() {
     ticking = false;
-    var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+    var y = window.pageYOffset || root.scrollTop || 0;
 
-    // Wordmark rides up 1:1 with the scroll, then stops. Moving with the page
-    // rather than at some other rate is what makes it read as the same object
-    // coming to rest rather than an animation playing.
-    var drop = Math.max(0, travel - y);
+    // 1:1 with the scroll, so it reads as the words coming to rest rather
+    // than an animation playing at some unrelated rate.
+    var p = travel > 0 ? Math.min(1, Math.max(0, y / travel)) : 1;
+    var bg = Math.min(1, Math.max(0, (y - settleAt) / FADE_OVER));
 
-    var bg = settleAt <= 0
-      ? Math.min(1, y / fadeOver)
-      : Math.min(1, Math.max(0, (y - settleAt) / fadeOver));
-
-    header.style.setProperty('--hdr-drop', drop.toFixed(1) + 'px');
-    header.style.setProperty('--hdr-bg', bg.toFixed(3));
+    root.style.setProperty('--hdr-p', p.toFixed(4));
+    root.style.setProperty('--hdr-bg', bg.toFixed(3));
   }
 
   function onScroll() {
