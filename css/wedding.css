@@ -225,11 +225,11 @@ html { scroll-padding-top: var(--hdr-h); }
   letter-spacing: 0.09375rem;
 }
 
-/* Pink marks both "you can click this" and "you're here" — no underline.
-   Overrides the global a:hover opacity so the colour is what reads, rather
-   than the link just dimming. */
-.nav a:hover,
-.nav a[aria-current="page"] { color: var(--pink); opacity: 1; }
+/* The page you're on stays white with a rule under it; pink is reserved for
+   hover, so colour means "you can click this" and never anything else.
+   opacity:1 overrides the global a:hover dim — the colour is the signal. */
+.nav a[aria-current="page"] { border-bottom: 1px solid var(--rule); }
+.nav a:hover { color: var(--pink); opacity: 1; }
 
 /* ---------- Meta (date — rule — place) ---------- */
 
@@ -590,8 +590,7 @@ html { scroll-padding-top: var(--hdr-h); }
 
 /* The footer wordmark is the way back to the top of the site. */
 .footer__name a:hover,
-.footer__links a:hover,
-.footer__links a[aria-current="page"] { color: var(--pink); opacity: 1; }
+.footer__links a:hover { color: var(--pink); opacity: 1; }
 
 .footer__cols {
   display: grid;
