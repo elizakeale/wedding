@@ -10,7 +10,7 @@
  *   Your guest tab, found automatically by looking for a header row with a
  *   "Group ID" cell. Columns are matched by header name, so you can move them
  *   around. Expected headers: Main, Group ID, Email, Child?, Drinker?,
- *   Welcome BBQ?, Host, Group.
+ *   Welcome BBQ, Host, Group.
  *
  *   A blank Group ID means "same party as the row above" — which is how your
  *   sheet is already filled in. 135 people resolve to 72 parties that way.
@@ -27,7 +27,7 @@
  *
  * DEPLOY
  *   Deploy ▸ New deployment ▸ Web app ▸ Execute as: Me ▸
- *   Who has access: Anyone ▸ copy the /exec URL into js/rsvp.js (ENDPOINT).
+ *   Who has access: Anyone ▸ copy the /exec URL into js/config.js (ENDPOINT).
  *   After editing this file: Deploy ▸ Manage deployments ▸ pencil ▸
  *   Version: New version ▸ Deploy. The URL stays the same.
  */
@@ -111,7 +111,7 @@ function loadParties_() {
   if (cName < 0 || cCode < 0) throw new Error('Guest tab needs "Main" and "Group ID" headers.');
 
   // Every other column is kept as a possible event gate. The Itinerary tab
-  // names one of these headers in its `audience` cell — "Welcome BBQ?",
+  // names one of these headers in its `audience` cell — "Welcome BBQ",
   // "Beach Day" — and the event is shown to a party only if somebody in it
   // has a Yes there. Invitations therefore stay where you already manage
   // them: in the guest list, not in a second place that can disagree.
@@ -149,7 +149,7 @@ function loadParties_() {
  * Columns: day | time | event | optional | audience | body | location | parking
  *
  * `audience` is blank (or "all") for events everyone sees, or the exact header
- * of a guest-list column — "Welcome BBQ?", "Beach Day" — for ones that are not
+ * of a guest-list column — "Welcome BBQ", "Beach Day" — for ones that are not
  * for everybody. Nothing here is filtered in the browser: an event a party
  * isn't invited to never leaves this script, so it can't be found by reading
  * the page source.
