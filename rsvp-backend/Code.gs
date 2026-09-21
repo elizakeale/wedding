@@ -32,6 +32,13 @@
  *   Version: New version ▸ Deploy. The URL stays the same.
  */
 
+var CONTACT_EMAIL = 'elizakeale@gmail.com';
+
+// Guest-facing copy, kept together so it reads as one voice.
+var MSG_LOCKED    = 'This party has already RSVP\u2019d, please message Eliza & Lucas at '
+                  + CONTACT_EMAIL + ' to change your response.';
+var MSG_NOT_FOUND = 'This code is not valid, please check spelling and use all caps.';
+
 var RESPONSES_TAB = 'RSVP Responses';
 var LATEST_TAB    = 'RSVP Latest';
 var PARTIES_TAB   = 'RSVP Parties';
@@ -145,7 +152,7 @@ function doGet(e) {
 
     var party = loadParties_()[key_(code)];
     if (!party) {
-      return json_({ ok: false, error: 'We couldn’t find that code. Check your invitation, or text us.' });
+      return json_({ ok: false, error: MSG_NOT_FOUND });
     }
 
     var state = partyState_()[key_(code)];
@@ -153,8 +160,7 @@ function doGet(e) {
       return json_({
         ok: false,
         locked: true,
-        error: 'This code has already been used to RSVP. If you need to change your answer, email ' +
-               'elizakeale@gmail.com and we’ll reopen it for you.'
+        error: MSG_LOCKED
       });
     }
 
@@ -190,17 +196,14 @@ function doPost(e) {
     }
 
     var party = loadParties_()[key_(code)];
-    if (!party) return json_({ ok: false, error: 'We couldn’t find that code.' });
+    if (!party) return json_({ ok: false, error: MSG_NOT_FOUND });
 
     // Re-check the lock INSIDE the lock: two people submitting the same code
     // at once must not both get through.
     var states = partyState_();
     var state = states[key_(code)];
     if (state && state.locked) {
-      return json_({
-        ok: false, locked: true,
-        error: 'This code has already been used to RSVP.'
-      });
+      return json_({ ok: false, locked: true, error: MSG_LOCKED });
     }
 
     var valid = {};

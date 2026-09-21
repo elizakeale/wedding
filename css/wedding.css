@@ -505,15 +505,58 @@ html { scroll-padding-top: var(--hdr-h); }
   background: transparent;
   cursor: pointer;
   flex: none;
-  display: grid;
-  place-content: center;
+  position: relative;   /* the X is positioned against this, not laid out in it */
 }
 
+/* Checked state is an X drawn corner to corner, not a filled block — two
+   hairline gradients crossing, so it stays a true 1px line at any scale
+   rather than blurring the way a rotated border would. */
 .guest input:checked::after {
   content: '';
-  width: 0.875rem;
-  height: 0.875rem;
-  background: var(--yellow);
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom right,
+      transparent calc(50% - 0.5px), var(--white) calc(50% - 0.5px),
+      var(--white) calc(50% + 0.5px), transparent calc(50% + 0.5px)),
+    linear-gradient(to bottom left,
+      transparent calc(50% - 0.5px), var(--white) calc(50% - 0.5px),
+      var(--white) calc(50% + 0.5px), transparent calc(50% + 0.5px));
+}
+
+/* ---------- Party code entry ---------- */
+
+.code-entry { position: relative; margin-top: 1.25rem; max-width: 39.375rem; }
+.code-entry__field { margin-top: 0; width: 100%; padding-right: 4.5rem; }
+
+/* The arrow sits inside the field's right edge. It's a real button so it can
+   be tabbed to and pressed — the field's own Enter key does the same thing. */
+.code-entry__go {
+  position: absolute;
+  top: 50%;
+  right: 1.25rem;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  background: transparent;
+  border: none;
+  color: var(--white);
+  cursor: pointer;
+  padding: 0.5rem 0;
+}
+
+.code-entry__go:hover { color: var(--pink); }
+.code-entry__go .arrow { width: 2.375rem; height: 1px; background: currentColor; position: relative; }
+.code-entry__go .arrow::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-top: 1px solid currentColor;
+  border-right: 1px solid currentColor;
+  transform: translateY(-50%) rotate(45deg);
 }
 
 .diet-list { margin-top: 1.25rem; display: grid; gap: 0.875rem; }

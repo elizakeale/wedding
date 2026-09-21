@@ -323,8 +323,12 @@ def rsvp_form():
             <p class="row__text" id="rsvp-intro">Please enter your party code (found in the email). If you&rsquo;re
               responding for you and a guest (or your family), you&rsquo;ll be able to RSVP for your
               entire group.</p>
-            <input class="field" id="party-code" name="code" type="text" autocomplete="off"
-                   aria-label="Party code" spellcheck="false" placeholder="Party code" />
+            <div class="code-entry">
+              <input class="field code-entry__field" id="party-code" name="code" type="text"
+                     autocomplete="off" aria-label="Party code" spellcheck="false" />
+              <button class="code-entry__go" id="code-go" type="button"
+                      aria-label="Look up your party"><span class="arrow"></span></button>
+            </div>
           </div>
         </div>
 
@@ -351,7 +355,19 @@ def rsvp_form():
             <p class="form-msg" id="rsvp-msg" role="status" aria-live="polite"></p>
           </div>
         </div>
-      </form>"""
+      </form>
+
+      <!-- Replaces the whole form once an RSVP lands. -->
+      <div class="rows is-hidden" id="rsvp-done">
+        <div class="row">
+          <div class="row__rule"></div>
+          <div class="row__body">
+            <p class="row__text">Thank you for RSVPing.</p>
+            <p class="row__text">If you need to change your RSVP, please contact Eliza &amp; Lucas at
+              <a href="mailto:{C.CONTACT['email']}">{C.CONTACT['email']}</a></p>
+          </div>
+        </div>
+      </div>"""
 
 
 def itinerary_section():
@@ -417,13 +433,13 @@ RSVP_DEMO_JS = """/* Fake RSVP backend — LOCAL PREVIEW ONLY.
     if (kind === 'lookup') {
       if (locked[key]) {
         return wait(350, { ok: false, locked: true,
-          error: 'This code has already been used to RSVP. If you need to change your '
-               + 'answer, email elizakeale@gmail.com and we\\u2019ll reopen it for you.' });
+          error: 'This party has already RSVP\\u2019d, please message Eliza & Lucas at '
+               + 'elizakeale@gmail.com to change your response.' });
       }
       var p = PARTIES[key];
       if (!p) {
         return wait(350, { ok: false,
-          error: 'We couldn\\u2019t find that code. Check your invitation, or text us.' });
+          error: 'This code is not valid, please check spelling and use all caps.' });
       }
       return wait(350, { ok: true, party: {
         code: p.code,

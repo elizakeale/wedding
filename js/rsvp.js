@@ -55,6 +55,8 @@
   var submitBtn = document.getElementById('rsvp-submit');
   var msg       = document.getElementById('rsvp-msg');
   var intro     = document.getElementById('rsvp-intro');
+  var goBtn     = document.getElementById('code-go');
+  var done      = document.getElementById('rsvp-done');
 
   var party = null;
   var busy  = false;
@@ -182,6 +184,7 @@
     if (ev.key === 'Enter') { ev.preventDefault(); lookup(); }
   });
   codeField.addEventListener('blur', function () { if (!party) lookup(); });
+  if (goBtn) goBtn.addEventListener('click', lookup);
 
   /* ------------------------------------------------------------- submit */
 
@@ -208,12 +211,12 @@
           say(data.error || 'Something went wrong.', 'error');
           return;
         }
-        reveal(false);
-        codeField.disabled = true;
-        say(data.attending
-              ? 'Thank you — we’ve got you down. See you in Kane’ohe.'
-              : 'Thank you for letting us know — we’ll miss you.',
-            'done');
+        // The whole form is replaced by the confirmation, rather than left
+        // on screen disabled — there is nothing left to do with it, and a
+        // dead form invites people to try again.
+        form.classList.add('is-hidden');
+        say('');
+        if (done) done.classList.remove('is-hidden');
       })
       .catch(function () {
         busy = false;
