@@ -39,6 +39,13 @@ var MSG_LOCKED    = 'This party has already RSVP\u2019d, please message Eliza & 
                   + CONTACT_EMAIL + ' to change your response.';
 var MSG_NOT_FOUND = 'This code is not valid, please check spelling and use all caps.';
 
+// The shared password. Works alongside party codes so you can let in a
+// plus-one, a vendor, or one of the parties whose leader has no email.
+// Someone who enters with this sees the full itinerary, not a filtered one.
+var MASTER_PASSWORD = 'rockpiles';
+
+var ITINERARY_TAB = 'Itinerary';
+
 var RESPONSES_TAB = 'RSVP Responses';
 var LATEST_TAB    = 'RSVP Latest';
 var PARTIES_TAB   = 'RSVP Parties';
@@ -103,6 +110,12 @@ function loadParties_() {
   var cChild = col('child?');
   if (cName < 0 || cCode < 0) throw new Error('Guest tab needs "Main" and "Group ID" headers.');
 
+  // Every other column is kept as a possible event gate. The Itinerary tab
+  // names one of these headers in its `audience` cell — "Welcome BBQ?",
+  // "Beach Day" — and the event is shown to a party only if somebody in it
+  // has a Yes there. Invitations therefore stay where you already manage
+  // them: in the guest list, not in a second place that can disagree.
+
   var parties = {};   // code(lower) -> { code, leader, guests: [...] }
   var current = '';
 
@@ -115,15 +128,66 @@ function loadParties_() {
     if (!current) continue;                    // nothing above it yet
 
     var k = key_(current);
-    if (!parties[k]) parties[k] = { code: current, leader: name, guests: [] };
+    if (!parties[k]) parties[k] = { code: current, leader: name, guests: [], invited: {} };
     parties[k].guests.push({
       id:    k + '|' + key_(name),             // stable across row reordering
       name:  name,
       child: cChild >= 0 ? norm_(values[r][cChild]) : '',
       email: cEmail >= 0 ? norm_(values[r][cEmail]) : ''
     });
+
+    // A party is invited to something if ANY of its members is.
+    for (var c = 0; c < head.length; c++) {
+      if (key_(values[r][c]) === 'yes') parties[k].invited[head[c]] = true;
+    }
   }
   return parties;
+}
+
+/**
+ * The itinerary, from the Itinerary tab.
+ * Columns: day | time | event | optional | audience | body | location | parking
+ *
+ * `audience` is blank (or "all") for events everyone sees, or the exact header
+ * of a guest-list column — "Welcome BBQ?", "Beach Day" — for ones that are not
+ * for everybody. Nothing here is filtered in the browser: an event a party
+ * isn't invited to never leaves this script, so it can't be found by reading
+ * the page source.
+ */
+function loadItinerary_(party) {
+  var sh = ss_().getSheetByName(ITINERARY_TAB);
+  if (!sh) return [];
+  var values = sh.getDataRange().getValues();
+  if (values.length < 2) return [];
+
+  var head = values[0].map(key_);
+  function col(n) { return head.indexOf(n); }
+  var cDay = col('day'), cTime = col('time'), cEvent = col('event');
+  var cOpt = col('optional'), cAud = col('audience'), cBody = col('body');
+  var cLoc = col('location'), cPark = col('parking');
+
+  var out = [];
+  for (var r = 1; r < values.length; r++) {
+    var name = norm_(values[r][cEvent]);
+    if (!name) continue;
+
+    var audience = cAud >= 0 ? key_(values[r][cAud]) : '';
+    if (audience && audience !== 'all') {
+      // party === null means the shared password was used: show everything.
+      if (party && !party.invited[audience]) continue;
+    }
+
+    out.push({
+      day:      cDay  >= 0 ? norm_(values[r][cDay])  : '',
+      time:     cTime >= 0 ? norm_(values[r][cTime]) : '',
+      name:     name,
+      optional: cOpt  >= 0 ? key_(values[r][cOpt]) === 'yes' : false,
+      body:     cBody >= 0 ? norm_(values[r][cBody]) : '',
+      location: cLoc  >= 0 ? norm_(values[r][cLoc])  : '',
+      parking:  cPark >= 0 ? norm_(values[r][cPark]) : ''
+    });
+  }
+  return out;
 }
 
 /** code(lower) -> { locked: bool, row: n } */
@@ -145,9 +209,32 @@ function partyState_() {
 function doGet(e) {
   try {
     var action = (e && e.parameter && e.parameter.action) || 'lookup';
+    var code = norm_(e.parameter.code);
+
+    /* The front door. Returns only whether the value is good and which kind
+       it is — never the code list, and never anything about other parties. */
+    if (action === 'auth') {
+      if (!code) return json_({ ok: false });
+      if (key_(code) === key_(MASTER_PASSWORD)) {
+        return json_({ ok: true, kind: 'master' });
+      }
+      var p = loadParties_()[key_(code)];
+      return p ? json_({ ok: true, kind: 'party', code: p.code })
+               : json_({ ok: false });
+    }
+
+    /* The itinerary, filtered to this party before it leaves the server. */
+    if (action === 'itinerary') {
+      var forParty = null;
+      if (code && key_(code) !== key_(MASTER_PASSWORD)) {
+        forParty = loadParties_()[key_(code)] || null;
+        if (!forParty) return json_({ ok: false, error: MSG_NOT_FOUND });
+      }
+      return json_({ ok: true, events: loadItinerary_(forParty) });
+    }
+
     if (action !== 'lookup') return json_({ ok: false, error: 'Unknown action.' });
 
-    var code = norm_(e.parameter.code);
     if (!code) return json_({ ok: false, error: 'Please enter your party code.' });
 
     var party = loadParties_()[key_(code)];

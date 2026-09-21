@@ -52,13 +52,64 @@ Those 17 leaders with no email are the ones you can't send a code to yet.
 
 ## 4. Point the site at it
 
-In `js/rsvp.js`, line 17:
+In `js/config.js` — **one place, used by the gate, the RSVP form and the
+itinerary**:
 
 ```js
-var ENDPOINT = 'https://script.google.com/macros/s/PASTE_YOURS_HERE/exec';
+window.ELW.ENDPOINT = 'https://script.google.com/macros/s/PASTE_YOURS_HERE/exec';
 ```
 
-Until that's filled in, the form tells guests RSVP isn't open yet.
+Until that's filled in the site keeps working the way it does today: the gate
+accepts the shared password on its own, and RSVP says it isn't open yet. That
+fallback is deliberate — it means pointing at a script you haven't deployed
+can't lock everyone out of a live site.
+
+## 4b. The front door
+
+Once the endpoint is set, the gate accepts **either a party code or the shared
+password**. Both let you in; the difference is what you see afterwards:
+
+- **A party code** is remembered for the tab. The RSVP page stops asking for
+  it, and the itinerary shows only that party's events.
+- **The shared password** (`rockpiles`, set as `MASTER_PASSWORD` in `Code.gs`)
+  works for anyone. They see the whole itinerary and still type a code on the
+  RSVP page. Keep it: it's how you let in a plus-one, a vendor, or one of the
+  17 parties whose leader has no email address yet.
+
+The 72 codes are never sent to the browser. The gate asks the script whether
+a typed value is good and gets back yes or no — nothing else.
+
+## 4c. The Itinerary tab
+
+Add a tab called **Itinerary** with this header row:
+
+| day | time | event | optional | audience | body | location | parking |
+
+`rsvp-backend/itinerary-seed.tsv` has your nine events ready to paste in
+(open it, copy all, paste into A1 — it's tab-separated so it fills the
+columns). **Check the day labels before you rely on them**; they were derived
+from the old July schedule, not confirmed.
+
+**`audience` is the important column.** Leave it blank for events everyone
+sees. Otherwise put the *exact header* of a guest-list column:
+
+| audience | who sees it |
+|---|---|
+| *(blank)* | everyone |
+| `Welcome BBQ?` | parties with a Yes in your Welcome BBQ? column |
+| `Beach Day` | parties with a Yes in your Beach Day column |
+
+So invitations stay where you already manage them — in the guest list. Mark
+someone Yes for the BBQ and the BBQ appears on their itinerary; there's no
+second list to keep in step.
+
+A party counts as invited if **anyone** in it is.
+
+This filtering happens in the script, before anything is sent. An event a
+party isn't invited to never reaches their browser, so it can't be found by
+viewing the page source. That's why the itinerary is the one page that needs
+JavaScript to show anything — hiding it with CSS would have left the text
+sitting in the HTML.
 
 ## 5. Test before any invitation goes out
 
@@ -69,7 +120,10 @@ Until that's filled in, the form tells guests RSVP isn't open yet.
 4. Enter `TESTME` again — it should refuse, because the code is now used.
 5. In **RSVP Parties**, clear the `locked` cell for TESTME. Try again — it
    should let you in.
-6. Delete the fake row when you're done.
+6. Check the itinerary as `TESTME` — with no Yes in Welcome BBQ? or Beach
+   Day, neither event should appear. Add a Yes and reload; it should.
+7. Enter `rockpiles` at the gate instead and confirm you see everything.
+8. Delete the fake row when you're done.
 
 ## What the three tabs are for
 

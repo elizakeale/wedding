@@ -48,6 +48,11 @@ GENERATED_BANNER = (
 PHASE_2_NAMES = ("phase-2", "phase2", "full")
 FULL = C.PHASE in PHASE_2_NAMES
 
+# True only for --phase2 builds. The fake backend loads on every preview page
+# (the itinerary needs it as much as the RSVP form does) and on none of the
+# real ones.
+PREVIEW = False
+
 
 # ---------------------------------------------------------------------------
 # Shared pieces
@@ -247,7 +252,10 @@ def footer():
 
 
 def page(filename, title, main, tall=False, save_the_date=False, scripts=""):
-    site_js = '\n  <script src="js/site.js"></script>' if FULL else ""
+    demo_js = '\n  <script src="js/rsvp-demo.js"></script>' if (FULL and PREVIEW) else ""
+    site_js = (demo_js
+               + '\n  <script src="js/config.js"></script>'
+               + '\n  <script src="js/site.js"></script>') if FULL else ""
     body_class = ' class="phase2"' if FULL else ""
     html = f"""<!DOCTYPE html>
 <html lang="en">
@@ -423,12 +431,56 @@ RSVP_DEMO_JS = """/* Fake RSVP backend — LOCAL PREVIEW ONLY.
   };
   var locked = { used: true };
 
+  // Who is invited to what, mirroring the guest sheet's Welcome BBQ? / Beach
+  // Day columns. CASS gets the BBQ, LORETTA doesn't — enter each and compare.
+  var INVITES = {
+    bailey:  ['welcome bbq?'],
+    cass:    ['welcome bbq?', 'beach day'],
+    ethan:   ['welcome bbq?', 'beach day'],
+    loretta: []
+  };
+
+  var EVENTS = [
+    { day: 'Wednesday, February 9', time: '11:00 AM – 3:00 PM', name: 'Beach Day',
+      optional: true, audience: 'beach day',
+      body: 'Tents up at Makapu\u2019u Beach Park. Bring sunscreen and a towel.',
+      location: 'Makapu\u2019u Beach Park, O\u2019ahu', parking: 'Easy on a weekday.' },
+    { day: 'Thursday, February 10', time: '5:00 PM – 9:00 PM', name: 'Welcome BBQ',
+      optional: false, audience: 'welcome bbq?',
+      body: 'A welcome BBQ for family and close friends.',
+      location: 'Kauhale Beach Cove, Kane\u2019ohe', parking: 'Guest spots plus street parking.' },
+    { day: 'Saturday, February 12', time: '11:30 AM – 2:30 PM', name: 'Reception Lunch',
+      optional: false, audience: '',
+      body: 'Lunch with mimosas overlooking Haiku Gardens.',
+      location: 'Hale\u2019iwa Joe\u2019s Haiku Gardens, Kane\u2019ohe', parking: 'Plenty on site.' },
+    { day: 'Sunday, February 13', time: '5:00 PM – 9:00 PM', name: 'Sunset Cruise',
+      optional: true, audience: '',
+      body: 'Totally optional. Takes off from Honolulu.', location: '', parking: '' }
+  ];
+
   function wait(ms, value) {
     return new Promise(function (res) { setTimeout(function () { res(value); }, ms); });
   }
 
   window.RSVP_DEMO = function (kind, payload) {
-    var key = String(payload.code || '').trim().toLowerCase();
+    var key = String((payload && payload.code) || '').trim().toLowerCase();
+
+    if (kind === 'auth') {
+      if (key === 'rockpiles') return wait(300, { ok: true, kind: 'master' });
+      var known = PARTIES[key];
+      return wait(300, known ? { ok: true, kind: 'party', code: known.code }
+                             : { ok: false });
+    }
+
+    if (kind === 'itinerary') {
+      var mine = key && key !== 'rockpiles' ? (INVITES[key] || []) : null;
+      var visible = EVENTS.filter(function (ev) {
+        if (!ev.audience) return true;            // everyone
+        if (mine === null) return true;           // shared password sees all
+        return mine.indexOf(ev.audience) !== -1;
+      });
+      return wait(350, { ok: true, events: visible });
+    }
 
     if (kind === 'lookup') {
       if (locked[key]) {
@@ -465,7 +517,8 @@ RSVP_DEMO_JS = """/* Fake RSVP backend — LOCAL PREVIEW ONLY.
 
 
 def build(preview=False):
-    global FULL, OUT_DIR
+    global FULL, OUT_DIR, PREVIEW
+    PREVIEW = preview
 
     if preview:
         FULL, OUT_DIR = True, PHASE2_DIR
@@ -482,16 +535,15 @@ def build(preview=False):
         # The demo backend loads before rsvp.js and only in the preview, so
         # the real site can never pick it up.
         rsvp_scripts = '\n  <script src="js/rsvp.js"></script>'
-        if preview:
-            rsvp_scripts = ('\n  <script src="js/rsvp-demo.js"></script>'
-                            '\n  <script src="js/rsvp.js"></script>')
         page("home.html", "E &amp; L Wedding",
              section("RSVP", rsvp_form(),
                      note=f"We kindly ask you to RSVP by {C.WEDDING['rsvp_deadline']}.",
                      extra_class="rsvp"),
              tall=True,
              scripts=rsvp_scripts)
-        page("itinerary.html", "Itinerary &mdash; E &amp; L Wedding", itinerary_section())
+        page("itinerary.html", "Itinerary &mdash; E &amp; L Wedding",
+             section("Itinerary", '      <div class="rows" id="itinerary"></div>'),
+             scripts='\n  <script src="js/itinerary.js"></script>')
         page("recommendations.html", "Recommendations &mdash; E &amp; L Wedding",
              section("Recommendations", rows(C.RECOMMENDATIONS)))
         page("faqs.html", "FAQs &mdash; E &amp; L Wedding", faq_section())
@@ -584,14 +636,38 @@ def update_gate():
     else:
         gate = gate.replace("</head>", f"{block}\n</head>", 1)
 
-    # Redirect target
+    # Redirect target. The old inline gate held it in a location.href; the
+    # current one keeps it in js/config.js, so update whichever is in use.
     gate, n = re.subn(r"(location(?:\.href|\.replace)?\s*[=(]\s*')[^']+\.html(')",
                       rf"\g<1>{C.ENTRY_PAGE}\g<2>", gate)
-    if n == 0:
+    if n == 0 and "js/gate.js" not in gate:
         print("\n  ! Could not find the redirect target in index.html — check it by hand.")
+
+    cfg_path = os.path.join(HERE, "js", "config.js")
+    if os.path.exists(cfg_path):
+        with open(cfg_path, encoding="utf-8") as f:
+            cfg = before_cfg = f.read()
+        cfg = re.sub(r"(window\.ELW\.ENTRY_PAGE\s*=\s*')[^']*(')",
+                     rf"\g<1>{C.ENTRY_PAGE}\g<2>", cfg)
+        if cfg != before_cfg:
+            with open(cfg_path, "w", encoding="utf-8") as f:
+                f.write(cfg)
+            print("  updated js/config.js (entry page)")
 
     # Asset versions
     gate = re.sub(r"(favicon\.(?:ico|png)\?v=)\d+", rf"\g<1>{C.ASSET_VERSION}", gate)
+
+    # The gate loads config.js + gate.js. Its own inline <script> is replaced
+    # the first time, so the password logic lives in one reviewable file
+    # rather than inline in a 6KB page.
+    tags = (f'  <script src="js/config.js?v={C.ASSET_VERSION}"></script>\n'
+            f'  <script src="js/gate.js?v={C.ASSET_VERSION}"></script>\n')
+    if "js/gate.js" in gate:
+        gate = re.sub(r'  <script src="js/config\.js[^"]*"></script>\n'
+                      r'  <script src="js/gate\.js[^"]*"></script>\n', tags, gate)
+    else:
+        # Drop the inline script and put the two files in its place.
+        gate = re.sub(r"  <script>.*?</script>\n", tags, gate, count=1, flags=re.S)
 
     if gate != original:
         with open(path, "w", encoding="utf-8") as f:

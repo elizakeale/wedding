@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>E &amp; L Wedding</title>
   <meta name="robots" content="noindex, nofollow" />
-  <link rel="icon" href="favicon.ico?v=15" sizes="any">
-  <link rel="icon" type="image/png" href="favicon.png?v=15" sizes="180x180">
-  <link rel="apple-touch-icon" href="favicon.png?v=15">
+  <link rel="icon" href="favicon.ico?v=16" sizes="any">
+  <link rel="icon" type="image/png" href="favicon.png?v=16" sizes="180x180">
+  <link rel="apple-touch-icon" href="favicon.png?v=16">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,300;1,300&family=Cormorant+Upright:wght@300&display=swap" rel="stylesheet">
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
@@ -118,91 +118,7 @@
       <p id="error" class="error">Incorrect password — please try again.</p>
     </div>
   </div>
-  <script>
-    var input = document.getElementById('input');
-    var error = document.getElementById('error');
-    var wrap  = document.getElementById('wrap');
-    var cursor = document.getElementById('cursor');
-    var realPw = '';
-    var maskTimer = null;
-
-    // Use a plain text input — we handle masking manually
-    input.type = 'text';
-
-    setTimeout(function(){ input.focus(); }, 100);
-
-    input.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') { e.preventDefault(); check(); return; }
-      // Handle backspace manually
-      if (e.key === 'Backspace') {
-        e.preventDefault();
-        if (realPw.length > 0) {
-          realPw = realPw.slice(0, -1);
-          clearTimeout(maskTimer);
-          input.value = '•'.repeat(realPw.length);
-          input.setSelectionRange(input.value.length, input.value.length);
-        }
-        if (realPw.length === 0) cursor.classList.remove('hidden');
-        return;
-      }
-    });
-
-    input.addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') return;
-      e.preventDefault();
-      var ch = e.key;
-      if (ch.length !== 1) return; // ignore special keys
-      realPw += ch;
-      // Show dots for previous chars + this new char
-      input.value = '•'.repeat(realPw.length - 1) + ch;
-      input.setSelectionRange(input.value.length, input.value.length);
-      cursor.classList.add('hidden');
-      // Mask after 500ms
-      clearTimeout(maskTimer);
-      maskTimer = setTimeout(function() {
-        input.value = '•'.repeat(realPw.length);
-        input.setSelectionRange(input.value.length, input.value.length);
-      }, 500);
-    });
-
-    input.addEventListener('input', function() {
-      error.classList.remove('show');
-      // Anything that arrives without a keypress (paste, autofill, mobile IME)
-      var v = input.value || '';
-      if (v && v.indexOf('\u2022') === -1) {
-        realPw = v;
-        clearTimeout(maskTimer);
-        maskTimer = setTimeout(function() {
-          input.value = '\u2022'.repeat(realPw.length);
-          input.setSelectionRange(input.value.length, input.value.length);
-        }, 500);
-      }
-    });
-    function typedPassword() {
-      // realPw holds what was actually typed; input.value holds bullets.
-      // Fall back to input.value for pasted text and for mobile keyboards,
-      // which don't fire usable keypress events.
-      var v = realPw || input.value || '';
-      return v.replace(/\u2022/g, '').trim().toLowerCase();
-    }
-
-    function check() {
-      if (typedPassword() === 'rockpiles') {
-        window.location.href = 'home.html';
-      } else {
-        error.classList.add('show');
-        wrap.classList.remove('shake');
-        void wrap.offsetWidth;
-        wrap.classList.add('shake');
-        input.value = '';
-        realPw = '';
-        clearTimeout(maskTimer);
-        wrap.addEventListener('animationend', function f() {
-          wrap.classList.remove('shake');
-          wrap.removeEventListener('animationend', f);
-        });
-      }
-    }
-  </script>
+  <script src="js/config.js?v=16"></script>
+  <script src="js/gate.js?v=16"></script>
 </body>
 </html>

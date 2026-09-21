@@ -16,32 +16,21 @@
 (function () {
   'use strict';
 
-  // Paste the Apps Script /exec URL here. See rsvp-backend/README.md.
-  var ENDPOINT = '';
+  var CFG = window.ELW || {};
 
-  /* Every call to the backend goes through here.
-   *
-   * With no ENDPOINT set, the preview build supplies window.RSVP_DEMO — a
-   * fake backend with a few sample parties — so the whole flow can be clicked
-   * through before the Apps Script is deployed. The demo file is only ever
-   * written into the local preview; it is never generated for the real site,
-   * so the live page with no ENDPOINT still says "not open yet" rather than
-   * quietly accepting RSVPs into nothing. */
+  /* One request path for the whole site, defined in js/config.js, so the
+   * /exec URL is pasted once rather than once per page. */
   function request(kind, payload) {
-    if (!ENDPOINT) {
-      if (window.RSVP_DEMO) return window.RSVP_DEMO(kind, payload);
+    if (!CFG.request) {
       return Promise.resolve({ ok: false, notOpen: true,
-        error: 'RSVP isn’t open yet — please check back soon.' });
+        error: 'RSVP isn\u2019t open yet \u2014 please check back soon.' });
     }
-    if (kind === 'lookup') {
-      return fetch(ENDPOINT + '?action=lookup&code=' + encodeURIComponent(payload.code))
-        .then(function (r) { return r.json(); });
-    }
-    return fetch(ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },  // avoids CORS preflight
-      body: JSON.stringify(payload)
-    }).then(function (r) { return r.json(); });
+    return CFG.request(kind, payload).then(function (data) {
+      if (data && data.notOpen && !data.error) {
+        data.error = 'RSVP isn\u2019t open yet \u2014 please check back soon.';
+      }
+      return data;
+    });
   }
 
   var form     = document.getElementById('rsvp-form');
@@ -73,6 +62,20 @@
   }
 
   reveal(false);
+
+  /* The gate already asked for a code, so don't ask twice. Anyone who came in
+   * on the shared password has no party of their own and still needs the
+   * field — that's the one case where it stays. */
+  var session = CFG.session ? CFG.session() : null;
+  var codeRow = codeField ? codeField.closest('.row') : null;
+
+  function useSessionCode() {
+    if (!session || !session.code) return false;
+    codeField.value = session.code;
+    if (codeRow) codeRow.classList.add('is-hidden');
+    lookup();
+    return true;
+  }
 
   /* ----------------------------------------------------------- rendering */
 
@@ -239,4 +242,6 @@
         say('We couldn’t reach the server. Please try again in a moment.', 'error');
       });
   });
+  // Runs last: lookup() and the handlers above have to exist first.
+  if (session && session.code) useSessionCode();
 })();
