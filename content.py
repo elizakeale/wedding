@@ -107,12 +107,9 @@ FOOTER_NAV_ORDER = ["RSVP", "FAQs", "ITINERARY", "RECOMMENDATIONS"]
 # ---------------------------------------------------------------------------
 # FAQs
 #
-# NOTE — copy discrepancy to resolve:
-# The Figma save-the-date frame now answers "Is it safe to book our flights
-# now?" with "We suggest holding off for now unless you are planning to book a
-# specific accommodation that is already opened up for booking..." which is the
-# opposite advice to what is live below. Left as-is deliberately: changing what
-# guests are told about booking flights is your call, not a build decision.
+# The flights answer follows Figma: hold off unless you're booking a specific
+# place that's already bookable. It used to say "yes, if you know you plan to
+# attend" — the opposite — so if a guest quotes that back at you, that's why.
 # ---------------------------------------------------------------------------
 FAQS = [
     (
@@ -121,8 +118,11 @@ FAQS = [
     ),
     (
         "Is it safe to book our flights now?",
-        ["Yes, if you know you plan to attend. Flights typically don’t get released until "
-         "11 months prior (likely March 2027)."],
+        ["We suggest holding off for now unless you are planning to book a specific "
+         "accommodation that is already opened up for booking (e.g., a larger luxury "
+         "Airbnb). Flights and Airbnbs typically don’t get released until 11 months "
+         "prior (likely March 2027). We also will share hotel blocks and Airbnb "
+         "recommendations soon."],
     ),
     (
         "When should we plan to travel?",
