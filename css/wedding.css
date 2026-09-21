@@ -19,6 +19,7 @@
   --yellow:    #ffe993;
   --burgundy:  #7f214d;
   --white:     #ffffff;
+  --pink:      #d8bcc3;    /* hover, and the page you're on */
   --rule:      rgba(255, 255, 255, 0.55);
 
   --gutter:    3.625rem;   /* 58px */
@@ -75,9 +76,16 @@ img { display: block; max-width: 100%; }
   background: #efe6e6 url('../orchid.jpg') top center / cover no-repeat;
 }
 
-.banner--tall  { min-height: 62.9375rem; }  /* 1007px */
-/* never taller than the window, so the scroll cue stays visible */
-@supports (height: 100svh) { .banner--tall { min-height: min(62.9375rem, 100svh); } }
+/* The hero is 1007px at the Figma frame width, but never taller than the
+   window — otherwise the scroll cue falls below the fold. Everything that
+   sits inside the hero is expressed as a fraction of THIS value rather than
+   in rem, because rem tracks viewport *width*: on a wide, short window a
+   rem-positioned element keeps sliding down while the clamped hero does not,
+   which is what pushed the wordmark onto the cue. */
+:root { --hero-h: 62.9375rem; }                                    /* 1007px */
+@supports (height: 100svh) { :root { --hero-h: min(62.9375rem, 100svh); } }
+
+.banner--tall  { min-height: var(--hero-h); }
 .banner--short { min-height: 16.25rem; }    /* 260px */
 
 .banner__inner {
@@ -118,7 +126,14 @@ img { display: block; max-width: 100%; }
   --hdr-bg:         0;
 
   --hdr-h:          9.75rem;     /* 156px */
-  --hdr-travel:     24.6875rem;  /* 395px: 388 of travel + the 7px the nav shifts */
+
+  /* The hero wordmark sits 46.08% down the hero (464 of 1007), so the travel
+     is measured against the hero's real height, not a fixed rem — see the
+     note on --hero-h above. The 5rem subtrahend is the wordmark's own flow
+     offset inside the header at p=0 (measured: 79.97px), so subtracting it
+     makes the rendered top land exactly on 46.077% of the hero. js/site.js
+     overrides this with a px value, so this calc is the no-JS path. */
+  --hdr-travel:     calc(var(--hero-h) * 0.46077 - 5rem);
 
   --hdr-nav-top-hi: 1.0625rem;   /* 17px, hero */
   --hdr-nav-top-lo: 1.5rem;      /* 24px, settled */
@@ -127,6 +142,11 @@ img { display: block; max-width: 100%; }
   --hdr-word-lo:    2.5rem;      /* 40px */
   --hdr-track-hi:   0.28125rem;  /* 4.5px */
   --hdr-track-lo:   0.125rem;    /* 2px */
+
+  --hdr-nav-hi:     1.875rem;    /* 30px */
+  --hdr-nav-lo:     1.25rem;     /* 20px */
+  --hdr-navtrk-hi:  0.09375rem;  /* 1.5px */
+  --hdr-navtrk-lo:  0.0625rem;   /* 1px */
 }
 
 .pageheader {
@@ -168,8 +188,8 @@ img { display: block; max-width: 100%; }
    The header is position:fixed, so relayout is confined to these few nodes
    and never touches the document. */
 .pageheader__wordmark {
-  /* 17px clear of the nav, which is what puts the settled wordmark at y=76. */
-  margin-top: 1.0625rem;
+  /* Clear of the nav, calibrated to put the settled wordmark at y=76. */
+  margin-top: 1.75rem;
   transform: translate3d(0, calc((1 - var(--hdr-p)) * var(--hdr-travel)), 0);
   will-change: transform;
 }
@@ -179,6 +199,14 @@ img { display: block; max-width: 100%; }
                        (var(--hdr-word-lo) - var(--hdr-word-hi)) * var(--hdr-p));
   letter-spacing: calc(var(--hdr-track-hi) +
                        (var(--hdr-track-lo) - var(--hdr-track-hi)) * var(--hdr-p));
+}
+
+/* The nav shrinks with it — 30px/1.5px in the hero down to 20px/1px settled. */
+.pageheader .nav {
+  font-size:      calc(var(--hdr-nav-hi) +
+                       (var(--hdr-nav-lo) - var(--hdr-nav-hi)) * var(--hdr-p));
+  letter-spacing: calc(var(--hdr-navtrk-hi) +
+                       (var(--hdr-navtrk-lo) - var(--hdr-navtrk-hi)) * var(--hdr-p));
 }
 
 /* Short-banner pages have nowhere to travel from: they open settled. */
@@ -197,7 +225,11 @@ html { scroll-padding-top: var(--hdr-h); }
   letter-spacing: 0.09375rem;
 }
 
-.nav a[aria-current="page"] { border-bottom: 1px solid var(--rule); }
+/* Pink marks both "you can click this" and "you're here" — no underline.
+   Overrides the global a:hover opacity so the colour is what reads, rather
+   than the link just dimming. */
+.nav a:hover,
+.nav a[aria-current="page"] { color: var(--pink); opacity: 1; }
 
 /* ---------- Meta (date — rule — place) ---------- */
 
@@ -333,8 +365,10 @@ html { scroll-padding-top: var(--hdr-h); }
 .phase2 .section { padding-top: 11.375rem; }              /* 182px */
 .phase2 .banner--tall + .section { padding-top: 8.3125rem; }  /* 133px */
 
-/* Cue sits 43px off the bottom of the hero (Figma: y=853, h=111, of 1007). */
-.phase2 .banner--tall .banner__inner { padding-bottom: 2.6875rem; }
+/* Cue keeps its Figma proportions at any window shape: 43px clear of the
+   bottom and 111px tall, of a 1007px hero. */
+.phase2 .banner--tall .banner__inner { padding-bottom: calc(var(--hero-h) * 0.0427); }
+.phase2 .banner--tall .scroll-cue    { height:         calc(var(--hero-h) * 0.1102); }
 
 /* The inner-page banner is now exactly the height of the header that sits on
    it, so the bar and the photo strip behind it are the same band. */
@@ -553,6 +587,11 @@ html { scroll-padding-top: var(--hdr-h); }
   letter-spacing: 0.125rem;
   text-transform: uppercase;
 }
+
+/* The footer wordmark is the way back to the top of the site. */
+.footer__name a:hover,
+.footer__links a:hover,
+.footer__links a[aria-current="page"] { color: var(--pink); opacity: 1; }
 
 .footer__cols {
   display: grid;

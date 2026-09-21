@@ -35,13 +35,21 @@
   var FADE_OVER = 80;   // px of scroll the bar background fades in across
 
   function measure() {
-    // How far the wordmark has to travel, in px at the current root size.
-    // Zero on a short-banner page: it is already settled.
+    // How far the wordmark has to travel. Measured against the hero's real
+    // height, not a rem constant: rem tracks viewport WIDTH, but the hero is
+    // clamped to the window HEIGHT, so on a wide short window a rem-based
+    // drop keeps growing after the hero has stopped and the wordmark lands
+    // on top of the scroll cue.
+    //
+    // 0.46077 = 464/1007, where the hero wordmark sits in the frame.
+    // 5rem is the wordmark's own flow offset inside the header at p=0, so
+    // subtracting it makes the rendered top land on that fraction exactly.
+    // Mirrors the --hdr-travel calc in the stylesheet (the no-JS path).
     if (isTall) {
       var rem = parseFloat(getComputedStyle(root).fontSize) || 16;
-      var declared = getComputedStyle(header).getPropertyValue('--hdr-travel').trim();
-      travel = declared.slice(-3) === 'rem' ? parseFloat(declared) * rem : parseFloat(declared);
-      if (!travel || travel < 1) travel = 388;
+      travel = banner.offsetHeight * 0.46077 - 5 * rem;
+      if (!(travel > 1)) travel = 388;
+      root.style.setProperty('--hdr-travel', travel.toFixed(1) + 'px');
     } else {
       travel = 0;
     }

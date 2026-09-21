@@ -234,7 +234,7 @@ def footer():
     return f"""  <footer class="footer">
     <div class="wrap">
       <div class="footer__top">
-        <p class="footer__name">{C.WEDDING['names_short']}</p>
+        <p class="footer__name"><a href="{C.ENTRY_PAGE}">{C.WEDDING['names_short']}</a></p>
         {meta_line(date_first=True)}
       </div>
 {links}      <div class="footer__cols footer__cols--stdate">
