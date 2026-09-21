@@ -112,17 +112,6 @@ def meta_line(date_first=True):
             f'<span class="meta__place">{p}</span></span>')
 
 
-def nav(current):
-    if not FULL:
-        return ""
-    out = ['      <nav class="nav">']
-    for label, href in C.NAV:
-        aria = ' aria-current="page"' if href == current else ""
-        out.append(f'        <a href="{href}"{aria}>{label}</a>')
-    out.append("      </nav>")
-    return "\n".join(out) + "\n"
-
-
 def banner(current, tall, save_the_date=False):
     classes = "banner banner--tall" if tall else "banner banner--short"
     if save_the_date:
@@ -140,6 +129,11 @@ def banner(current, tall, save_the_date=False):
         <p class="stdate__tagline">{C.SAVE_THE_DATE['tagline']}</p>
       </div>
 """
+    elif FULL:
+        # In phase 2 the nav and wordmark live in the fixed page header
+        # instead, so they can ride up the screen and settle into the bar.
+        # The banner is then just the photo (and the cue, on a tall hero).
+        body = ""
     else:
         body = f"""      <div>
         <div class="wordmark">
@@ -153,33 +147,50 @@ def banner(current, tall, save_the_date=False):
     # "there is more below the fold". The short 260px banners open straight
     # onto their content, so a cue there would point at nothing.
     cue = '      <span class="scroll-cue" aria-hidden="true"></span>\n' if tall else ""
+    inner = "wrap banner__inner"
+    if FULL and tall:
+        inner += " banner__inner--cue-only"   # cue is the only child; pin it low
 
+    # No nav here in either phase: phase 1 has none, and in phase 2 it lives
+    # in the fixed page header. Rendering it here too is how you get two.
     return f"""  <header class="{classes}" id="top">
-    <div class="wrap banner__inner">
-{nav(current)}{body}{cue}    </div>
+    <div class="{inner}">
+{body}{cue}    </div>
   </header>"""
 
 
-def topbar(current):
-    """The nav pinned to the top of the window once the banner scrolls away.
+def pageheader(current, tall):
+    """Phase 2's header: fixed to the window, carrying the nav and the wordmark.
 
-    Carries a slice of the same orchid photo as its background, so it reads as
-    the top of the banner staying behind rather than a new element arriving.
+    There is deliberately only ONE of these rather than a banner copy plus a
+    separate bar that slides in. The wordmark starts pushed down to its hero
+    position and rides up as you scroll until it comes to rest beside the nav,
+    which is the compact bar. Because it is the same element throughout, there
+    is no crossfade or handoff to go wrong — it is literally the same words
+    moving.
+
+    Figma puts the nav at y=60 in both the tall and the compact frame, so the
+    nav never moves; only the wordmark travels, by 464-112 = 352px (22rem).
     """
     if not FULL:
         return ""
     rows = []
     for label, href in C.NAV:
         aria = ' aria-current="page"' if href == current else ""
-        rows.append(f'      <a href="{href}"{aria}>{label}</a>')
+        rows.append(f'        <a href="{href}"{aria}>{label}</a>')
     links = "\n".join(rows)
-    # No aria-hidden: the bar is hidden with `visibility`, which already takes
-    # it out of the tab order, and flipping aria-hidden on a focusable nav is
-    # how you end up with links a screen reader can reach but not announce.
-    return f"""  <div class="topbar" id="topbar">
-    <nav class="topbar__nav wrap" aria-label="Site">
+    mod = " pageheader--tall" if tall else ""
+    return f"""  <div class="pageheader{mod}" id="pageheader">
+    <div class="pageheader__bg" aria-hidden="true"></div>
+    <div class="wrap pageheader__inner">
+      <nav class="nav" aria-label="Site">
 {links}
-    </nav>
+      </nav>
+      <div class="wordmark pageheader__wordmark">
+        <h1 class="wordmark__name">{C.WEDDING['names']}</h1>
+        {meta_line(date_first=True)}
+      </div>
+    </div>
   </div>
 """
 
@@ -241,7 +252,7 @@ def page(filename, title, main, tall=False, save_the_date=False, scripts=""):
 <html lang="en">
 {GENERATED_BANNER}{head(title, filename)}
 <body>
-{topbar(filename)}{banner(filename, tall, save_the_date)}
+{pageheader(filename, tall)}{banner(filename, tall, save_the_date)}
 
 {main}
 

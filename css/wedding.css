@@ -93,66 +93,78 @@ img { display: block; max-width: 100%; }
 
 .banner--tall .banner__inner { padding-bottom: 4.125rem; }
 
-/* ---------- Pinned nav bar (phase 2) ----------
-   Appears once the banner has scrolled past. It carries a slice of the same
-   orchid photo, anchored the same way the banner is, so it reads as the top
-   of the banner staying put rather than a new bar sliding in.
+/* Phase 2 tall hero: the nav and wordmark have moved into the fixed header,
+   so the cue is the only thing left in here. Keep it at the bottom. */
+.banner__inner--cue-only { justify-content: flex-end; }
 
-   --topbar-scrim darkens that slice slightly. The top of the photo is very
-   pale, and white nav text on it sits near the legibility floor; set the
-   value to `transparent` on both stops to match the Figma frame exactly. */
+/* ---------- Page header (phase 2) ----------
+   One fixed element carries the nav and the wordmark for the whole page.
+   There is no second bar that slides in: the wordmark starts pushed down to
+   its hero position and rides up with the scroll until it rests beside the
+   nav. Same element throughout, so there is no handoff to go wrong.
 
-:root { --topbar-h: 4.5rem; }   /* 72px */
+   Figma puts the nav at y=60 in both the tall frame and the compact one, so
+   the nav itself never moves. Only the wordmark travels — 464px to 112px,
+   i.e. 22rem — which is what --hdr-drop animates.
 
-.topbar {
+   js/site.js sets --hdr-drop and --hdr-bg from the scroll position. With no
+   JS the header simply renders in its resting (compact) state, which is a
+   perfectly usable page. */
+
+:root {
+  --hdr-h:        16.25rem;   /* 260px — the compact bar, per Figma */
+  --hdr-travel:   22rem;      /* 352px — how far the wordmark drops on a hero */
+  --hdr-drop:     0px;        /* set by js/site.js, 0 .. --hdr-travel */
+  --hdr-bg:       0;          /* set by js/site.js, 0 .. 1 */
+}
+
+.pageheader {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 50;
-  height: var(--topbar-h);
-  display: flex;
-  align-items: center;
-  background: #efe6e6 url('../orchid.jpg') top center / cover no-repeat;
-  transform: translateY(-100%);
-  visibility: hidden;           /* also keeps the links out of the tab order */
-  transition: transform 0.32s ease, visibility 0s linear 0.32s;
+  height: var(--hdr-h);
+  pointer-events: none;       /* the photo below stays selectable */
 }
 
-.topbar::after {
+.pageheader__inner { position: relative; z-index: 1; padding-top: 3.75rem; }
+.pageheader .nav,
+.pageheader .wordmark { pointer-events: auto; }
+
+/* The orchid slice, revealed only once real content is passing underneath.
+   While the banner is still behind the header this stays at 0, so the
+   banner's own photo shows through uninterrupted and there is no seam. */
+.pageheader__bg {
+  position: absolute;
+  inset: 0;
+  background: #efe6e6 url('../orchid.jpg') top center / cover no-repeat;
+  opacity: var(--hdr-bg);
+  will-change: opacity;
+}
+
+.pageheader__bg::after {
   content: "";
   position: absolute;
   inset: 0;
   /* Measured, not guessed: the bare orchid slice puts white nav text at
      1.71:1 at its palest, well under the 3:1 floor. This lands it at ~3.8:1
-     worst case / ~5:1 average while the photo still reads through. */
+     worst case / ~5:1 average while the photo still reads through.
+     Set to `transparent` to match the Figma frame exactly. */
   background: linear-gradient(rgba(70, 40, 55, 0.60), rgba(70, 40, 55, 0.50));
-  pointer-events: none;
 }
 
-.topbar.is-pinned {
-  transform: none;
-  visibility: visible;
-  transition: transform 0.32s ease, visibility 0s;
+.pageheader__wordmark {
+  transform: translate3d(0, var(--hdr-drop), 0);
+  will-change: transform;
 }
 
-.topbar__nav {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  font-size: 1.25rem;
-  letter-spacing: 0.0625rem;
-  text-transform: uppercase;
-}
+/* A tall hero is the only case where the wordmark has anywhere to travel
+   from; on the short-banner pages it is already at rest. */
+.pageheader--tall { --hdr-drop: var(--hdr-travel); }
 
-.topbar__nav a { color: var(--white); text-decoration: none; }
-.topbar__nav a[aria-current="page"] { opacity: 0.72; }
-
-@media (prefers-reduced-motion: reduce) {
-  .topbar { transition: none; }
-}
+/* Anchors (Back to top) shouldn't land under the fixed header. */
+html { scroll-padding-top: var(--hdr-h); }
 
 /* ---------- Nav ---------- */
 
