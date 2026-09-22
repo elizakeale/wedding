@@ -27,7 +27,7 @@ PHASE = "save-the-date"
 
 # Bump this when css/wedding.css or the favicons change, so browsers don't
 # serve a stale copy.
-ASSET_VERSION = 20
+ASSET_VERSION = 21
 
 # The page the password gate sends people to.
 ENTRY_PAGE = "home.html"
@@ -101,8 +101,8 @@ SAVE_THE_DATE = {
 NAV = [
     ("RSVP", "home.html"),
     ("ITINERARY", "itinerary.html"),
-    ("RECOMMENDATIONS", "recommendations.html"),
     ("FAQs", "faqs.html"),
+    ("RECOMMENDATIONS", "recommendations.html"),
 ]
 
 # The footer nav uses a different order than the header (matches Figma).
@@ -247,10 +247,6 @@ FAQS = [
          "open and we might join you."],
     ),
 ]
-
-FAQS_NOTE = ('Other trip-related recommendations can be found on the '
-             '<a href="recommendations.html">recommendations</a> page.')
-
 
 # --- Recommendations page (PHASE == "phase-2") -----------------------------
 RECOMMENDATIONS = [
@@ -468,14 +464,3 @@ ITINERARY = [
 ITINERARY_FIELDS = ["day", "time", "event", "optional", "audience", "body",
                     "location", "parking", "transportation", "directions", "attire"]
 
-
-# ---------------------------------------------------------------------------
-# Recommendations (PHASE == "full" only)
-# Placeholder — the Figma frame for this page is still unfinished.
-# ---------------------------------------------------------------------------
-RECOMMENDATIONS = [
-    ("Where to stay", ["TBC"]),
-    ("Getting around", ["TBC"]),
-    ("Eating", ["TBC"]),
-    ("Things to do", ["TBC"]),
-]

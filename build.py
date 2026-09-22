@@ -333,7 +333,7 @@ def faq_section():
     """The save-the-date page answers only what can honestly be answered
     before invitations go out; the phase-2 page answers everything."""
     if FULL:
-        return section("FAQs", rows(C.FAQS), note=C.FAQS_NOTE)
+        return section("FAQs", rows(C.FAQS))
     return section("FAQs", rows(C.FAQS_SHORT))
 
 

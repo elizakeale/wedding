@@ -259,17 +259,19 @@ img { display: block; max-width: 100%; }
    at the same inset the nav would have had. */
 .pageheader--stdate { --hero-frac: 0.4121; }   /* 415/1007 */
 
-.pageheader--stdate .pageheader__wordmark { display: block; }
-
-/* Name and date/place share a line, so the pair can shrink into the bar as
-   one. Everything below them belongs to the hero only. */
-.pageheader--stdate .wordmark__name,
-.pageheader--stdate .meta { display: inline-block; vertical-align: baseline; }
-
-.pageheader--stdate .pageheader__wordmark > .meta {
-  float: right;
-  white-space: nowrap;
+/* Name and date/place share a line so the pair can shrink into the bar as
+   one; the label and tagline take a full row each beneath them. */
+.pageheader--stdate .pageheader__wordmark {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
 }
+
+.pageheader--stdate .pageheader__wordmark > .meta { white-space: nowrap; }
+
+.pageheader--stdate .stdate__label,
+.pageheader--stdate .stdate__tagline { flex-basis: 100%; }
 
 .pageheader--stdate .wordmark__name a { color: inherit; }
 .pageheader--stdate .wordmark__name a:hover { color: var(--hover); }
@@ -333,7 +335,10 @@ html { scroll-padding-top: var(--hdr-h); }
 .wordmark {
   display: flex;
   justify-content: space-between;  /* name left, date/place right, as in the frame */
-  align-items: baseline;
+  /* Centred, not baseline: the date is half the wordmark's size, so sharing a
+     baseline drops it well below the optical middle of the bar. Figma centres
+     the two boxes on each other. */
+  align-items: center;
   flex-wrap: wrap;
   gap: 0.75rem 1.75rem;
 }
@@ -438,7 +443,7 @@ html { scroll-padding-top: var(--hdr-h); }
    Inner pages: bar ends 156, "FAQs" title at 338  -> 182px
    Homepage:    hero ends 1007, "RSVP" title at 1140 -> 133px, the extra room
                 that lets the header finish settling before content arrives. */
-.phase2 .section { padding-top: 11.375rem; }              /* 182px */
+.phase2 .section { padding-top: 5.75rem; }                /* 92px */
 .phase2 .banner--tall + .section { padding-top: 8.3125rem; }  /* 133px */
 
 /* Cue keeps its Figma proportions at any window shape: 43px clear of the
@@ -451,6 +456,7 @@ html { scroll-padding-top: var(--hdr-h); }
 .phase2 .banner--short { min-height: var(--hdr-h); }   /* 156px */
 
 .section__title {
+  text-transform: uppercase;
   font-size: 2.5rem;
   letter-spacing: 0.125rem;
   margin-bottom: 0.75rem;
@@ -505,6 +511,8 @@ html { scroll-padding-top: var(--hdr-h); }
 
 .day:first-of-type,
 .rows > .group:first-child { margin-top: 2.375rem; }
+
+.group { text-transform: uppercase; letter-spacing: 0.09375rem; }
 
 .event {
   display: grid;
