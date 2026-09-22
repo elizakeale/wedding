@@ -185,6 +185,11 @@ img { display: block; max-width: 100%; }
   pointer-events: none;       /* the photo below stays selectable */
 }
 
+.pageheader--stdate .pageheader__inner {
+  padding-top: calc(var(--hdr-nav-top-hi) +
+                    (var(--hdr-nav-top-lo) - var(--hdr-nav-top-hi)) * var(--hdr-p));
+}
+
 .pageheader__inner {
   position: relative;
   z-index: 1;
@@ -220,6 +225,11 @@ img { display: block; max-width: 100%; }
   will-change: transform;
 }
 
+/* The bar wordmark is the way home, and says so on hover like every other
+   clickable thing on the site. */
+.pageheader__wordmark .wordmark__name a { color: inherit; }
+.pageheader__wordmark .wordmark__name a:hover { color: var(--hover); }
+
 .pageheader__wordmark .wordmark__name {
   font-size:      calc(var(--hdr-word-hi) +
                        (var(--hdr-word-lo) - var(--hdr-word-hi)) * var(--hdr-p));
@@ -237,6 +247,46 @@ img { display: block; max-width: 100%; }
 
 /* Short-banner pages have nowhere to travel from: they open settled. */
 .pageheader:not(.pageheader--tall) { --hdr-p: 1; }
+
+/* Where the hero wordmark sits, as a fraction of the hero height. js/site.js
+   reads this so the number lives with the other frame measurements rather
+   than inside the script. */
+.pageheader { --hero-frac: 0.46077; }   /* 464/1007, phase 2 */
+
+/* ---------- Save the date: the same header, without the nav ---------- */
+
+/* No nav above it, so the wordmark is the first thing in the bar and starts
+   at the same inset the nav would have had. */
+.pageheader--stdate { --hero-frac: 0.4121; }   /* 415/1007 */
+
+.pageheader--stdate .pageheader__wordmark { display: block; }
+
+/* Name and date/place share a line, so the pair can shrink into the bar as
+   one. Everything below them belongs to the hero only. */
+.pageheader--stdate .wordmark__name,
+.pageheader--stdate .meta { display: inline-block; vertical-align: baseline; }
+
+.pageheader--stdate .pageheader__wordmark > .meta {
+  float: right;
+  white-space: nowrap;
+}
+
+.pageheader--stdate .wordmark__name a { color: inherit; }
+.pageheader--stdate .wordmark__name a:hover { color: var(--hover); }
+
+/* "Save the date" and the tagline ride up with the wordmark and are gone
+   before it lands — they have no place in a compact bar. Fading over the
+   first 40% of the travel means the bar is clean well before it settles,
+   rather than text dissolving as it arrives. */
+.pageheader--stdate .stdate__label,
+.pageheader--stdate .stdate__tagline {
+  clear: both;
+  opacity: clamp(0, calc(1 - var(--hdr-p) * 2.5), 1);
+  /* Collapsed at rest so they cannot catch clicks over the page below. */
+  visibility: visible;
+}
+
+.pageheader--stdate .stdate__label { margin-top: 0.25rem; }
 
 /* Anchors (Back to top) shouldn't land under the fixed header. */
 html { scroll-padding-top: var(--hdr-h); }
@@ -791,6 +841,50 @@ html { scroll-padding-top: var(--hdr-h); }
   .stdate__meta .meta__rule  { order: 1; }
   .stdate__meta .meta__date  { order: 2; }
   .stdate__meta .meta__place { order: 3; flex-basis: 100%; }
+
+  /* 460/873 in the mobile frame — the hero is shorter, so the wordmark sits
+     proportionally lower than it does on desktop. */
+  .pageheader--stdate { --hero-frac: 0.527; }
+
+  /* The header sets the wordmark's size by calc, which outranks the plain
+     .wordmark__name rule below — so the mobile sizes have to be set as the
+     header's own tokens or the bar keeps the desktop 90px. */
+  .pageheader {
+    --hdr-word-hi:  3rem;      /* 48px, the mobile frame's hero wordmark */
+    --hdr-track-hi: 0.15rem;
+    --hdr-word-lo:  1.75rem;   /* 28px, settled */
+    --hdr-track-lo: 0.0875rem;
+  }
+
+  .pageheader--stdate {
+    --hdr-word-hi:  3.5rem;    /* 56px — "E & L" alone, so it can be larger */
+    --hdr-track-hi: 0.175rem;
+  }
+
+  /* Column order, so date and place sit above the name as the frame has
+     them. The DOM keeps the name first because it is the page heading. */
+  .pageheader--stdate .pageheader__wordmark {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pageheader--stdate .pageheader__wordmark > .meta {
+    order: 1;
+    float: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem 0.75rem;
+    white-space: normal;
+    font-size: 0.9375rem;
+  }
+  .pageheader--stdate .pageheader__wordmark > .meta .meta__rule  { order: 1; }
+  .pageheader--stdate .pageheader__wordmark > .meta .meta__date  { order: 2; }
+  .pageheader--stdate .pageheader__wordmark > .meta .meta__place { order: 3; flex-basis: 100%; }
+
+  .pageheader--stdate .wordmark__name { order: 2; display: block; margin-top: 0.75rem; }
+  .pageheader--stdate .stdate__label  { order: 3; }
+  .pageheader--stdate .stdate__tagline { order: 4; }
 
   .scroll-cue { height: 4.875rem; margin-top: 3rem; }
 

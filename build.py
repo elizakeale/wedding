@@ -122,22 +122,10 @@ def banner(current, tall, save_the_date=False):
     if save_the_date:
         classes += " banner--stdate"
 
-    if save_the_date:
-        body = f"""      <div class="stdate">
-        <h1 class="stdate__name">E &amp; L<span class="stdate__rest"> Wedding</span></h1>
-        <p class="stdate__label">{C.SAVE_THE_DATE['label']}</p>
-        <p class="meta stdate__meta">
-          <span class="meta__rule"></span>
-          <span class="meta__date">{C.WEDDING['date_display']}</span>
-          <span class="meta__place">{C.WEDDING['place']}</span>
-        </p>
-        <p class="stdate__tagline">{C.SAVE_THE_DATE['tagline']}</p>
-      </div>
-"""
-    elif FULL:
-        # In phase 2 the nav and wordmark live in the fixed page header
-        # instead, so they can ride up the screen and settle into the bar.
-        # The banner is then just the photo (and the cue, on a tall hero).
+    if save_the_date or FULL:
+        # The wordmark lives in the fixed page header in both phases, so it
+        # can ride up the screen and settle into the bar. The banner is then
+        # just the photo (and the cue, on a tall hero).
         body = ""
     else:
         body = f"""      <div>
@@ -153,7 +141,7 @@ def banner(current, tall, save_the_date=False):
     # onto their content, so a cue there would point at nothing.
     cue = '      <span class="scroll-cue" aria-hidden="true"></span>\n' if tall else ""
     inner = "wrap banner__inner"
-    if FULL and tall:
+    if tall:
         inner += " banner__inner--cue-only"   # cue is the only child; pin it low
 
     # No nav here in either phase: phase 1 has none, and in phase 2 it lives
@@ -164,7 +152,7 @@ def banner(current, tall, save_the_date=False):
   </header>"""
 
 
-def pageheader(current, tall):
+def pageheader(current, tall, save_the_date=False):
     """Phase 2's header: fixed to the window, carrying the nav and the wordmark.
 
     There is deliberately only ONE of these rather than a banner copy plus a
@@ -177,8 +165,29 @@ def pageheader(current, tall):
     Figma puts the nav at y=60 in both the tall and the compact frame, so the
     nav never moves; only the wordmark travels, by 464-112 = 352px (22rem).
     """
-    if not FULL:
+    if not (FULL or save_the_date):
         return ""
+
+    if save_the_date:
+        # Same one-element motion as phase 2, minus the nav: the wordmark
+        # starts at its hero size and position and rides up into the bar.
+        # "Save the date" and the tagline travel with it and fade out, since
+        # neither belongs in a compact bar.
+        mod = " pageheader--tall" if tall else ""
+        return f"""  <div class="pageheader pageheader--stdate{mod}" id="pageheader">
+    <div class="pageheader__bg" aria-hidden="true"></div>
+    <div class="wrap pageheader__inner">
+      <div class="wordmark pageheader__wordmark">
+        <h1 class="wordmark__name"><a href="{C.ENTRY_PAGE}">E &amp; L<span
+          class="stdate__rest"> Wedding</span></a></h1>
+        {meta_line(date_first=True)}
+        <p class="stdate__label">{C.SAVE_THE_DATE['label']}</p>
+        <p class="stdate__tagline">{C.SAVE_THE_DATE['tagline']}</p>
+      </div>
+    </div>
+  </div>
+"""
+
     rows = []
     for label, href in C.NAV:
         aria = ' aria-current="page"' if href == current else ""
@@ -192,7 +201,7 @@ def pageheader(current, tall):
 {links}
       </nav>
       <div class="wordmark pageheader__wordmark">
-        <h1 class="wordmark__name">{C.WEDDING['names']}</h1>
+        <h1 class="wordmark__name"><a href="{C.ENTRY_PAGE}">{C.WEDDING['names']}</a></h1>
         {meta_line(date_first=True)}
       </div>
     </div>
@@ -253,15 +262,16 @@ def footer():
 
 def page(filename, title, main, tall=False, save_the_date=False, scripts=""):
     demo_js = '\n  <script src="js/rsvp-demo.js"></script>' if (FULL and PREVIEW) else ""
-    site_js = (demo_js
-               + '\n  <script src="js/config.js"></script>'
-               + '\n  <script src="js/site.js"></script>') if FULL else ""
+    site_js = ((demo_js + '\n  <script src="js/config.js"></script>')
+               if FULL else "")
+    if FULL or save_the_date:
+        site_js += '\n  <script src="js/site.js"></script>'
     body_class = ' class="phase2"' if FULL else ""
     html = f"""<!DOCTYPE html>
 <html lang="en">
 {GENERATED_BANNER}{head(title, filename)}
 <body{body_class}>
-{pageheader(filename, tall)}{banner(filename, tall, save_the_date)}
+{pageheader(filename, tall, save_the_date)}{banner(filename, tall, save_the_date)}
 
 {main}
 

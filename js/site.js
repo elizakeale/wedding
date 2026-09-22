@@ -46,8 +46,21 @@
     // subtracting it makes the rendered top land on that fraction exactly.
     // Mirrors the --hdr-travel calc in the stylesheet (the no-JS path).
     if (isTall) {
-      var rem = parseFloat(getComputedStyle(root).fontSize) || 16;
-      travel = banner.offsetHeight * 0.46077 - 5 * rem;
+      // Where the wordmark sits in the frame, as a fraction of the hero.
+      // Phase 2 is 464/1007; the save-the-date frame is higher up, and the
+      // mobile frame higher still, so the number is a CSS variable that the
+      // media query can change rather than a constant in here.
+      var frac = parseFloat(
+        getComputedStyle(header).getPropertyValue('--hero-frac')) || 0.46077;
+
+      // The wordmark's own offset inside the header. Measured rather than
+      // assumed, because phase 2 has the nav above it and the save-the-date
+      // header does not. offsetTop ignores the transform, which is what we
+      // want: this is the flow position, not the travelled one.
+      var word = header.querySelector('.pageheader__wordmark');
+      var flow = word ? word.offsetTop : 0;
+
+      travel = banner.offsetHeight * frac - flow;
       if (!(travel > 1)) travel = 388;
       root.style.setProperty('--hdr-travel', travel.toFixed(1) + 'px');
     } else {
