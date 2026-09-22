@@ -158,7 +158,7 @@
     if (!code || busy) return;
 
     busy = true;
-    say('Looking for you…');
+    say('One moment…');
 
     request('lookup', { code: code })
       .then(function (data) {
