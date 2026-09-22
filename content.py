@@ -27,7 +27,7 @@ PHASE = "save-the-date"
 
 # Bump this when css/wedding.css or the favicons change, so browsers don't
 # serve a stale copy.
-ASSET_VERSION = 22
+ASSET_VERSION = 23
 
 # The page the password gate sends people to.
 ENTRY_PAGE = "home.html"
@@ -348,11 +348,10 @@ RECOMMENDATIONS = [
 # Script reads it from there and filters it per party before sending.
 #
 # "audience" is blank for events everyone sees, or the EXACT header of a
-# guest-list column. Today that is only "Beach Day & Cruise" — a Yes there
-# shows the party all three of the friends-and-close-family events: the beach
-# day, the sunset surf and the sunset cruise. (The column name now covers one
-# more event than it says; rename it in the sheet and here together if that
-# starts to bother you.)
+# guest-list column. Today that is only "Friend Only Events" — a Yes there
+# shows the party all three: the beach day, the sunset surf and the sunset
+# cruise. If you rename that column in the sheet, change it here in the same
+# sitting: a value that matches no column shows the event to nobody, silently.
 # ---------------------------------------------------------------------------
 ITINERARY = [
     ("Monday, October 18", [
@@ -360,7 +359,7 @@ ITINERARY = [
             "time": "11:00 AM \u2013 3:00 PM",
             "name": "Beach Day",
             "optional": True,
-            "audience": "Beach Day & Cruise",
+            "audience": "Friend Only Events",
             "body": "We\u2019ll have tents up at Makapu\u2019u Beach Park. Bring sunscreen, sun "
                     "protection, beach towels, and anything else you might need to have fun. Rain "
                     "permitting. Food is not easily accessed so we recommend bringing snacks and "
@@ -374,7 +373,7 @@ ITINERARY = [
             "time": "5:00 PM \u2013 7:00 PM",
             "name": "Sunset Surf",
             "optional": True,
-            "audience": "Beach Day & Cruise",
+            "audience": "Friend Only Events",
             "body": "Depending on conditions, we\u2019ll do a chill sunset surf in Waikiki. Still "
                     "happening if drizzling. Beginner friendly and very unserious! Text Lucas if "
                     "you have questions or need help (e.g., we\u2019ll help people get "
@@ -457,7 +456,7 @@ ITINERARY = [
             "time": "5:00 PM \u2013 9:00 PM",
             "name": "Sunset Cruise",
             "optional": True,
-            "audience": "Beach Day & Cruise",
+            "audience": "Friend Only Events",
             "body": "More information will be shared on where to buy tickets soon. Totally "
                     "optional. Takes off from Honolulu.",
         },

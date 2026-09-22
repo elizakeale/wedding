@@ -10,7 +10,7 @@
  *   Your guest tab, found automatically by looking for a header row with a
  *   "Group ID" cell. Columns are matched by header name, so you can move them
  *   around. Expected headers: Main, Group ID, Email, Child?, Drinker?,
- *   Beach Day & Cruise, Host, Group.
+ *   Friend Only Events, Host, Group.
  *
  *   A blank Group ID means "same party as the row above" — which is how your
  *   sheet is already filled in. 135 people resolve to 72 parties that way.
@@ -151,7 +151,7 @@ function loadParties_() {
 
   // Every other column is kept as a possible event gate. The Itinerary tab
   // names one of these headers in its `audience` cell — today only
-  // "Beach Day & Cruise" — and the event is shown to a party only if somebody in it
+  // "Friend Only Events" — and the event is shown to a party only if somebody in it
   // has a Yes there. Invitations therefore stay where you already manage
   // them: in the guest list, not in a second place that can disagree.
 
@@ -189,7 +189,7 @@ function loadParties_() {
  *          transportation | directions | attire
  *
  * `audience` is blank (or "all") for events everyone sees, or the exact header
- * of a guest-list column — today only "Beach Day & Cruise" — for ones that are not
+ * of a guest-list column — today only "Friend Only Events" — for ones that are not
  * for everybody. Nothing here is filtered in the browser: an event a party
  * isn't invited to never leaves this script, so it can't be found by reading
  * the page source.
