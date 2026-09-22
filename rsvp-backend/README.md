@@ -103,7 +103,7 @@ sees. Otherwise put the *exact header* of a guest-list column:
 | audience | who sees it |
 |---|---|
 | *(blank)* | everyone |
-| `Beach Day & Cruise` | parties with a Yes in that column — they see the beach day *and* the sunset cruise |
+| `Beach Day & Cruise` | parties with a Yes in that column — they see the beach day, the sunset surf *and* the sunset cruise |
 
 So invitations stay where you already manage them — in the guest list. Mark
 someone Yes for the BBQ and the BBQ appears on their itinerary; there's no
@@ -126,9 +126,9 @@ sitting in the HTML.
 4. Enter `TESTME` again — it should refuse, because the code is now used.
 5. In **RSVP Parties**, clear the `locked` cell for TESTME. Try again — it
    should let you in.
-6. Check the itinerary as `TESTME` — with no Yes in Beach Day & Cruise,
-   neither the beach day nor the sunset cruise should appear. Add a Yes and
-   reload; both should.
+6. Check the itinerary as `TESTME` — with no Yes in Beach Day & Cruise, the
+   beach day, sunset surf and sunset cruise should all be missing. Add a Yes
+   and reload; all three should appear.
 7. Enter `rockpiles` at the gate instead and confirm you see everything.
 8. Delete the fake row when you're done.
 

@@ -27,7 +27,7 @@ PHASE = "save-the-date"
 
 # Bump this when css/wedding.css or the favicons change, so browsers don't
 # serve a stale copy.
-ASSET_VERSION = 21
+ASSET_VERSION = 22
 
 # The page the password gate sends people to.
 ENTRY_PAGE = "home.html"
@@ -349,7 +349,10 @@ RECOMMENDATIONS = [
 #
 # "audience" is blank for events everyone sees, or the EXACT header of a
 # guest-list column. Today that is only "Beach Day & Cruise" — a Yes there
-# means the party sees both the beach day and the sunset cruise.
+# shows the party all three of the friends-and-close-family events: the beach
+# day, the sunset surf and the sunset cruise. (The column name now covers one
+# more event than it says; rename it in the sheet and here together if that
+# starts to bother you.)
 # ---------------------------------------------------------------------------
 ITINERARY = [
     ("Monday, October 18", [
@@ -371,6 +374,7 @@ ITINERARY = [
             "time": "5:00 PM \u2013 7:00 PM",
             "name": "Sunset Surf",
             "optional": True,
+            "audience": "Beach Day & Cruise",
             "body": "Depending on conditions, we\u2019ll do a chill sunset surf in Waikiki. Still "
                     "happening if drizzling. Beginner friendly and very unserious! Text Lucas if "
                     "you have questions or need help (e.g., we\u2019ll help people get "
