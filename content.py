@@ -27,7 +27,7 @@ PHASE = "save-the-date"
 
 # Bump this when css/wedding.css or the favicons change, so browsers don't
 # serve a stale copy.
-ASSET_VERSION = 16
+ASSET_VERSION = 17
 
 # The page the password gate sends people to.
 ENTRY_PAGE = "home.html"
@@ -51,7 +51,7 @@ SITE_URL = "https://lucasandeliza.com"
 
 META = {
     "title": "Save The Date | E &amp; L Wedding",
-    "description": "02.12.2028 — Kane’ohe, O’ahu, Hawai’i",
+    "description": "10.22.2027 — Kane’ohe, O’ahu, Hawai’i",
     "image": "og-image.jpg",     # 1200x630, generated from surfing.jpg
     "image_w": "1200",
     "image_h": "630",
@@ -62,14 +62,19 @@ META = {
 # The wedding
 # ---------------------------------------------------------------------------
 WEDDING = {
-    "date_display": "02.12.2028",          # as shown in the hero and footer
-    "date_long": "Saturday, February 12, 2028",
+    "date_display": "10.22.2027",          # as shown in the hero and footer
+    "date_long": "Friday, October 22, 2027",
+
+    # NOTE: the hero and footer still say Kane’ohe, matching Figma. The
+    # ceremony and reception are now at The Plant Place in WAIMANALO; only the
+    # Welcome BBQ is in Kane’ohe. Worth deciding whether the site should say
+    # O’ahu rather than name the wrong town.
     "place": "Kane’ohe, O’ahu, Hawai’i",
     "names": "E &amp; L Wedding",           # hero wordmark
     "names_short": "E&amp;L Wedding",       # footer wordmark
 
-    # TBC — not yet decided. Only appears when PHASE == "full".
-    "rsvp_deadline": "TBC",
+    # From Figma. Only appears when PHASE == "phase-2".
+    "rsvp_deadline": "March 1, 2027",
 }
 
 CONTACT = {
@@ -114,30 +119,31 @@ FOOTER_NAV_ORDER = ["RSVP", "FAQs", "ITINERARY", "RECOMMENDATIONS"]
 FAQS = [
     (
         "When will more information be shared?",
-        ["We will send out official invites and full information over the coming months."],
+        ["We will send out official invites and more information over the coming weeks."],
     ),
     (
         "Is it safe to book our flights now?",
         ["We suggest holding off for now unless you are planning to book a specific "
          "accommodation that is already opened up for booking (e.g., a larger luxury "
          "Airbnb). Flights and Airbnbs typically don’t get released until 11 months "
-         "prior (likely March 2027). We also will share hotel blocks and Airbnb "
+         "prior (likely late November 2026). We also will share hotel blocks and Airbnb "
          "recommendations soon."],
     ),
     (
         "When should we plan to travel?",
         ["If you’re planning to come for about a week (we hope you do if you’re flying all "
          "the way!), then we recommend aiming to arrive the week before the wedding, arriving "
-         "approximately February 4 weekend and flying out Sunday or Monday February 14. We will "
-         "be planning optional events throughout February 5 to 12, including the wedding on "
-         "Saturday, February 12. We recommend visiting the island for at least 5 nights, but the "
-         "sweet spot is 10 nights if you can swing some island hopping as well."],
+         "October 15 weekend and flying out Sunday, October 24. We will be planning completely "
+         "optional events throughout October 16 through 23, including a Welcome BBQ on "
+         "Wednesday, October 20 and the wedding on Friday, October 22. We recommend visiting "
+         "the island for at least 6 nights, but the sweet spot is 10&ndash;12 nights if you can "
+         "swing some island hopping as well."],
     ),
     (
         "How do we get to the island?",
         ["Fly into Daniel K. Inouye International Airport in Honolulu, Oahu, Hawaii. This is the "
          "only international airport on Oahu. You could also fly in from another island if more "
-         "affordable and you’d like to island hop!"],
+         "affordable and you’d like to island hop."],
     ),
     (
         "Where should we stay on island?",
@@ -154,73 +160,128 @@ FAQS = [
 
 
 # ---------------------------------------------------------------------------
-# Itinerary (PHASE == "full" only — not generated while the site is dark)
+# Itinerary — the source of truth, taken from Figma.
 #
-# !! DAY LABELS ARE DERIVED, NOT CONFIRMED !!
-# These were shifted from the old July 2027 schedule by the same relative
-# offsets (beach day T-3, BBQ T-2, wedding day, cruise T+1) against the new
-# wedding date of Saturday, February 12, 2028. Confirm before going live.
+# This list is what generates rsvp-backend/itinerary-seed.tsv on every build.
+# Paste that file into the Itinerary tab of the Master Planner sheet; the Apps
+# Script reads it from there and filters it per party before sending.
+#
+# "audience" is blank for events everyone sees, or the EXACT header of a
+# guest-list column. Today that is only "Beach Day & Cruise" — a Yes there
+# means the party sees both the beach day and the sunset cruise.
 # ---------------------------------------------------------------------------
 ITINERARY = [
-    ("Wednesday, February 9", [
-        ("11:00 AM &ndash; 3:00 PM", "Beach Day", True, [
-            "We’ll have tents up at Makapu’u Beach Park. Bring sunscreen, sun protection, "
-            "beach towels, and anything else you might need to have fun. Rain permitting. Food is "
-            "not easily accessed so we recommend bringing snacks and eating before. There is also "
-            "amazing poke 10 min west in Hawaii Kai at HanaPa’a Market.",
-            "<span class=\"k\">Location:</span> Makapu’u Beach Park, O’ahu<br />"
-            "<span class=\"k\">Parking:</span> Parking should be easy on the weekday in the parking "
-            "lot, otherwise people park along the road.",
-        ]),
-        ("5:00 PM &ndash; 7:00 PM", "Sunset Surf", True, [
-            "Depending on conditions, we’ll do a chill sunset surf in Waikiki. Still happening "
-            "if drizzling. Beginner friendly and very unserious! Text Lucas if you have questions "
-            "or need help (e.g., we’ll help people get surfboards). If you don’t want to "
-            "surf, you can come and hang on the beach!",
-        ]),
+    ("Monday, October 18", [
+        {
+            "time": "11:00 AM \u2013 3:00 PM",
+            "name": "Beach Day",
+            "optional": True,
+            "audience": "Beach Day & Cruise",
+            "body": "We\u2019ll have tents up at Makapu\u2019u Beach Park. Bring sunscreen, sun "
+                    "protection, beach towels, and anything else you might need to have fun. Rain "
+                    "permitting. Food is not easily accessed so we recommend bringing snacks and "
+                    "eating before. There is also amazing poke 10 min west in Hawaii Kai at "
+                    "HanaPa\u2019a Market.",
+            "location": "Makapu\u2019u Beach Park, O\u2019ahu",
+            "parking": "Parking should be easy on the weekday in the parking lot, otherwise "
+                       "people park along the road.",
+        },
+        {
+            "time": "5:00 PM \u2013 7:00 PM",
+            "name": "Sunset Surf",
+            "optional": True,
+            "body": "Depending on conditions, we\u2019ll do a chill sunset surf in Waikiki. Still "
+                    "happening if drizzling. Beginner friendly and very unserious! Text Lucas if "
+                    "you have questions or need help (e.g., we\u2019ll help people get "
+                    "surfboards). If you don\u2019t want to surf, you can come and hang on the "
+                    "beach!",
+            "location": "Will be decided closer to depending on conditions.",
+            "parking": "Will be shared once break is decided.",
+        },
     ]),
-    ("Thursday, February 10", [
-        ("5:00 PM &ndash; 9:00 PM", "Welcome BBQ", False, [
-            "We invite you to a welcome BBQ for family and close friends.",
-            "<span class=\"k\">Location:</span> Kauhale Beach Cove, 45-180 Mahalani Place, "
-            "Kane’ohe, O’ahu<br /><span class=\"k\">Parking:</span> There are guest parking "
-            "spots as well as street parking outside the gate.",
-        ]),
+    ("Wednesday, October 20", [
+        {
+            "time": "5:00 PM \u2013 11:00 PM",
+            "name": "Welcome BBQ",
+            "body": "Join us at our home in Kane\u2019ohe for casual appetizers, dinner, drinks, "
+                    "and our favourite local dessert. Bring a swimsuit and towel if you plan to "
+                    "swim in pool/hot tub or risk it with the hammerheads.",
+            "location": "Kauhale Beach Cove, 45-180 Mahalani Place, Kane\u2019ohe, O\u2019ahu, "
+                        "96744",
+            "parking": "There will be plenty of street parking in the neighborhood. Avoid driving "
+                       "through the gates.",
+            "transportation": "We recommend either driving with a designated driver, scheduling a "
+                              "taxi, or taking an Uber or Lyft.",
+            "directions": "After arriving, walk through the yellow gates down the hill and head "
+                          "to the clubhouse.",
+            "attire": "Island chic. For men, we suggest linen (white is okay!) or Hawaiian shirts "
+                      "and slippahs (flip flops). For women, we suggest sundresses and sandals "
+                      "(heels if you feel like it). Most of the area is grass or deck so you can "
+                      "walk around barefoot.",
+        },
     ]),
-    ("Saturday, February 12", [
-        ("11:00 AM &ndash; 11:30 AM", "Welcome Cocktail", False, [
-            "Arrive in this time window.",
-        ]),
-        ("11:30 AM &ndash; 2:30 PM", "Reception Lunch", False, [
-            "We’re all going to paddle out to rockpiles surf break, where we met. Just kidding "
-            "&mdash; the reception is a lunch with mimosas and will take place overlooking Haiku "
-            "Gardens and Ko’olau mountains in Kane’ohe.",
-            "<span class=\"k\">Location:</span> Hale’iwa Joe’s Haiku Gardens*, "
-            "Kane’ohe, O’ahu<br /><span class=\"k\">Parking:</span> There is plenty of "
-            "designated parking on-site.",
-            "*not to be confused with the Haleiwa, North Shore location",
-        ]),
-        ("2:30 &ndash; 3:00 PM", "Shuttle Transport", False, [
-            "Shuttle buses will take us from reception to Kauhale Beach Cove (still in "
-            "Kane’ohe) for the day party. The ride is only 5 minutes. If you are not attending "
-            "the party, there will be other buses returning people to Honolulu.",
-        ]),
-        ("3:00 PM &ndash; late", "Party", True, [
-            "We’ll have bartenders and hangout. Feel free to bring a swimsuit for the pool or "
-            "hot tub. There is also a clubhouse if you don’t want to be outside.",
-        ]),
-        ("8:00 &ndash; 9:00 PM", "Shuttle Transport", False, [
-            "Shuttle buses will take guests back to Honolulu. You can also order an Uber or Lyft "
-            "if you don’t prefer the shuttle.",
-        ]),
+    ("Friday, October 22", [
+        {
+            "time": "3:30 \u2013 4:00 PM",
+            "name": "Arrival",
+            "body": "Please arrive in this time window.",
+        },
+        {
+            "time": "4:00 \u2013 4:30 PM",
+            "name": "Ceremony",
+            "body": "Paddle out to rockpiles surf break, where we met. Just kidding. The entire "
+                    "day will take place at one venue set against the Ko\u2019olau mountains. "
+                    "There will be a tent and covered Lanai so rain will not affect the event.",
+            "location": "The Plant Place, 41-821 Waikupanaha Street, Waimanalo, O\u2019ahu, 96795",
+            "parking": "There is plenty of designated parking on-site.",
+            "transportation": "We recommend either a car with a designated driver, or scheduling "
+                              "a taxi or Uber in advance. We would highly suggest not waiting "
+                              "until event to schedule an Uber as this can sometimes be "
+                              "unpredictable.",
+            "directions": "After parking or being dropped off, walk down the gravel path. "
+                          "You\u2019ll see a clear tent, it\u2019ll be hard to miss.",
+            "attire": "Island formal. We suggest lightweight suits and dress shoes for men (ties "
+                      "optional) and dresses for women (whatever length is fine).",
+        },
+        {
+            "time": "4:30 \u2013 5:30 PM",
+            "name": "Champagne Hour",
+            "body": "There will be champagne and time to get settled in.",
+        },
+        {
+            "time": "5:30 \u2013 6:30 PM",
+            "name": "Reception",
+            "body": "There will be a few speeches accompanied by plenty of booze and fresh local "
+                    "appetizers, dinner, and desserts.",
+        },
+        {
+            "time": "6:30 \u2013 10 PM",
+            "name": "Afterparty",
+            "body": "Open bar, music, and hangout. We have a hard stop at 10 PM.",
+        },
+        {
+            "time": "10 PM",
+            "name": "Shuttle Transport",
+            "body": "An optional shuttle bus will take guests back to Honolulu. You can also take "
+                    "a ride back with a designated driver or pre-schedule an Uber or Lyft if you "
+                    "don\u2019t prefer the shuttle or are not staying in Honolulu.",
+        },
     ]),
-    ("Sunday, February 13", [
-        ("5:00 PM &ndash; 9:00 PM", "Sunset Cruise", True, [
-            "Purchase tickets to the Kuhio Sunset Cruise here. Totally optional. Takes off from "
-            "Honolulu.",
-        ]),
+    ("Saturday, October 23", [
+        {
+            "time": "5:00 PM \u2013 9:00 PM",
+            "name": "Sunset Cruise",
+            "optional": True,
+            "audience": "Beach Day & Cruise",
+            "body": "More information will be shared on where to buy tickets soon. Totally "
+                    "optional. Takes off from Honolulu.",
+        },
     ]),
 ]
+
+# The columns written to the seed file, in order.
+ITINERARY_FIELDS = ["day", "time", "event", "optional", "audience", "body",
+                    "location", "parking", "transportation", "directions", "attire"]
 
 
 # ---------------------------------------------------------------------------

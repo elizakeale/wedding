@@ -10,7 +10,7 @@
  *   Your guest tab, found automatically by looking for a header row with a
  *   "Group ID" cell. Columns are matched by header name, so you can move them
  *   around. Expected headers: Main, Group ID, Email, Child?, Drinker?,
- *   Welcome BBQ, Host, Group.
+ *   Beach Day & Cruise, Host, Group.
  *
  *   A blank Group ID means "same party as the row above" — which is how your
  *   sheet is already filled in. 135 people resolve to 72 parties that way.
@@ -111,8 +111,8 @@ function loadParties_() {
   if (cName < 0 || cCode < 0) throw new Error('Guest tab needs "Main" and "Group ID" headers.');
 
   // Every other column is kept as a possible event gate. The Itinerary tab
-  // names one of these headers in its `audience` cell — "Welcome BBQ",
-  // "Beach Day" — and the event is shown to a party only if somebody in it
+  // names one of these headers in its `audience` cell — today only
+  // "Beach Day & Cruise" — and the event is shown to a party only if somebody in it
   // has a Yes there. Invitations therefore stay where you already manage
   // them: in the guest list, not in a second place that can disagree.
 
@@ -146,10 +146,11 @@ function loadParties_() {
 
 /**
  * The itinerary, from the Itinerary tab.
- * Columns: day | time | event | optional | audience | body | location | parking
+ * Columns: day | time | event | optional | audience | body | location | parking |
+ *          transportation | directions | attire
  *
  * `audience` is blank (or "all") for events everyone sees, or the exact header
- * of a guest-list column — "Welcome BBQ", "Beach Day" — for ones that are not
+ * of a guest-list column — today only "Beach Day & Cruise" — for ones that are not
  * for everybody. Nothing here is filtered in the browser: an event a party
  * isn't invited to never leaves this script, so it can't be found by reading
  * the page source.
@@ -165,6 +166,7 @@ function loadItinerary_(party) {
   var cDay = col('day'), cTime = col('time'), cEvent = col('event');
   var cOpt = col('optional'), cAud = col('audience'), cBody = col('body');
   var cLoc = col('location'), cPark = col('parking');
+  var cTrans = col('transportation'), cDir = col('directions'), cAttire = col('attire');
 
   var out = [];
   for (var r = 1; r < values.length; r++) {
@@ -184,7 +186,10 @@ function loadItinerary_(party) {
       optional: cOpt  >= 0 ? key_(values[r][cOpt]) === 'yes' : false,
       body:     cBody >= 0 ? norm_(values[r][cBody]) : '',
       location: cLoc  >= 0 ? norm_(values[r][cLoc])  : '',
-      parking:  cPark >= 0 ? norm_(values[r][cPark]) : ''
+      parking:  cPark >= 0 ? norm_(values[r][cPark]) : '',
+      transportation: cTrans  >= 0 ? norm_(values[r][cTrans])  : '',
+      directions:     cDir    >= 0 ? norm_(values[r][cDir])    : '',
+      attire:         cAttire >= 0 ? norm_(values[r][cAttire]) : ''
     });
   }
   return out;

@@ -61,17 +61,24 @@
 
       if (ev.body) body.appendChild(el('p', 'event__text', ev.body));
 
-      if (ev.location || ev.parking) {
+      /* Location, parking and the rest print as one labelled block, in a
+       * fixed order so every event reads the same way — and only the lines
+       * that have something to say appear. */
+      var DETAILS = [
+        ['Location:', ev.location],
+        ['Parking:', ev.parking],
+        ['Transportation:', ev.transportation],
+        ['Directions:', ev.directions],
+        ['Attire:', ev.attire]
+      ].filter(function (d) { return d[1]; });
+
+      if (DETAILS.length) {
         var p = el('p', 'event__text');
-        if (ev.location) {
-          p.appendChild(el('span', 'k', 'Location:'));
-          p.appendChild(document.createTextNode(' ' + ev.location));
-        }
-        if (ev.location && ev.parking) p.appendChild(document.createElement('br'));
-        if (ev.parking) {
-          p.appendChild(el('span', 'k', 'Parking:'));
-          p.appendChild(document.createTextNode(' ' + ev.parking));
-        }
+        DETAILS.forEach(function (d, i) {
+          if (i) p.appendChild(document.createElement('br'));
+          p.appendChild(el('span', 'k', d[0]));
+          p.appendChild(document.createTextNode(' ' + d[1]));
+        });
         body.appendChild(p);
       }
 

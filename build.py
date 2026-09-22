@@ -378,22 +378,42 @@ def rsvp_form():
       </div>"""
 
 
-def itinerary_section():
-    out = []
+def write_itinerary_seed():
+    """Write rsvp-backend/itinerary-seed.tsv from C.ITINERARY.
+
+    The itinerary page ships empty and is filled by the Apps Script, so the
+    schedule lives in the spreadsheet rather than in the HTML — that is what
+    lets an event be withheld from a party who isn't invited, instead of
+    hidden in CSS where anyone could read it in the page source.
+
+    But a spreadsheet is a poor place to keep the master copy: it drifts from
+    Figma and nobody can diff it. So content.py stays the source, this writes
+    the paste-ready file, and the sheet is a copy you refresh when it changes.
+    """
+    path = os.path.join(HERE, "rsvp-backend", "itinerary-seed.tsv")
+    rows = ["\t".join(C.ITINERARY_FIELDS)]
+
+    def cell(v):
+        # Tabs and newlines would break the paste; the site's own entities
+        # mean nothing in a spreadsheet, so they are resolved here.
+        s = str(v or "")
+        s = s.replace("&ndash;", "\u2013").replace("&mdash;", "\u2014")
+        s = s.replace("&amp;", "&").replace("&nbsp;", " ")
+        return re.sub(r"\s+", " ", s).strip()
+
     for day, events in C.ITINERARY:
-        out.append(f'      <h3 class="day">{day}</h3>')
-        for time, name, optional, paras in events:
-            opt = '<span class="opt">Optional:</span> ' if optional else ""
-            out.append('      <div class="event">')
-            out.append(f'        <p class="event__time">{time}</p>')
-            out.append('        <div class="event__rule"></div>')
-            out.append('        <div class="event__body">')
-            out.append(f'          <h3 class="event__name">{opt}{name}</h3>')
-            for p in paras:
-                out.append(f'          <p class="event__text">{p}</p>')
-            out.append("        </div>")
-            out.append("      </div>")
-    return section("Itinerary", "\n".join(out))
+        for ev in events:
+            row = [day, cell(ev.get("time")), cell(ev.get("name")),
+                   "Yes" if ev.get("optional") else ""]
+            row += [cell(ev.get(f)) for f in C.ITINERARY_FIELDS[4:]]
+            rows.append("\t".join(row))
+
+    body = "\n".join(rows) + "\n"
+    if not os.path.exists(path) or open(path, encoding="utf-8").read() != body:
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(body)
+        print("  wrote rsvp-backend/itinerary-seed.tsv"
+              "  — re-paste this into the sheet's Itinerary tab")
 
 
 # ---------------------------------------------------------------------------
@@ -604,6 +624,7 @@ def build(preview=False):
         for p in stale:
             print(f"    git rm {p}")
 
+    write_itinerary_seed()
     update_gate()
     print("\nDone.")
 
