@@ -61,6 +61,22 @@ function ss_() { return SpreadsheetApp.getActiveSpreadsheet(); }
 function norm_(v) { return String(v == null ? '' : v).trim(); }
 function key_(v)  { return norm_(v).toLowerCase(); }
 
+/* Google Sheets turns "Monday, October 18" into a Date (guessing the wrong
+ * year) and "10 PM" into a time in 1899. The seed file pastes these as text so
+ * it shouldn't happen — but if a cell is ever retyped by hand it will, and a
+ * wrong date on the itinerary is worse than almost any other bug here. So the
+ * day is printed without a year, which is how the design shows it anyway, and
+ * a bare time is printed as a time. */
+function dayText_(v) {
+  if (Object.prototype.toString.call(v) !== '[object Date]') return norm_(v);
+  return Utilities.formatDate(v, Session.getScriptTimeZone(), 'EEEE, MMMM d');
+}
+
+function timeText_(v) {
+  if (Object.prototype.toString.call(v) !== '[object Date]') return norm_(v);
+  return Utilities.formatDate(v, Session.getScriptTimeZone(), 'h:mm a');
+}
+
 function json_(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
@@ -180,8 +196,8 @@ function loadItinerary_(party) {
     }
 
     out.push({
-      day:      cDay  >= 0 ? norm_(values[r][cDay])  : '',
-      time:     cTime >= 0 ? norm_(values[r][cTime]) : '',
+      day:      cDay  >= 0 ? dayText_(values[r][cDay])  : '',
+      time:     cTime >= 0 ? timeText_(values[r][cTime]) : '',
       name:     name,
       optional: cOpt  >= 0 ? key_(values[r][cOpt]) === 'yes' : false,
       body:     cBody >= 0 ? norm_(values[r][cBody]) : '',

@@ -401,9 +401,17 @@ def write_itinerary_seed():
         s = s.replace("&amp;", "&").replace("&nbsp;", " ")
         return re.sub(r"\s+", " ", s).strip()
 
+    # Sheets helpfully parses "Monday, October 18" into a date (guessing the
+    # WRONG year) and "10 PM" into a time in 1899. A leading apostrophe is the
+    # one thing it always reads as "this cell is text"; it is not displayed and
+    # not returned by getValues(), so the script sees the string we wrote.
+    def text(v):
+        v = cell(v)
+        return ("'" + v) if v else v
+
     for day, events in C.ITINERARY:
         for ev in events:
-            row = [day, cell(ev.get("time")), cell(ev.get("name")),
+            row = [text(day), text(ev.get("time")), cell(ev.get("name")),
                    "Yes" if ev.get("optional") else ""]
             row += [cell(ev.get(f)) for f in C.ITINERARY_FIELDS[4:]]
             rows.append("\t".join(row))
