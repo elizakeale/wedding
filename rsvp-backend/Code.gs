@@ -44,6 +44,29 @@ var MSG_NOT_FOUND = 'This code is not valid, please check spelling and use all c
 // Someone who enters with this sees the full itinerary, not a filtered one.
 var MASTER_PASSWORD = 'rockpiles';
 
+/* A code you can use over and over while testing.
+ *
+ * It is not in the guest list, it never locks, and submitting it writes
+ * nothing to any tab — so you can run the whole flow as many times as you
+ * like without leaving rows to clean up or burning a real party's one RSVP.
+ * It sees the full itinerary, so you can check every event renders.
+ *
+ * Set it to '' before you send codes out, and redeploy. */
+var TEST_CODE = 'TESTME';
+
+var TEST_PARTY = {
+  code: TEST_CODE,
+  leader: 'Test Leader',
+  guests: [
+    { id: 'test|leader',    name: 'Test Leader',       child: '' },
+    { id: 'test|plusone',   name: 'Test Plus-One',     child: '' },
+    { id: 'test|longname',  name: 'Testasaurus Rex-Hyphenated', child: '' },
+    { id: 'test|child',     name: 'Test Child',        child: 'Yes' }
+  ]
+};
+
+function isTest_(code) { return !!TEST_CODE && key_(code) === key_(TEST_CODE); }
+
 var ITINERARY_TAB = 'Itinerary';
 
 var RESPONSES_TAB = 'RSVP Responses';
@@ -239,6 +262,7 @@ function doGet(e) {
       if (key_(code) === key_(MASTER_PASSWORD)) {
         return json_({ ok: true, kind: 'master' });
       }
+      if (isTest_(code)) return json_({ ok: true, kind: 'party', code: TEST_CODE });
       var p = loadParties_()[key_(code)];
       return p ? json_({ ok: true, kind: 'party', code: p.code })
                : json_({ ok: false });
@@ -247,7 +271,7 @@ function doGet(e) {
     /* The itinerary, filtered to this party before it leaves the server. */
     if (action === 'itinerary') {
       var forParty = null;
-      if (code && key_(code) !== key_(MASTER_PASSWORD)) {
+      if (code && key_(code) !== key_(MASTER_PASSWORD) && !isTest_(code)) {
         forParty = loadParties_()[key_(code)] || null;
         if (!forParty) return json_({ ok: false, error: MSG_NOT_FOUND });
       }
@@ -257,6 +281,16 @@ function doGet(e) {
     if (action !== 'lookup') return json_({ ok: false, error: 'Unknown action.' });
 
     if (!code) return json_({ ok: false, error: 'Please enter your party code.' });
+
+    if (isTest_(code)) {
+      return json_({ ok: true, party: {
+        code: TEST_PARTY.code,
+        leader: TEST_PARTY.leader,
+        guests: TEST_PARTY.guests.map(function (g) {
+          return { id: g.id, name: g.name, child: g.child, attending: false, dietary: '' };
+        })
+      }});
+    }
 
     var party = loadParties_()[key_(code)];
     if (!party) {
@@ -301,6 +335,13 @@ function doPost(e) {
     var code = norm_(body.code);
     if (!code || !body.guests || !body.guests.length) {
       return json_({ ok: false, error: 'Nothing to save.' });
+    }
+
+    if (isTest_(code)) {
+      // Behaves exactly like a real submission to the browser, and touches
+      // nothing — that is the whole point of the test code.
+      var fake = (body.guests || []).filter(function (g) { return g.attending; });
+      return json_({ ok: true, attending: fake.length });
     }
 
     var party = loadParties_()[key_(code)];

@@ -285,9 +285,17 @@ def write(filename, html):
 # ---------------------------------------------------------------------------
 
 def rows(items):
-    """The label / rule / text row pattern used by FAQs and Recommendations."""
+    """The label / rule / text row pattern used by FAQs and Recommendations.
+
+    A bare string in the list is a group heading ("General", "Wedding Day"),
+    styled like the itinerary's day headings because it does the same job.
+    """
     out = ['      <div class="rows">']
-    for label, paras in items:
+    for item in items:
+        if isinstance(item, str):
+            out.append(f'        <h3 class="group">{item}</h3>')
+            continue
+        label, paras = item
         out.append('        <div class="row">')
         out.append('          <div class="row__rule"></div>')
         out.append('          <div class="row__body">')
@@ -312,7 +320,11 @@ def section(title, body, note=None, extra_class=""):
 
 
 def faq_section():
-    return section("FAQs", rows(C.FAQS))
+    """The save-the-date page answers only what can honestly be answered
+    before invitations go out; the phase-2 page answers everything."""
+    if FULL:
+        return section("FAQs", rows(C.FAQS), note=C.FAQS_NOTE)
+    return section("FAQs", rows(C.FAQS_SHORT))
 
 
 def rsvp_form():
