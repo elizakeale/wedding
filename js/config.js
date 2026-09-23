@@ -21,7 +21,7 @@ window.ELW.ENDPOINT = 'https://script.google.com/macros/s/AKfycbzV_Pz9_JUaxIG6OH
 window.ELW.FALLBACK_PASSWORD = 'rockpiles';
 
 /* Where the gate sends people once they're in. */
-window.ELW.ENTRY_PAGE = 'home.html';
+window.ELW.ENTRY_PAGE = 'savethedate/';
 
 /* Who the browser thinks you are. sessionStorage, not localStorage: it clears
  * when the tab closes, which is the right lifetime for a shared family laptop.

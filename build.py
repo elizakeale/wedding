@@ -33,6 +33,24 @@ PHASE2_DIR = os.path.join(HERE, "_phase2")
 LEGACY_OUT_DIRS = ["_preview", "preview", "Preview"]
 
 # Files the preview copies alongside the generated pages so it renders properly.
+# Clean URLs. Every generated page is written as <slug>/index.html, so it is
+# served as lucasandeliza.com/<slug> with no .html on the end. That puts every
+# page exactly one directory down, which is why assets and cross-links are all
+# "../" — a constant, not a per-page calculation.
+#
+# index.html (the password gate) stays at the root, so the bare domain is the
+# front door.
+def slug(filename):
+    if filename == "home.html":
+        return "rsvp" if FULL else "savethedate"
+    return filename[:-5]          # itinerary.html -> itinerary
+
+
+def link(filename):
+    """A link from one generated page to another."""
+    return f"../{slug(filename)}/"
+
+
 PHASE2_ASSETS = ["css", "js", "orchid.jpg", "surfing.jpg",
                   "og-image.jpg", "favicon.ico", "favicon.png"]
 
@@ -66,7 +84,7 @@ def social_meta(page=""):
     """
     m = C.META
     base = C.SITE_URL.rstrip("/")
-    url = f"{base}/{page}" if page else f"{base}/"
+    url = f"{base}/{slug(page)}" if page else f"{base}/"
     return f"""  <meta property="og:type" content="website" />
   <meta property="og:site_name" content="E &amp; L Wedding" />
   <meta property="og:title" content="{m['title']}" />
@@ -94,13 +112,13 @@ def head(title, page=""):
   <meta name="description" content="{C.META['description']}" />
   <meta name="robots" content="noindex, nofollow" />
 {social_meta(page)}
-  <link rel="icon" href="favicon.ico?v={v}" sizes="any" />
-  <link rel="icon" type="image/png" href="favicon.png?v={v}" sizes="180x180" />
-  <link rel="apple-touch-icon" href="favicon.png?v={v}" />
+  <link rel="icon" href="../favicon.ico?v={v}" sizes="any" />
+  <link rel="icon" type="image/png" href="../favicon.png?v={v}" sizes="180x180" />
+  <link rel="apple-touch-icon" href="../favicon.png?v={v}" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,300;1,300&family=Cormorant+Upright:wght@300&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/wedding.css?v={v}" />
+  <link rel="stylesheet" href="../css/wedding.css?v={v}" />
 </head>"""
 
 
@@ -178,7 +196,7 @@ def pageheader(current, tall, save_the_date=False):
     <div class="pageheader__bg" aria-hidden="true"></div>
     <div class="wrap pageheader__inner">
       <div class="wordmark pageheader__wordmark">
-        <h1 class="wordmark__name"><a href="{C.ENTRY_PAGE}">E &amp; L<span
+        <h1 class="wordmark__name"><a href="{link(C.ENTRY_PAGE)}">E &amp; L<span
           class="stdate__rest"> Wedding</span></a></h1>
         {meta_line(date_first=True)}
         <p class="stdate__label">{C.SAVE_THE_DATE['label']}</p>
@@ -191,7 +209,7 @@ def pageheader(current, tall, save_the_date=False):
     rows = []
     for label, href in C.NAV:
         aria = ' aria-current="page"' if href == current else ""
-        rows.append(f'        <a href="{href}"{aria}>{label}</a>')
+        rows.append(f'        <a href="{link(href)}"{aria}>{label}</a>')
     links = "\n".join(rows)
     mod = " pageheader--tall" if tall else ""
     return f"""  <div class="pageheader{mod}" id="pageheader">
@@ -201,7 +219,7 @@ def pageheader(current, tall, save_the_date=False):
 {links}
       </nav>
       <div class="wordmark pageheader__wordmark">
-        <h1 class="wordmark__name"><a href="{C.ENTRY_PAGE}">{C.WEDDING['names']}</a></h1>
+        <h1 class="wordmark__name"><a href="{link(C.ENTRY_PAGE)}">{C.WEDDING['names']}</a></h1>
         {meta_line(date_first=True)}
       </div>
     </div>
@@ -231,13 +249,13 @@ def footer():
     visually, which is the whole point of generating them from one place.
     """
     photo = ('      <div class="footer__photo">'
-             '<img src="surfing.jpg" alt="Eliza and Lucas paddling out" /></div>')
+             '<img src="../surfing.jpg" alt="Eliza and Lucas paddling out" /></div>')
 
     links = ""
     if FULL:
         by_label = {label: href for label, href in C.NAV}
         rows = "\n".join(
-            f'          <a href="{by_label[label]}">{label}</a>'
+            f'          <a href="{link(by_label[label])}">{label}</a>'
             for label in C.FOOTER_NAV_ORDER
         )
         links = f"""      <nav class="footer__links">
@@ -248,7 +266,7 @@ def footer():
     return f"""  <footer class="footer">
     <div class="wrap">
       <div class="footer__top">
-        <p class="footer__name"><a href="{C.ENTRY_PAGE}">{C.WEDDING['names_short']}</a></p>
+        <p class="footer__name"><a href="{link(C.ENTRY_PAGE)}">{C.WEDDING['names_short']}</a></p>
         {meta_line(date_first=True)}
       </div>
 {links}      <div class="footer__cols footer__cols--stdate">
@@ -261,11 +279,11 @@ def footer():
 
 
 def page(filename, title, main, tall=False, save_the_date=False, scripts=""):
-    demo_js = '\n  <script src="js/rsvp-demo.js"></script>' if (FULL and PREVIEW) else ""
-    site_js = ((demo_js + '\n  <script src="js/config.js"></script>')
+    demo_js = '\n  <script src="../js/rsvp-demo.js"></script>' if (FULL and PREVIEW) else ""
+    site_js = ((demo_js + '\n  <script src="../js/config.js"></script>')
                if FULL else "")
     if FULL or save_the_date:
-        site_js += '\n  <script src="js/site.js"></script>'
+        site_js += '\n  <script src="../js/site.js"></script>'
     body_class = ' class="phase2"' if FULL else ""
     html = f"""<!DOCTYPE html>
 <html lang="en">
@@ -282,8 +300,9 @@ def page(filename, title, main, tall=False, save_the_date=False, scripts=""):
     write(filename, html)
 
 
-def write(filename, html):
-    path = os.path.join(OUT_DIR, filename)
+def write(filename, html, literal=False):
+    rel = filename if literal else os.path.join(slug(filename), "index.html")
+    path = os.path.join(OUT_DIR, rel)
     os.makedirs(os.path.dirname(path) or OUT_DIR, exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
         f.write(html)
@@ -584,7 +603,7 @@ def build(preview=False):
     if FULL:
         # The demo backend loads before rsvp.js and only in the preview, so
         # the real site can never pick it up.
-        rsvp_scripts = '\n  <script src="js/rsvp.js"></script>'
+        rsvp_scripts = '\n  <script src="../js/rsvp.js"></script>'
         page("home.html", "E &amp; L Wedding",
              section("RSVP", rsvp_form(),
                      note=f"We kindly ask you to RSVP by {C.WEDDING['rsvp_deadline']}.",
@@ -593,7 +612,7 @@ def build(preview=False):
              scripts=rsvp_scripts)
         page("itinerary.html", "Itinerary &mdash; E &amp; L Wedding",
              section("Itinerary", '      <div class="rows" id="itinerary"></div>'),
-             scripts='\n  <script src="js/itinerary.js"></script>')
+             scripts='\n  <script src="../js/itinerary.js"></script>')
         page("recommendations.html", "Recommendations &mdash; E &amp; L Wedding",
              section("Recommendations", rows(C.RECOMMENDATIONS)))
         page("faqs.html", "FAQs &mdash; E &amp; L Wedding", faq_section())
@@ -610,16 +629,16 @@ def build(preview=False):
 {GENERATED_BANNER}<head>
   <meta charset="UTF-8" />
   <meta name="robots" content="noindex, nofollow" />
-  <meta http-equiv="refresh" content="0; url={C.ENTRY_PAGE}" />
-  <link rel="canonical" href="{C.ENTRY_PAGE}" />
+  <meta http-equiv="refresh" content="0; url={slug(C.ENTRY_PAGE)}/" />
+  <link rel="canonical" href="{slug(C.ENTRY_PAGE)}/" />
   <title>E &amp; L Wedding</title>
 </head>
 <body>
-  <p>Redirecting to <a href="{C.ENTRY_PAGE}">the wedding site</a>&hellip;</p>
-  <script>location.replace('{C.ENTRY_PAGE}');</script>
+  <p>Redirecting to <a href="{slug(C.ENTRY_PAGE)}/">the wedding site</a>&hellip;</p>
+  <script>location.replace('{slug(C.ENTRY_PAGE)}/');</script>
 </body>
 </html>
-""")
+""", literal=True)
     live = list(live) + ["homepage.html"]
 
     if preview:
@@ -648,11 +667,16 @@ def build(preview=False):
         print("\nDone.")
         return
 
-    stale = [p for p in ALL_PAGES if p not in live and os.path.exists(os.path.join(HERE, p))]
-    if stale:
-        print("\n  Stale pages from another phase (delete these so they don't ship):")
+    stale = [p for p in ALL_PAGES
+             if p not in live and os.path.exists(os.path.join(HERE, slug(p), "index.html"))]
+    flat = [p for p in ALL_PAGES
+            if p != "homepage.html" and os.path.exists(os.path.join(HERE, p))]
+    if stale or flat:
+        print("\n  Left over from an earlier build (delete so they don't ship):")
         for p in stale:
-            print(f"    git rm {p}")
+            print(f"    git rm -r {slug(p)}")
+        for p in flat:
+            print(f"    git rm {p}   # replaced by /{slug(p)}/")
 
     write_itinerary_seed()
     update_gate()
@@ -699,7 +723,7 @@ def update_gate():
         with open(cfg_path, encoding="utf-8") as f:
             cfg = before_cfg = f.read()
         cfg = re.sub(r"(window\.ELW\.ENTRY_PAGE\s*=\s*')[^']*(')",
-                     rf"\g<1>{C.ENTRY_PAGE}\g<2>", cfg)
+                     rf"\g<1>{slug(C.ENTRY_PAGE)}/\g<2>", cfg)
         if cfg != before_cfg:
             with open(cfg_path, "w", encoding="utf-8") as f:
                 f.write(cfg)
