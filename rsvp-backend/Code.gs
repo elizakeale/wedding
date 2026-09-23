@@ -32,6 +32,13 @@
  *   Version: New version ▸ Deploy. The URL stays the same.
  */
 
+/* Bump this whenever you change this file. Then open your /exec URL with
+ *   ?action=version
+ * and you can see at a glance which version is actually deployed — the
+ * commonest failure here is editing the script, saving, and never pushing a
+ * new version, so the old code keeps serving under the same URL. */
+var SCRIPT_VERSION = 'v3 — test code, itinerary details, Friend Only Events';
+
 var CONTACT_EMAIL = 'elizakeale@gmail.com';
 
 // Guest-facing copy, kept together so it reads as one voice.
@@ -254,6 +261,10 @@ function doGet(e) {
   try {
     var action = (e && e.parameter && e.parameter.action) || 'lookup';
     var code = norm_(e.parameter.code);
+
+    if (action === 'version') {
+      return json_({ ok: true, version: SCRIPT_VERSION, testCode: TEST_CODE || null });
+    }
 
     /* The front door. Returns only whether the value is good and which kind
        it is — never the code list, and never anything about other parties. */
