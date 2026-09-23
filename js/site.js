@@ -85,6 +85,10 @@
     var bg = Math.min(1, Math.max(0, (y - settleAt) / FADE_OVER));
 
     root.style.setProperty('--hdr-p', p.toFixed(4));
+
+    // The wordmark is only a link once it has arrived in the bar. Above the
+    // fold it is the page's title and shouldn't behave like navigation.
+    header.classList.toggle('is-bar', p > 0.995);
     root.style.setProperty('--hdr-bg', bg.toFixed(3));
   }
 

@@ -228,7 +228,11 @@ img { display: block; max-width: 100%; }
 /* The bar wordmark is the way home, and says so on hover like every other
    clickable thing on the site. */
 .pageheader__wordmark .wordmark__name a { color: inherit; }
-.pageheader__wordmark .wordmark__name a:hover { color: var(--hover); }
+.pageheader.is-bar .wordmark__name a:hover { color: var(--hover); }
+
+/* Not a link until it is the bar: no pointer, no hover colour, nothing to
+   click. It reads as the page's title up there, because that is what it is. */
+.pageheader:not(.is-bar) .wordmark__name a { pointer-events: none; cursor: default; }
 
 .pageheader__wordmark .wordmark__name {
   font-size:      calc(var(--hdr-word-hi) +
@@ -270,17 +274,10 @@ img { display: block; max-width: 100%; }
 
 .pageheader--stdate .pageheader__wordmark > .meta { white-space: nowrap; }
 
-/* Cormorant defaults to old-style figures: 0, 1 and 2 sit at x-height and 7
-   drops below the baseline, so "10.22.2027" reads as sitting low next to the
-   caps of KANE'OHE and under the rule. Lining figures are cap-height, which
-   is what actually centres it. */
-.meta__date { font-variant-numeric: lining-nums; font-feature-settings: "lnum" 1; }
-
 .pageheader--stdate .stdate__label,
 .pageheader--stdate .stdate__tagline { flex-basis: 100%; }
 
 .pageheader--stdate .wordmark__name a { color: inherit; }
-.pageheader--stdate .wordmark__name a:hover { color: var(--hover); }
 
 /* "Save the date" and the tagline ride up with the wordmark and are gone
    before it lands — they have no place in a compact bar. Fading over the
