@@ -27,7 +27,7 @@ PHASE = "save-the-date"
 
 # Bump this when css/wedding.css or the favicons change, so browsers don't
 # serve a stale copy.
-ASSET_VERSION = 23
+ASSET_VERSION = 24
 
 # The page the password gate sends people to.
 ENTRY_PAGE = "home.html"
@@ -90,7 +90,7 @@ CONTACT = {
 # ---------------------------------------------------------------------------
 SAVE_THE_DATE = {
     "label": "Save the date",
-    "tagline": "…more details to come. Scroll down for FAQs.",
+    "tagline": "…more details to come. scroll down for FAQs.",
 }
 
 
@@ -135,18 +135,17 @@ _Q_DATES = (
     "What dates do you recommend booking our trip for?",
     ["If you\u2019re planning to come for about a week (we hope you do if you\u2019re flying "
      "all the way!), then we recommend aiming to arrive the week before the wedding, arriving "
-     "October 15 weekend and flying out Sunday, October 24. We will be planning completely "
-     "optional events throughout October 16 through 23, including a Welcome BBQ on Wednesday, "
-     "October 20 and the wedding on Friday, October 22. We recommend visiting the island for at "
-     "least 6 nights, but the sweet spot is 10&ndash;12 nights if you can swing some island "
-     "hopping as well."],
+     "October 15 weekend and flying out Sunday, October 24 onwards. We will be planning "
+     "completely optional events throughout October 16 through 23. We recommend visiting the "
+     "island for at least 6 nights, but the sweet spot is 10&ndash;12 nights if you plan to "
+     "island hop."],
 )
 
 _Q_AIRPORT = (
     "How do I get to the island?",
     ["Fly into Daniel K. Inouye International Airport in Honolulu, Oahu, Hawaii. This is the "
      "only international airport on Oahu. You could also fly in from another island if more "
-     "affordable and you\u2019d like to island hop."],
+     "affordable and/or you\u2019d like to island hop."],
 )
 
 
@@ -161,7 +160,7 @@ FAQS_SHORT = [
         ["We suggest holding off for now unless you are planning to book a specific "
          "accommodation that is already opened up for booking (e.g., a larger luxury Airbnb). "
          "Flights and Airbnbs typically don\u2019t get released until 11 months prior (likely "
-         "late November 2026). We also will share hotel blocks and Airbnb recommendations soon."],
+         "late November 2026). We also will share hotel and Airbnb information soon."],
     ),
     _Q_DATES,
     _Q_AIRPORT,

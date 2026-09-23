@@ -216,7 +216,7 @@ def contact_block():
         <ul class="footer__details">
           <li>Email: <a href="mailto:{c['email']}">{c['email']}</a></li>
           <li>Phone: <a href="tel:{c['phone_href']}">{c['phone']}</a></li>
-          <li>Website: <a href="https://{c['website']}">{c['website']}</a></li>
+          <li>Website: <a href="#top">{c['website']}</a></li>
         </ul>
         <p class="footer__contact-short">Contact <a href="mailto:{c['email']}">{c['email']}</a> with questions.</p>
       </div>"""

@@ -270,6 +270,12 @@ img { display: block; max-width: 100%; }
 
 .pageheader--stdate .pageheader__wordmark > .meta { white-space: nowrap; }
 
+/* Cormorant defaults to old-style figures: 0, 1 and 2 sit at x-height and 7
+   drops below the baseline, so "10.22.2027" reads as sitting low next to the
+   caps of KANE'OHE and under the rule. Lining figures are cap-height, which
+   is what actually centres it. */
+.meta__date { font-variant-numeric: lining-nums; font-feature-settings: "lnum" 1; }
+
 .pageheader--stdate .stdate__label,
 .pageheader--stdate .stdate__tagline { flex-basis: 100%; }
 
