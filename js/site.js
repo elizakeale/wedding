@@ -42,6 +42,13 @@
   var root = document.documentElement;
   var travel = 0, settleAt = 0, subEnd = 0, subStart = 0;
 
+  /* Whether the hero has ever had a real size to measure. It does not while
+   * the gate is up: #site is display:none, so the banner is 0 tall, and a
+   * settleAt of 0 used to read as "the hero is already behind you" — which
+   * is why a first visit landed on the settled bar and only came right when
+   * something forced a re-measure. */
+  var ready = false;
+
   // The hero holds for the first third, then the morph runs on a smoothstep:
   // no movement at the start, none at the finish, peak rate in the middle.
   // A plain power curve was back-loaded the same way but arrived at full
@@ -65,6 +72,11 @@
     // subtracting it makes the rendered top land on that fraction exactly.
     // Mirrors the --hdr-travel calc in the stylesheet (the no-JS path).
     if (isTall) {
+      // Nothing laid out yet. Publish nothing: the stylesheet's own
+      // --hdr-travel is correct, and apply() holds the hero state.
+      if (!banner.offsetHeight) { ready = false; return; }
+      ready = true;
+
       // Where the wordmark sits in the frame, as a fraction of the hero.
       // Phase 2 is 464/1007; the save-the-date frame is higher up, and the
       // mobile frame higher still, so the number is a CSS variable that the
@@ -127,6 +139,14 @@
     ticking = false;
     if (!isTall) return;
 
+    if (!ready) {                 // hero not measurable yet — stay in it
+      root.style.setProperty('--hdr-p', '0');
+      root.style.setProperty('--hdr-bg', '0');
+      root.style.setProperty('--hdr-sub', '1');
+      header.classList.remove('is-bar');
+      return;
+    }
+
     var y = window.pageYOffset || root.scrollTop || 0;
 
     // Fraction of the way down the hero, held flat for the first HOLD of it,
@@ -167,8 +187,19 @@
     }
   }
 
+  function remeasure() { measure(); onScroll(); }
+
   measure();
   apply();
   window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', function () { measure(); onScroll(); });
+  window.addEventListener('resize', remeasure);
+
+  /* Everything that can give the hero a size after this script has run: the
+   * gate being dismissed (0 -> full height), the webfont arriving and
+   * changing the wordmark's flow offset, a phone's toolbars collapsing. The
+   * observer covers all three; the other two are belt and braces for
+   * anything that changes the type without changing the banner. */
+  if (window.ResizeObserver) new ResizeObserver(remeasure).observe(banner);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(remeasure);
+  window.addEventListener('load', remeasure);
 })();

@@ -58,16 +58,10 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-/* Mobile Safari fills the strip behind the status bar from the PAGE's
-   background colour — the body's property, not what is actually painted at
-   the top, and not <meta name="theme-color">, which it ignored here. So the
-   green cannot live on the body: it goes on the blocks that are green, and
-   the document's own colour is the hero's base. The content is contiguous
-   from the hero to the end of the footer, so nothing pink shows through. */
-html { -webkit-text-size-adjust: 100%; background: #efe6e6; }
+html { -webkit-text-size-adjust: 100%; }
 
 body {
-  background: #efe6e6;
+  background: var(--olive);
   color: var(--white);
   font-family: 'Cormorant Upright', 'Cormorant Garamond', Georgia, serif;
   font-weight: 300;
@@ -481,9 +475,6 @@ html { scroll-padding-top: var(--hdr-h); }
 
 /* ---------- Sections ---------- */
 
-/* The green the body used to carry — see the note on body above. */
-.section, .footer { background: var(--olive); }
-
 .section { padding: 5.25rem 0 3.75rem; }
 
 /* Phase 2 spacing, straight off the updated frames. Scoped to .phase2 so the
@@ -860,8 +851,8 @@ html { scroll-padding-top: var(--hdr-h); }
      Set on --hero-h rather than on .banner--tall, so everything derived from
      the hero's height agrees with the hero's actual height. Overriding only
      the banner left the two 27px apart on a tall phone. */
-  :root { --hero-h: 54.5625rem; }  /* 873px, the mobile frame */
-  @supports (height: 100lvh) { :root { --hero-h: min(54.5625rem, 100lvh); } }
+  :root { --hero-h: 57.1875rem; }  /* 915px, the mobile frame (15:69) */
+  @supports (height: 100lvh) { :root { --hero-h: min(57.1875rem, 100lvh); } }
   .banner--short { min-height: 11.875rem; }
 
   /* On a 402px-wide frame Figma scales the photo to 1311px and pushes it to

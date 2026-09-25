@@ -116,11 +116,7 @@ def social_meta(page=""):
   <meta name="twitter:title" content="{m['title']}" />
   <meta name="twitter:description" content="{m['description']}" />
   <meta name="twitter:image" content="{base}/{m['image']}" />
-  <!-- The strip behind the phone's status bar. The orchid's base tone, not
-       the site's green: the photo runs right up to the top of every page —
-       the hero at rest, the bar once you have scrolled — so green up there
-       read as a band cutting across the picture. -->
-  <meta name="theme-color" content="#efe6e6" />"""
+  <meta name="theme-color" content="#bcbc49" />"""
 
 
 # ---------------------------------------------------------------------------

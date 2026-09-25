@@ -27,7 +27,7 @@ PHASE = "save-the-date"
 
 # Bump this when css/wedding.css or the favicons change, so browsers don't
 # serve a stale copy.
-ASSET_VERSION = 42
+ASSET_VERSION = 43
 
 # The page the password gate sends people to.
 ENTRY_PAGE = "home.html"
