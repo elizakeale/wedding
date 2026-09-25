@@ -950,14 +950,51 @@ html { scroll-padding-top: var(--hdr-h); }
   .field { width: 100%; }
   .diet .field { margin-top: 0.375rem; width: 100%; }
 
+  /* The mobile footer is the desktop footer RESTACKED, not shrunk. Every type
+     size in the 402px frame is the one the 1512px frame uses — 40px wordmark,
+     20px contact, 20px back-to-top, 78px rule — and what changes is the order
+     and the alignment. We had it backwards: desktop's arrangement at reduced
+     sizes. Frame 15:56, footer at y2453-3190.
+
+       wordmark            y2453
+       contact intro       y2529   (+28 from the wordmark)
+       email/phone/website y2629   (+52)
+       date, then place    y2766   (+65)   rule first, place on its own line
+       photo, centred      y2865   (+55)
+       back to top         y3071   (+48)
+
+     The DOM keeps the desktop order because that is the one that reads
+     correctly without stylesheets; `display: contents` dissolves the two
+     wrappers so the pieces can be ordered as one column. Phase 2's footer
+     has a nav row and its own grid, so this is scoped away from it. */
   .footer { padding: 3rem 0 2.5rem; }
-  .footer__name { font-size: 1.75rem; }
   .footer__cols { grid-template-columns: 1fr 1fr; align-items: start; }
   .footer__cols--stdate { grid-template-columns: 1fr; }
   .footer__links { font-size: 1rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .footer__photo { width: 15.125rem; max-width: 100%; }
-  .footer__cols--stdate .footer__photo { grid-column: auto; margin-top: 0.875rem; }
-  .footer__contact { font-size: 0.9375rem; }
-  .back-to-top a { font-size: 0.9375rem; gap: 1.25rem; }
-  .back-to-top__rule { height: 3.75rem; }
+
+  body:not(.phase2) .footer .wrap { display: flex; flex-direction: column; }
+  body:not(.phase2) .footer__top,
+  body:not(.phase2) .footer__cols--stdate { display: contents; }
+
+  body:not(.phase2) .footer__name      { order: 1; }
+  body:not(.phase2) .footer__contact   { order: 2; margin-top: 1.75rem; }
+  body:not(.phase2) .footer__details   { margin-top: 3.25rem; }
+  body:not(.phase2) .footer__top .meta { order: 3; margin-top: 4rem; }
+  body:not(.phase2) .footer__photo     { order: 4; margin-top: 3.5rem;
+                                         align-self: center; }
+  body:not(.phase2) .back-to-top       { order: 5; margin-top: 3rem; }
+
+  /* Rule and date on one line, place beneath — as the hero's meta already
+     does on this width. */
+  body:not(.phase2) .footer__top .meta {
+    flex-wrap: wrap;
+    white-space: normal;
+    gap: 0.375rem 0.75rem;
+  }
+  body:not(.phase2) .footer__top .meta .meta__rule  { order: 1; }
+  body:not(.phase2) .footer__top .meta .meta__date  { order: 2; }
+  body:not(.phase2) .footer__top .meta .meta__place { order: 3; flex-basis: 100%; }
+
+  .back-to-top a { gap: 1.25rem; }
 }
