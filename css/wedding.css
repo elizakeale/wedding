@@ -851,8 +851,25 @@ html { scroll-padding-top: var(--hdr-h); }
      Set on --hero-h rather than on .banner--tall, so everything derived from
      the hero's height agrees with the hero's actual height. Overriding only
      the banner left the two 27px apart on a tall phone. */
+  /* 915px is the frame (15:69), taller than any phone, so on a phone this
+     resolves to the viewport. Three units rather than one because no single
+     one of them can be trusted here:
+
+       min(915, 100vh)  the hero at its tallest. 100vh on iOS Safari has
+                        always meant the viewport with the toolbars RETRACTED,
+                        which is the behaviour we want and the one unit that
+                        has always behaved that way. lvh should be identical
+                        and was not — it came up short and left a band of
+                        green between the photo and the toolbar.
+       max(100svh, …)   a floor: never shorter than the viewport with the
+                        toolbars SHOWING. Whatever the first part returns, the
+                        photo cannot end above the fold.
+
+     Mobile only. On a desktop the outer max() would defeat the 1007px cap. */
   :root { --hero-h: 57.1875rem; }  /* 915px, the mobile frame (15:69) */
-  @supports (height: 100lvh) { :root { --hero-h: min(57.1875rem, 100lvh); } }
+  @supports (height: 100svh) {
+    :root { --hero-h: max(100svh, min(57.1875rem, 100vh)); }
+  }
   .banner--short { min-height: 11.875rem; }
 
   /* On a 402px-wide frame Figma scales the photo to 1311px and pushes it to
@@ -862,9 +879,9 @@ html { scroll-padding-top: var(--hdr-h); }
 
   .banner__inner { padding-top: 1.5rem; padding-bottom: 1.75rem; }
   .banner--tall .banner__inner { padding-bottom: 2rem; }
-  @supports (height: 100lvh) {
+  @supports (height: 100svh) {
     .banner--tall .banner__inner {
-      padding-bottom: calc(2rem + (100lvh - 100svh));
+      padding-bottom: calc(2rem + max(0px, 100vh - 100svh));
     }
   }
 
