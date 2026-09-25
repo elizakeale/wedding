@@ -1,24 +1,31 @@
 /* E & L Wedding — header behaviour.
  *
- * Two states, one element, one threshold. On a tall hero the header is part
- * of the hero and scrolls away with it at full size; when the hero's bottom
- * reaches the top of the window this adds .is-bar and CSS brings the same
- * element back as the compact bar.
+ * The header is one fixed element holding the nav and the wordmark. On a tall
+ * hero the wordmark starts big and low — its hero position — and as you scroll
+ * it rides up and shrinks until it settles beside the nav, at which point the
+ * header IS the compact bar. Same element throughout, so there is no crossfade
+ * and nothing to keep in sync.
  *
- * It used to interpolate continuously — the wordmark shrinking and riding up
- * from the first pixel of scroll — which left a half-formed bar sitting over
- * a hero that was still mostly on screen. A single class change at the hero's
- * bottom is both what the design asks for and a great deal less work per
- * frame: no custom properties written on every scroll event, so no style
- * recalculation until the one moment it matters.
+ * WHERE the morph happens matters as much as that it happens. Run linearly
+ * against the wordmark's own travel it was finished less than halfway down
+ * the hero, leaving a half-formed bar over a photo that was still mostly on
+ * screen — the hero appeared to split in two. So the timeline is the whole
+ * hero, not the wordmark's travel, and the fraction is CUBED: the first half
+ * of the hero spends about an eighth of the morph, and the rest arrives over
+ * the last stretch, landing exactly as the hero's bottom meets the bar. The
+ * hero holds; the bar gathers itself as the photo leaves.
  *
- * This publishes two numbers, both only on load and resize:
+ * This file publishes just two numbers and lets CSS derive everything else:
  *
- *   --hdr-travel  how far down the hero the wordmark sits, in px.
- *   settleAt      the scroll position where the bar takes over.
+ *   --hdr-p    0 = full hero, 1 = settled. Drives position, size and tracking.
+ *   --hdr-bg   opacity of the orchid slice behind the bar, 0..1.
+ *
+ * Keeping the two states described in CSS (rather than computing pixel values
+ * here) means the Figma numbers live in one place, and they keep scaling with
+ * the viewport-relative root font size for free.
  *
  * Scroll reads are batched into a rAF so scrolling never forces a synchronous
- * layout. With JS off a tall hero simply never forms its bar, which leaves a
+ * layout. With JS off the header renders in its hero state, which is still a
  * correct and readable page.
  */
 (function () {
@@ -34,7 +41,7 @@
 
   var root = document.documentElement;
   var travel = 0, settleAt = 0;
-  var HYST = 6;   // px of slack, so resting on the line doesn't flicker
+  var EASE = 3;   // how hard the morph is pushed to the end of the hero
 
   // Short-banner pages are the bar from the start — there is no hero for
   // them to come out of, and the wordmark is a link immediately.
@@ -90,13 +97,24 @@
     if (!isTall) return;
 
     var y = window.pageYOffset || root.scrollTop || 0;
-    var on = header.classList.contains('is-bar');
 
-    // The bar takes over exactly when the hero's bottom arrives at the top of
-    // the window. The wordmark is a link only in that state: in the hero it
-    // is the page's title and shouldn't behave like navigation.
-    if (!on && y > settleAt) header.classList.add('is-bar');
-    else if (on && y < settleAt - HYST) header.classList.remove('is-bar');
+    // Fraction of the way down the hero, then cubed — see the note up top.
+    var t = settleAt > 0 ? Math.min(1, Math.max(0, y / settleAt)) : 1;
+    var p = Math.pow(t, EASE);
+
+    // The bar's own photo strip waits until the hero has gone. While the hero
+    // is still behind the bar, the hero's photo IS the bar's background —
+    // turning this on any earlier paints a second, differently-cropped slice
+    // over the first, and the edge of it is the seam that made the hero look
+    // like it was splitting. It fades up as the hero slides out from behind.
+    var bg = Math.min(1, Math.max(0, (y - settleAt) / 70));
+
+    root.style.setProperty('--hdr-p', p.toFixed(4));
+    root.style.setProperty('--hdr-bg', bg.toFixed(3));
+
+    // The wordmark is only a link once it has arrived in the bar. Above the
+    // fold it is the page's title and shouldn't behave like navigation.
+    header.classList.toggle('is-bar', p > 0.995);
   }
 
   function onScroll() {
