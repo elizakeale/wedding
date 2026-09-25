@@ -157,9 +157,7 @@ GATE_STYLE = """
             display:flex; align-items:center; justify-content:center; }
     #gate .bg { position:absolute; inset:0; width:100%; height:100%;
                 object-fit:cover; object-position:center; }
-    /* The arrow's column. It scales with the bar so a narrow phone keeps
-       the same breathing room a wide one has. */
-    #gate { --pw-arrow: clamp(1.75rem, 9.5vw, 3.25rem); }
+    #gate { --pw-arrow: 3.25rem; }   /* the arrow's own column at the end */
     #gate .card { position:relative; z-index:2; display:flex; flex-direction:column;
                   align-items:center; width:clamp(200px, 22%, 329px); }
     #gate .photo { width:100%; aspect-ratio:329/215; object-fit:cover; display:block; }
@@ -225,10 +223,9 @@ GATE_STYLE = """
     #gate .pw-cursor.hidden { display:none; }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
     @media (max-width:600px) {
-      /* The frame has the bar wider than the photo and pushed left; one
-         width for both reads better and holds at any phone size. */
-      #gate .card { width:61.4vw; }
-      #gate #wrap { margin-top:7.3vh !important; }
+      #gate .card { width:61.4vw; align-items:flex-start; }
+      #gate #wrap { width:81.8vw !important; margin-top:7.3vh !important;
+                    margin-left:calc(-10.1vw) !important; }
       /* 16px, not 15: iOS Safari zooms the whole page in when you focus a
          field smaller than that, and never zooms back out — which is how the
          body copy ended up cut off with the page scrolled sideways. */
@@ -237,10 +234,7 @@ GATE_STYLE = """
          what has to share the bar with the arrow, and on a narrow phone
          holding it at 16 leaves the two almost touching. */
       #gate .pw-input { font-size:16px; }
-      /* Centred in the bar AND clear of the arrow means the prompt has to
-         give: at 16px there is only about 5px between the two on a phone.
-         Tuned so the gap lands near 15px at every width. */
-      #gate .pw-ph    { font-size:clamp(10px, 3.5vw, 16px); }
+      #gate .pw-ph    { font-size:16px; }
     }
 """
 
