@@ -21,7 +21,7 @@ window.ELW.ENDPOINT = 'https://script.google.com/macros/s/AKfycbzV_Pz9_JUaxIG6OH
 window.ELW.FALLBACK_PASSWORD = 'rockpiles';
 
 /* Where the gate sends people once they're in. */
-window.ELW.ENTRY_PAGE = 'savethedate/';
+window.ELW.ENTRY_PAGE = '/';
 
 /* Who the browser thinks you are. sessionStorage, not localStorage: it clears
  * when the tab closes, which is the right lifetime for a shared family laptop.
@@ -30,15 +30,30 @@ window.ELW.ENTRY_PAGE = 'savethedate/';
  * fine, because it doesn't gate anything on its own. The itinerary's contents
  * come from the server keyed by code, so a forged session shows you nothing
  * you couldn't already see. */
+window.ELW.SESSION_TTL_MS = 30 * 60 * 1000;   /* 30 minutes */
+
 window.ELW.session = function () {
   try {
     var raw = sessionStorage.getItem('elw.session');
-    return raw ? JSON.parse(raw) : null;
+    if (!raw) return null;
+    var v = JSON.parse(raw);
+    /* Two expiries, both wanted: sessionStorage ends when the tab closes, and
+     * the stamp ends it after 30 minutes in a tab left open. A reload is
+     * neither, which is why reloading keeps you in. */
+    if (!v || !v.t || (Date.now() - v.t) > window.ELW.SESSION_TTL_MS) {
+      sessionStorage.removeItem('elw.session');
+      return null;
+    }
+    return v;
   } catch (e) { return null; }
 };
 
 window.ELW.setSession = function (data) {
-  try { sessionStorage.setItem('elw.session', JSON.stringify(data)); }
+  try {
+    data = data || {};
+    data.t = Date.now();
+    sessionStorage.setItem('elw.session', JSON.stringify(data));
+  }
   catch (e) { /* private mode — the session just won't persist */ }
 };
 

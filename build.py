@@ -41,15 +41,31 @@ LEGACY_OUT_DIRS = ["_preview", "preview", "Preview"]
 # index.html (the password gate) stays at the root, so the bare domain is the
 # front door.
 def slug(filename):
+    """Where a page is served from. "" means the site root.
+
+    In phase 1 the save-the-date IS the root: the gate is an overlay on the
+    same page rather than a separate door, so there is no second URL anyone
+    can go straight to. In phase 2 the root is the gate and the pages sit
+    under their own names.
+    """
     if filename == "home.html":
-        return "rsvp" if FULL else "savethedate"
+        return "rsvp" if FULL else ""
     return filename[:-5]          # itinerary.html -> itinerary
 
 
-def link(filename):
-    """A link from one generated page to another."""
-    return f"../{slug(filename)}/"
+def prefix(filename):
+    """How far up the assets are from this page."""
+    return "" if slug(filename) == "" else "../"
 
+
+def link(filename):
+    """A link from one generated page to another. Every generated page is
+    either at the root or one directory down, so this is one of two shapes."""
+    s = slug(filename)
+    return "./" if s == "" else f"../{s}/"
+
+
+UP = "../"          # depth of the page being written; set by page()
 
 PHASE2_ASSETS = ["css", "js", "orchid.jpg", "surfing.jpg",
                   "og-image.jpg", "favicon.ico", "favicon.png"]
@@ -103,7 +119,106 @@ def social_meta(page=""):
   <meta name="theme-color" content="#bcbc49" />"""
 
 
-def head(title, page=""):
+# ---------------------------------------------------------------------------
+# The gate
+#
+# In phase 1 this is an overlay on the save-the-date itself, not a separate
+# page. That is the whole point: a door with its own URL is a door people can
+# walk around, and /savethedate was exactly that.
+#
+# Everything is scoped under #gate so it cannot reach the page underneath,
+# which is a full stylesheet of its own.
+#
+# The page is hidden by CSS until <html> gets the "unlocked" class, and an
+# inline script in the head sets that before the first paint if the session is
+# still good — so a reload does not flash the door at someone already inside.
+# With JavaScript off it stays shut, which is the right way to fail.
+#
+# None of this is real security. The content is in the page source, as it was
+# when the door was its own page. It stops the link being walked around, not a
+# determined reader.
+# ---------------------------------------------------------------------------
+
+GATE_STYLE = """
+    #gate, #gate * { margin:0; padding:0; box-sizing:border-box; }
+    html:not(.unlocked), html:not(.unlocked) body {
+      width:100%; height:100%; overflow:hidden; background:#ede0e4;
+    }
+    html:not(.unlocked) #site { display:none; }
+    html.unlocked #gate { display:none; }
+    #gate { position:fixed; inset:0; z-index:9999;
+            display:flex; align-items:center; justify-content:center; }
+    #gate .bg { position:absolute; inset:0; width:100%; height:100%;
+                object-fit:cover; object-position:center; }
+    #gate .card { position:relative; z-index:2; display:flex; flex-direction:column;
+                  align-items:center; width:clamp(200px, 22%, 329px); }
+    #gate .photo { width:100%; aspect-ratio:329/215; object-fit:cover; display:block; }
+    #gate .pw-input {
+      display:block; width:100%; height:40px;
+      background:#ffe993; border:none; outline:none;
+      font-family:'Cormorant Upright',serif; font-weight:300;
+      font-size:15px; letter-spacing:1px; color:#7f214d; text-align:center;
+      padding:0 12px; -webkit-appearance:none; appearance:none;
+      border-radius:0; caret-color:transparent;
+    }
+    #gate .pw-input::placeholder { color:#7f214d; opacity:1; }
+    #gate .error {
+      font-family:'Cormorant Infant',serif; font-style:italic;
+      font-size:12px; color:#fff; text-align:center;
+      margin-top:8px; min-height:18px;
+      text-shadow:0 1px 3px rgba(0,0,0,0.5);
+      opacity:0; transition:opacity 0.2s;
+    }
+    #gate .error.show { opacity:1; }
+    @keyframes shake {
+      0%,100%{transform:translateX(0)} 20%{transform:translateX(-7px)}
+      40%{transform:translateX(7px)} 60%{transform:translateX(-5px)}
+      80%{transform:translateX(5px)}
+    }
+    #gate .shake { animation:shake 0.38s ease; }
+    #gate .pw-cursor { position:absolute; top:50%; left:calc(50% + 74px);
+      transform:translateY(-50%); width:1px; height:15px; background:#7f214d;
+      pointer-events:none; animation:blink 1.1s ease-in-out infinite; }
+    #gate .pw-cursor.hidden { display:none; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+    @media (max-width:600px) {
+      #gate .card { width:61.4vw; align-items:flex-start; }
+      #gate #wrap { width:81.8vw !important; margin-top:7.3vh !important;
+                    margin-left:calc(-10.1vw) !important; }
+      #gate .pw-cursor { left:calc(50% + 55px); }
+    }
+"""
+
+
+def gate_markup(up=""):
+    return f'''  <div id="gate">
+    <img class="bg" src="{up}orchid.jpg" alt="" />
+    <div class="card">
+      <img class="photo" src="{up}surfing.jpg" alt="Eliza and Lucas" />
+      <div id="wrap" class="pw-input-wrap" style="margin-top: clamp(30px, 6.3vh, 62px); position:relative; width:100%;">
+        <input id="input" class="pw-input" type="password" placeholder="ENTER PASSWORD" autocomplete="off" />
+        <span class="pw-cursor" id="cursor"></span>
+      </div>
+      <p id="error" class="error">Incorrect password &mdash; please try again.</p>
+    </div>
+  </div>
+'''
+
+
+# Runs before the first paint, so someone already inside never sees the door
+# flash. Deliberately duplicates the TTL from js/config.js: inlining it is what
+# makes it early enough to matter, and both read the same stored value.
+GATE_EARLY = """  <script>
+    try {
+      var s = JSON.parse(sessionStorage.getItem('elw.session') || 'null');
+      if (s && s.t && (Date.now() - s.t) < 1800000) {
+        document.documentElement.className = 'unlocked';
+      }
+    } catch (e) {}
+  </script>"""
+
+
+def head(title, page="", up="../", extra=""):
     v = C.ASSET_VERSION
     return f"""<head>
   <meta charset="UTF-8" />
@@ -112,13 +227,13 @@ def head(title, page=""):
   <meta name="description" content="{C.META['description']}" />
   <meta name="robots" content="noindex, nofollow" />
 {social_meta(page)}
-  <link rel="icon" href="../favicon.ico?v={v}" sizes="any" />
-  <link rel="icon" type="image/png" href="../favicon.png?v={v}" sizes="180x180" />
-  <link rel="apple-touch-icon" href="../favicon.png?v={v}" />
+  <link rel="icon" href="{up}favicon.ico?v={v}" sizes="any" />
+  <link rel="icon" type="image/png" href="{up}favicon.png?v={v}" sizes="180x180" />
+  <link rel="apple-touch-icon" href="{up}favicon.png?v={v}" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,300;1,300&family=Cormorant+Upright:wght@300&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../css/wedding.css?v={v}" />
+  <link rel="stylesheet" href="{up}css/wedding.css?v={v}" />{extra}
 </head>"""
 
 
@@ -249,7 +364,7 @@ def footer():
     visually, which is the whole point of generating them from one place.
     """
     photo = ('      <div class="footer__photo">'
-             '<img src="../surfing.jpg" alt="Eliza and Lucas paddling out" /></div>')
+             f'<img src="{UP}surfing.jpg" alt="Eliza and Lucas paddling out" /></div>')
 
     links = ""
     if FULL:
@@ -279,21 +394,38 @@ def footer():
 
 
 def page(filename, title, main, tall=False, save_the_date=False, scripts=""):
-    demo_js = '\n  <script src="../js/rsvp-demo.js"></script>' if (FULL and PREVIEW) else ""
-    site_js = ((demo_js + '\n  <script src="../js/config.js"></script>')
+    global UP
+    up = UP = prefix(filename)
+
+    # The save-the-date is the site root, so the gate rides on it rather than
+    # standing in front of it as its own URL.
+    gated = save_the_date and slug(filename) == ""
+
+    demo_js = f'\n  <script src="{up}js/rsvp-demo.js"></script>' if (FULL and PREVIEW) else ""
+    site_js = ((demo_js + f'\n  <script src="{up}js/config.js"></script>')
                if FULL else "")
+    if gated:
+        site_js += f'\n  <script src="{up}js/config.js"></script>'
     if FULL or save_the_date:
-        site_js += '\n  <script src="../js/site.js"></script>'
+        site_js += f'\n  <script src="{up}js/site.js"></script>'
+    if gated:
+        site_js += f'\n  <script src="{up}js/gate.js"></script>'
+
     body_class = ' class="phase2"' if FULL else ""
-    html = f"""<!DOCTYPE html>
-<html lang="en">
-{GENERATED_BANNER}{head(title, filename)}
-<body{body_class}>
-{pageheader(filename, tall, save_the_date)}{banner(filename, tall, save_the_date)}
+    extra_head = f"\n  <style>{GATE_STYLE}  </style>\n{GATE_EARLY}" if gated else ""
+    body = f"""{pageheader(filename, tall, save_the_date)}{banner(filename, tall, save_the_date)}
 
 {main}
 
-{footer()}{site_js}{scripts}
+{footer()}"""
+    if gated:
+        body = gate_markup(up) + '  <div id="site">\n' + body + "\n  </div>"
+
+    html = f"""<!DOCTYPE html>
+<html lang="en">
+{GENERATED_BANNER}{head(title, filename, up, extra_head)}
+<body{body_class}>
+{body}{site_js}{scripts}
 </body>
 </html>
 """
@@ -676,7 +808,8 @@ def build(preview=False):
         for p in stale:
             print(f"    git rm -r {slug(p)}")
         for p in flat:
-            print(f"    git rm {p}   # replaced by /{slug(p)}/")
+            dest = f"/{slug(p)}/" if slug(p) else "the site root"
+            print(f"    git rm {p}   # replaced by {dest}")
 
     write_itinerary_seed()
     update_gate()
@@ -696,6 +829,8 @@ def update_gate():
     the gate is the page people actually share, so its tags are the ones that
     matter most.
     """
+    if not FULL:
+        return          # phase 1 generates index.html; nothing to patch in
     path = os.path.join(HERE, "index.html")
     if not os.path.exists(path):
         print("\n  ! index.html (password gate) is missing.")

@@ -35,6 +35,12 @@
   var busy = false;
 
   input.type = 'text';
+
+  if (CFG.session && CFG.session() && document.getElementById('site')) {
+    document.documentElement.className = 'unlocked';
+    return;                                  // still inside; no door needed
+  }
+
   setTimeout(function () { input.focus(); }, 100);
 
   function mask() {
@@ -100,8 +106,17 @@
     clearTimeout(maskTimer);
   }
 
+  /* Two shapes of door. In phase 1 the gate is an overlay on the page it
+   * protects, so getting in is a class change and the URL never moves —
+   * there is no second address to walk around it. In phase 2 the root is a
+   * door of its own and this navigates, as before. */
   function enter(session) {
     if (CFG.setSession) CFG.setSession(session);
+    if (document.getElementById('site')) {
+      document.documentElement.className = 'unlocked';
+      window.scrollTo(0, 0);
+      return;
+    }
     window.location.href = (CFG.ENTRY_PAGE || 'home.html');
   }
 
