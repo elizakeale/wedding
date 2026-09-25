@@ -157,6 +157,7 @@ GATE_STYLE = """
             display:flex; align-items:center; justify-content:center; }
     #gate .bg { position:absolute; inset:0; width:100%; height:100%;
                 object-fit:cover; object-position:center; }
+    #gate { --pw-arrow: 3.25rem; }   /* room reserved at the end of the bar */
     #gate .card { position:relative; z-index:2; display:flex; flex-direction:column;
                   align-items:center; width:clamp(200px, 22%, 329px); }
     #gate .photo { width:100%; aspect-ratio:329/215; object-fit:cover; display:block; }
@@ -165,7 +166,10 @@ GATE_STYLE = """
       background:#ffe993; border:none; outline:none;
       font-family:'Cormorant Upright',serif; font-weight:300;
       font-size:15px; letter-spacing:1px; color:#7f214d; text-align:center;
-      padding:0 12px; -webkit-appearance:none; appearance:none;
+      /* Asymmetric on purpose: the text centres in what is left after the
+         arrow's column, so the two can never collide however narrow the
+         bar gets. */
+      padding:0 var(--pw-arrow) 0 0.75rem; -webkit-appearance:none; appearance:none;
       border-radius:0; caret-color:transparent;
     }
     /* The placeholder is a real element rather than ::placeholder, so the
@@ -178,6 +182,7 @@ GATE_STYLE = """
       pointer-events:none; user-select:none;
       font-family:'Cormorant Upright',serif; font-weight:300;
       font-size:15px; letter-spacing:1px; color:#7f214d;
+      padding-right:var(--pw-arrow);
     }
     #gate .pw-ph.hidden { display:none; }
     #gate .error {
@@ -199,8 +204,8 @@ GATE_STYLE = """
        rendered size, so nothing scales the line. Full field height, so the
        tap target is the whole right end of the bar and not just the glyph. */
     #gate .pw-go {
-      position:absolute; right:4px; top:0; z-index:3;
-      height:100%; padding:0 10px;
+      position:absolute; right:0; top:0; z-index:3;
+      height:100%; width:var(--pw-arrow); justify-content:center; padding:0;
       display:flex; align-items:center;
       background:none; border:none; cursor:pointer;
       -webkit-appearance:none; appearance:none;
@@ -220,13 +225,19 @@ GATE_STYLE = """
     #gate .pw-cursor.hidden { display:none; }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
     @media (max-width:600px) {
-      #gate .card { width:61.4vw; align-items:flex-start; }
-      #gate #wrap { width:81.8vw !important; margin-top:7.3vh !important;
-                    margin-left:calc(-10.1vw) !important; }
+      /* The frame has the bar wider than the photo and pushed left; one
+         width for both reads better and holds at any phone size. */
+      #gate .card { width:61.4vw; }
+      #gate #wrap { margin-top:7.3vh !important; }
       /* 16px, not 15: iOS Safari zooms the whole page in when you focus a
          field smaller than that, and never zooms back out — which is how the
          body copy ended up cut off with the page scrolled sideways. */
-      #gate .pw-input, #gate .pw-ph { font-size:16px; }
+      /* 16px, not 15: iOS Safari zooms the whole page in when you focus a
+         field smaller than that. The prompt is free to scale, though — it is
+         what has to share the bar with the arrow, and on a narrow phone
+         holding it at 16 leaves the two almost touching. */
+      #gate .pw-input { font-size:16px; }
+      #gate .pw-ph    { font-size:clamp(11px, 4vw, 16px); }
     }
 """
 
@@ -521,12 +532,16 @@ def rows(items):
     return "\n".join(out)
 
 
-def section(title, body, note=None, extra_class=""):
+def section(title, body, note=None, extra_class="", cased=False):
+    """`cased` keeps the title exactly as written. Every page title is set in
+    caps by the stylesheet, which is right for ITINERARY and RECOMMENDATIONS
+    and wrong for FAQs — the s is lower case in the acronym."""
     cls = f"section {extra_class}".strip()
+    tcls = "section__title section__title--cased" if cased else "section__title"
     note_html = f'\n      <p class="section__note">{note}</p>' if note else ""
     return f"""  <main class="{cls}">
     <div class="wrap">
-      <h2 class="section__title">{title}</h2>{note_html}
+      <h2 class="{tcls}">{title}</h2>{note_html}
 {body}
     </div>
   </main>"""
@@ -536,8 +551,8 @@ def faq_section():
     """The save-the-date page answers only what can honestly be answered
     before invitations go out; the phase-2 page answers everything."""
     if FULL:
-        return section("FAQs", rows(C.FAQS))
-    return section("FAQs", rows(C.FAQS_SHORT))
+        return section("FAQs", rows(C.FAQS), cased=True)
+    return section("FAQs", rows(C.FAQS_SHORT), cased=True)
 
 
 def rsvp_form():
@@ -802,7 +817,7 @@ def build(preview=False):
         page("faqs.html", "FAQs &mdash; E &amp; L Wedding", faq_section())
         live = FULL_PAGES
     else:
-        page("home.html", C.META["title"],
+        page("home.html", C.META["tab_title"],
              faq_section(), tall=True, save_the_date=True)
         live = SAVE_THE_DATE_PAGES
 

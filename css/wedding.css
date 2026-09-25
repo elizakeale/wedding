@@ -494,6 +494,8 @@ html { scroll-padding-top: var(--hdr-h); }
    it, so the bar and the photo strip behind it are the same band. */
 .phase2 .banner--short { min-height: var(--hdr-h); }   /* 156px */
 
+.section__title--cased { text-transform: none !important; }
+
 .section__title {
   text-transform: uppercase;
   font-size: 2.5rem;

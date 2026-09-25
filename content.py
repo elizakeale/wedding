@@ -27,7 +27,7 @@ PHASE = "save-the-date"
 
 # Bump this when css/wedding.css or the favicons change, so browsers don't
 # serve a stale copy.
-ASSET_VERSION = 52
+ASSET_VERSION = 55
 
 # The page the password gate sends people to.
 ENTRY_PAGE = "home.html"
@@ -52,7 +52,8 @@ SITE_URL = "https://lucasandeliza.com"
 META = {
     # What a link preview (iMessage, WhatsApp, Slack) shows: title on the
     # first line, description underneath.
-    "title": "E &amp; L Wedding, Save The Date",
+    "title": "E &amp; L Wedding, Save The Date",   # link previews
+    "tab_title": "E &amp; L | Save The Date",      # the browser tab
     "description": "10.22.2027",
     "image": "og-image.jpg",     # 1200x630, generated from surfing.jpg
     "image_w": "1200",
@@ -141,7 +142,7 @@ _Q_DATES = (
     ["If you\u2019re planning to come for about a week (we hope you do if you\u2019re flying "
      "all the way!), then we recommend aiming to arrive the weekend before, arriving "
      "October 15 weekend and flying out Sunday, October 24 onwards. We will be planning "
-     "completely optional events throughout October 16 through 23. We recommend visiting the "
+     "completely optional events throughout the week. We recommend visiting the "
      "island for at least 6 nights, but the sweet spot is 10&ndash;12 nights if you plan to "
      "island hop."],
 )

@@ -13,7 +13,7 @@
        reloading drops you into the middle of it. In the head so it is set
        before the browser gets to restore anything; anchors still work. -->
   <script>if ('scrollRestoration' in history) history.scrollRestoration = 'manual';</script>
-  <title>E &amp; L Wedding, Save The Date</title>
+  <title>E &amp; L | Save The Date</title>
   <meta name="description" content="10.22.2027" />
   <meta name="robots" content="noindex, nofollow" />
   <meta property="og:type" content="website" />
@@ -39,13 +39,13 @@
        the picture carrying on rather than a band across it. js/site.js
        swaps it for the olive once the hero has scrolled away. -->
   <meta name="theme-color" content="#ccb8be" />
-  <link rel="icon" href="favicon.ico?v=52" sizes="any" />
-  <link rel="icon" type="image/png" href="favicon.png?v=52" sizes="180x180" />
-  <link rel="apple-touch-icon" href="favicon.png?v=52" />
+  <link rel="icon" href="favicon.ico?v=55" sizes="any" />
+  <link rel="icon" type="image/png" href="favicon.png?v=55" sizes="180x180" />
+  <link rel="apple-touch-icon" href="favicon.png?v=55" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,300;1,300&family=Cormorant+Upright:wght@300&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/wedding.css?v=52" />
+  <link rel="stylesheet" href="css/wedding.css?v=55" />
   <style>
     #gate, #gate * { margin:0; padding:0; box-sizing:border-box; }
     html:not(.unlocked), html:not(.unlocked) body {
@@ -57,6 +57,7 @@
             display:flex; align-items:center; justify-content:center; }
     #gate .bg { position:absolute; inset:0; width:100%; height:100%;
                 object-fit:cover; object-position:center; }
+    #gate { --pw-arrow: 3.25rem; }   /* room reserved at the end of the bar */
     #gate .card { position:relative; z-index:2; display:flex; flex-direction:column;
                   align-items:center; width:clamp(200px, 22%, 329px); }
     #gate .photo { width:100%; aspect-ratio:329/215; object-fit:cover; display:block; }
@@ -65,7 +66,10 @@
       background:#ffe993; border:none; outline:none;
       font-family:'Cormorant Upright',serif; font-weight:300;
       font-size:15px; letter-spacing:1px; color:#7f214d; text-align:center;
-      padding:0 12px; -webkit-appearance:none; appearance:none;
+      /* Asymmetric on purpose: the text centres in what is left after the
+         arrow's column, so the two can never collide however narrow the
+         bar gets. */
+      padding:0 var(--pw-arrow) 0 0.75rem; -webkit-appearance:none; appearance:none;
       border-radius:0; caret-color:transparent;
     }
     /* The placeholder is a real element rather than ::placeholder, so the
@@ -78,6 +82,7 @@
       pointer-events:none; user-select:none;
       font-family:'Cormorant Upright',serif; font-weight:300;
       font-size:15px; letter-spacing:1px; color:#7f214d;
+      padding-right:var(--pw-arrow);
     }
     #gate .pw-ph.hidden { display:none; }
     #gate .error {
@@ -99,8 +104,8 @@
        rendered size, so nothing scales the line. Full field height, so the
        tap target is the whole right end of the bar and not just the glyph. */
     #gate .pw-go {
-      position:absolute; right:4px; top:0; z-index:3;
-      height:100%; padding:0 10px;
+      position:absolute; right:0; top:0; z-index:3;
+      height:100%; width:var(--pw-arrow); justify-content:center; padding:0;
       display:flex; align-items:center;
       background:none; border:none; cursor:pointer;
       -webkit-appearance:none; appearance:none;
@@ -120,13 +125,19 @@
     #gate .pw-cursor.hidden { display:none; }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
     @media (max-width:600px) {
-      #gate .card { width:61.4vw; align-items:flex-start; }
-      #gate #wrap { width:81.8vw !important; margin-top:7.3vh !important;
-                    margin-left:calc(-10.1vw) !important; }
+      /* The frame has the bar wider than the photo and pushed left; one
+         width for both reads better and holds at any phone size. */
+      #gate .card { width:61.4vw; }
+      #gate #wrap { margin-top:7.3vh !important; }
       /* 16px, not 15: iOS Safari zooms the whole page in when you focus a
          field smaller than that, and never zooms back out — which is how the
          body copy ended up cut off with the page scrolled sideways. */
-      #gate .pw-input, #gate .pw-ph { font-size:16px; }
+      /* 16px, not 15: iOS Safari zooms the whole page in when you focus a
+         field smaller than that. The prompt is free to scale, though — it is
+         what has to share the bar with the arrow, and on a narrow phone
+         holding it at 16 leaves the two almost touching. */
+      #gate .pw-input { font-size:16px; }
+      #gate .pw-ph    { font-size:clamp(11px, 4vw, 16px); }
     }
   </style>
   <script>
@@ -177,7 +188,7 @@
 
   <main class="section">
     <div class="wrap">
-      <h2 class="section__title">FAQs</h2>
+      <h2 class="section__title section__title--cased">FAQs</h2>
       <div class="rows">
         <div class="row">
           <div class="row__rule"></div>
@@ -197,7 +208,7 @@
           <div class="row__rule"></div>
           <div class="row__body">
             <h3 class="row__label">What dates do you recommend booking our trip for?</h3>
-            <p class="row__text">If you’re planning to come for about a week (we hope you do if you’re flying all the way!), then we recommend aiming to arrive the weekend before, arriving October 15 weekend and flying out Sunday, October 24 onwards. We will be planning completely optional events throughout October 16 through 23. We recommend visiting the island for at least 6 nights, but the sweet spot is 10&ndash;12 nights if you plan to island hop.</p>
+            <p class="row__text">If you’re planning to come for about a week (we hope you do if you’re flying all the way!), then we recommend aiming to arrive the weekend before, arriving October 15 weekend and flying out Sunday, October 24 onwards. We will be planning completely optional events throughout the week. We recommend visiting the island for at least 6 nights, but the sweet spot is 10&ndash;12 nights if you plan to island hop.</p>
           </div>
         </div>
         <div class="row">
@@ -232,8 +243,8 @@
     </div>
   </footer>
   </div>
-  <script src="js/config.js?v=52"></script>
-  <script src="js/site.js?v=52"></script>
-  <script src="js/gate.js?v=52"></script>
+  <script src="js/config.js?v=55"></script>
+  <script src="js/site.js?v=55"></script>
+  <script src="js/gate.js?v=55"></script>
 </body>
 </html>
