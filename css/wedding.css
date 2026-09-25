@@ -921,6 +921,21 @@ html { scroll-padding-top: var(--hdr-h); }
      frame. The wordmark and the two lines under it follow from it. */
   .pageheader--stdate { --hero-frac: 0.377; }
 
+  /* The bar's photo strip is its own crop in the frame, not a slice of the
+     hero's: bar frame 78:243 draws the image 1493 wide at x=-307 in a 402
+     frame, so it is scaled up about 3.7x and pulled left, which is what puts
+     the dark petal behind the wordmark. Percentages rather than pixels so it
+     holds at any phone width.
+       1493 / 402       = 371.4%
+       307 / (1493-402) = 28.14%
+     Centred vertically, which is how Figma crops a fill into a strip that
+     shallow — and it is what puts the petal in the band rather than the pale
+     linen from the top of the photograph. */
+  .pageheader__bg {
+    background-size: 371.4% auto;
+    background-position: 28.14% center;
+  }
+
   /* The header sets the wordmark's size by calc, which outranks the plain
      .wordmark__name rule below — so the mobile sizes have to be set as the
      header's own tokens or the bar keeps the desktop 90px. */
@@ -957,9 +972,16 @@ html { scroll-padding-top: var(--hdr-h); }
   .pageheader--stdate .pageheader__wordmark > .meta .meta__date  { order: 2; }
   .pageheader--stdate .pageheader__wordmark > .meta .meta__place { order: 3; flex-basis: 100%; }
 
-  /* 69px: the frame has the place line ending at 389 and E & L starting at
-     460. The label and tagline follow from it. */
-  .pageheader--stdate .wordmark__name { order: 2; display: block; margin-top: 4.3125rem; }
+  /* 69px in the hero — the frame has the place line ending at 389 and E & L
+     starting at 460 — but 11px once settled, where the bar frame (78:243)
+     puts the place at 50 and E & L at 80. It has to travel between the two
+     with everything else, or the 69px hero gap pushes the wordmark straight
+     out of the bottom of a 156px bar. */
+  .pageheader--stdate .wordmark__name {
+    order: 2;
+    display: block;
+    margin-top: calc(4.3125rem + (0.6875rem - 4.3125rem) * var(--hdr-p));
+  }
   .pageheader--stdate .stdate__label  { order: 3; }
   .pageheader--stdate .stdate__tagline { order: 4; }
 

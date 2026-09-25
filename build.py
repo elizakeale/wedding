@@ -116,9 +116,14 @@ def social_meta(page=""):
   <meta name="twitter:title" content="{m['title']}" />
   <meta name="twitter:description" content="{m['description']}" />
   <meta name="twitter:image" content="{base}/{m['image']}" />
-  <!-- No theme-color on purpose. With one set, Safari paints the strip
-       behind the status bar that flat colour; without it, it tints from the
-       page, which at the top of every page is the photo. -->"""
+  <!-- The strips behind the status bar and the toolbar. iOS Safari never
+       renders page content there, so these can only ever be a flat colour:
+       this one if it is set, the body's background if it is not. #ccb8be is
+       the measured average of the photograph exactly where the status bar
+       falls on a 402px crop — so at the top of the page the strip reads as
+       the picture carrying on rather than a band across it. js/site.js
+       swaps it for the olive once the hero has scrolled away. -->
+  <meta name="theme-color" content="#ccb8be" />"""
 
 
 # ---------------------------------------------------------------------------

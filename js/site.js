@@ -56,6 +56,21 @@
   // at the moment they were supposed to be at rest.
   var HOLD = 0.35;
 
+  /* iOS Safari fills the strips behind the status bar and the toolbar with a
+   * flat colour — it will not render the page up there, so the photograph
+   * can never actually run into them. The best available is to match: the
+   * photo's own tone while the hero is what's on screen, the olive once the
+   * content is. Safari picks up the change live. */
+  var themeMeta = document.querySelector('meta[name="theme-color"]');
+  var TONE_HERO = '#ccb8be';   // the photo where the status bar falls
+  var TONE_PAGE = '#bcbc49';   // the olive
+
+  function tone(heroInView) {
+    if (!themeMeta) return;
+    var want = heroInView ? TONE_HERO : TONE_PAGE;
+    if (themeMeta.content !== want) themeMeta.content = want;
+  }
+
   // Short-banner pages are the bar from the start — there is no hero for
   // them to come out of, and the wordmark is a link immediately.
   if (!isTall) header.classList.add('is-bar');
@@ -140,6 +155,7 @@
     if (!isTall) return;
 
     if (!ready) {                 // hero not measurable yet — stay in it
+      tone(true);
       root.style.setProperty('--hdr-p', '0');
       root.style.setProperty('--hdr-bg', '0');
       root.style.setProperty('--hdr-sub', '1');
@@ -178,6 +194,8 @@
     // The wordmark is only a link once it has arrived in the bar. Above the
     // fold it is the page's title and shouldn't behave like navigation.
     header.classList.toggle('is-bar', p > 0.995);
+
+    tone(y < settleAt);
   }
 
   function onScroll() {
