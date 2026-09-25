@@ -370,6 +370,15 @@ html { scroll-padding-top: var(--hdr-h); }
   background: currentColor;
   opacity: 0.85;
   flex: none;
+  /* align-items: center centres it against the text's LINE BOX, not the
+     glyphs — Cormorant's normal line-height carries noticeably more room
+     above the caps than below them (room reserved for accents this all-caps,
+     no-descender line never uses), so the line sits visibly above the
+     numerals and letters rather than through their middle. Nudged down by
+     eye against the rendered font; in em so it holds at any size the meta
+     line is used at. */
+  position: relative;
+  top: 0.2em;
 }
 
 /* ---------- Interior page wordmark ---------- */
