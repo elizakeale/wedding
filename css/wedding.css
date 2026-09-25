@@ -58,14 +58,16 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-/* The hero's own base colour, not the site's green. Mobile Safari fills
-   the strip behind the status bar with the page's background, and green
-   up there read as a band interrupting the photo. body still paints the
-   green over its own box, so only the strip above the page changes. */
+/* Mobile Safari fills the strip behind the status bar from the PAGE's
+   background colour — the body's property, not what is actually painted at
+   the top, and not <meta name="theme-color">, which it ignored here. So the
+   green cannot live on the body: it goes on the blocks that are green, and
+   the document's own colour is the hero's base. The content is contiguous
+   from the hero to the end of the footer, so nothing pink shows through. */
 html { -webkit-text-size-adjust: 100%; background: #efe6e6; }
 
 body {
-  background: var(--olive);
+  background: #efe6e6;
   color: var(--white);
   font-family: 'Cormorant Upright', 'Cormorant Garamond', Georgia, serif;
   font-weight: 300;
@@ -112,8 +114,12 @@ img { display: block; max-width: 100%; }
    in rem, because rem tracks viewport *width*: on a wide, short window a
    rem-positioned element keeps sliding down while the clamped hero does not,
    which is what pushed the wordmark onto the cue. */
+/* lvh, not svh: the hero has to fill the viewport with the browser's
+   toolbars HIDDEN, or a scroll that hides them reveals a band of green under
+   the photo. The cue is kept above the fold separately, by lifting it the
+   height of the toolbars — see .banner--tall .banner__inner below. */
 :root { --hero-h: 62.9375rem; }                                    /* 1007px */
-@supports (height: 100svh) { :root { --hero-h: min(62.9375rem, 100svh); } }
+@supports (height: 100lvh) { :root { --hero-h: min(62.9375rem, 100lvh); } }
 
 .banner--tall  { min-height: var(--hero-h); }
 .banner--short { min-height: 16.25rem; }    /* 260px */
@@ -129,7 +135,16 @@ img { display: block; max-width: 100%; }
   padding-bottom: 2.75rem;  /* 44px */
 }
 
+/* The hero is as tall as the viewport gets; the cue has to sit inside the
+   viewport at its SMALLEST. The difference is exactly the toolbar height, so
+   adding it to the padding floats the cue clear of them. Zero on a desktop,
+   where the two heights are the same. */
 .banner--tall .banner__inner { padding-bottom: 4.125rem; }
+@supports (height: 100lvh) {
+  .banner--tall .banner__inner {
+    padding-bottom: calc(4.125rem + (100lvh - 100svh));
+  }
+}
 
 /* Phase 2 tall hero: the nav and wordmark have moved into the fixed header,
    so the cue is the only thing left in here. Keep it at the bottom. */
@@ -465,6 +480,9 @@ html { scroll-padding-top: var(--hdr-h); }
 }
 
 /* ---------- Sections ---------- */
+
+/* The green the body used to carry — see the note on body above. */
+.section, .footer { background: var(--olive); }
 
 .section { padding: 5.25rem 0 3.75rem; }
 
@@ -842,8 +860,8 @@ html { scroll-padding-top: var(--hdr-h); }
      Set on --hero-h rather than on .banner--tall, so everything derived from
      the hero's height agrees with the hero's actual height. Overriding only
      the banner left the two 27px apart on a tall phone. */
-  :root { --hero-h: 54.5625rem; }  /* 873px */
-  @supports (height: 100svh) { :root { --hero-h: min(54.5625rem, 100svh); } }
+  :root { --hero-h: 54.5625rem; }  /* 873px, the mobile frame */
+  @supports (height: 100lvh) { :root { --hero-h: min(54.5625rem, 100lvh); } }
   .banner--short { min-height: 11.875rem; }
 
   /* On a 402px-wide frame Figma scales the photo to 1311px and pushes it to
@@ -853,6 +871,11 @@ html { scroll-padding-top: var(--hdr-h); }
 
   .banner__inner { padding-top: 1.5rem; padding-bottom: 1.75rem; }
   .banner--tall .banner__inner { padding-bottom: 2rem; }
+  @supports (height: 100lvh) {
+    .banner--tall .banner__inner {
+      padding-bottom: calc(2rem + (100lvh - 100svh));
+    }
+  }
 
   .nav { font-size: 0.875rem; letter-spacing: 0.04375rem; gap: 0.625rem; }
 

@@ -46,34 +46,68 @@
 
   setTimeout(function () { input.focus(); }, 100);
 
+  /* The field shows one bullet per real character, so an index into the
+   * displayed value is the same index into realPw. Everything below works
+   * on those indices rather than assuming the caret is at the end — which is
+   * what stopped select-all, and every mid-word edit, from behaving. */
+  function caret() {
+    return { s: input.selectionStart || 0, e: input.selectionEnd || 0 };
+  }
+
+  function show(revealAt) {
+    var n = realPw.length;
+    input.value = revealAt > 0
+      ? '•'.repeat(revealAt - 1) + realPw.charAt(revealAt - 1) +
+        '•'.repeat(n - revealAt)
+      : '•'.repeat(n);
+    if (cursor) cursor.classList.toggle('hidden', n > 0);
+  }
+
+  /* Re-masking must not move the caret or drop a selection: the mask fires
+   * half a second after the last keystroke, which is long enough to land in
+   * the middle of someone pressing Cmd+A. */
   function mask() {
-    input.value = '•'.repeat(realPw.length);
-    input.setSelectionRange(input.value.length, input.value.length);
+    var c = caret();
+    show(0);
+    try { input.setSelectionRange(c.s, c.e); } catch (err) {}
   }
 
   input.addEventListener('keydown', function (e) {
     if (e.key === 'Enter') { e.preventDefault(); check(); return; }
-    if (e.key === 'Backspace') {
-      e.preventDefault();
-      if (realPw.length > 0) {
-        realPw = realPw.slice(0, -1);
-        clearTimeout(maskTimer);
-        mask();
-      }
-      if (realPw.length === 0 && cursor) cursor.classList.remove('hidden');
+    // Cmd/Ctrl/Alt chords are the browser's: select all, copy, word-delete.
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+    if (e.key !== 'Backspace' && e.key !== 'Delete') return;
+    e.preventDefault();
+
+    var c = caret(), at = c.s;
+    if (c.e > c.s) {                                  // a selection: drop it
+      realPw = realPw.slice(0, c.s) + realPw.slice(c.e);
+    } else if (e.key === 'Backspace' && c.s > 0) {
+      realPw = realPw.slice(0, c.s - 1) + realPw.slice(c.s);
+      at = c.s - 1;
+    } else if (e.key === 'Delete' && c.s < realPw.length) {
+      realPw = realPw.slice(0, c.s) + realPw.slice(c.s + 1);
     }
+
+    clearTimeout(maskTimer);
+    show(0);
+    input.setSelectionRange(at, at);
   });
 
   input.addEventListener('keypress', function (e) {
     if (e.key === 'Enter') return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
     e.preventDefault();
     var ch = e.key;
     if (ch.length !== 1) return;
     ch = ch.toLowerCase();          // codes and the password are all lower case
-    realPw += ch;
-    input.value = '•'.repeat(realPw.length - 1) + ch;   // reveal the last one briefly
-    input.setSelectionRange(input.value.length, input.value.length);
-    if (cursor) cursor.classList.add('hidden');
+
+    var c = caret();
+    realPw = realPw.slice(0, c.s) + ch + realPw.slice(c.e);
+    var at = c.s + 1;
+    show(at);                       // the character just typed shows briefly
+    input.setSelectionRange(at, at);
     clearTimeout(maskTimer);
     maskTimer = setTimeout(mask, 500);
   });
