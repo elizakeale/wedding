@@ -157,7 +157,9 @@ GATE_STYLE = """
             display:flex; align-items:center; justify-content:center; }
     #gate .bg { position:absolute; inset:0; width:100%; height:100%;
                 object-fit:cover; object-position:center; }
-    #gate { --pw-arrow: 3.25rem; }   /* room reserved at the end of the bar */
+    /* The arrow's column. It scales with the bar so a narrow phone keeps
+       the same breathing room a wide one has. */
+    #gate { --pw-arrow: clamp(1.75rem, 9.5vw, 3.25rem); }
     #gate .card { position:relative; z-index:2; display:flex; flex-direction:column;
                   align-items:center; width:clamp(200px, 22%, 329px); }
     #gate .photo { width:100%; aspect-ratio:329/215; object-fit:cover; display:block; }
@@ -166,10 +168,9 @@ GATE_STYLE = """
       background:#ffe993; border:none; outline:none;
       font-family:'Cormorant Upright',serif; font-weight:300;
       font-size:15px; letter-spacing:1px; color:#7f214d; text-align:center;
-      /* Asymmetric on purpose: the text centres in what is left after the
-         arrow's column, so the two can never collide however narrow the
-         bar gets. */
-      padding:0 var(--pw-arrow) 0 0.75rem; -webkit-appearance:none; appearance:none;
+      /* Reserved on BOTH sides, so what is typed stays centred in the bar
+         and still cannot run under the arrow. */
+      padding:0 var(--pw-arrow); -webkit-appearance:none; appearance:none;
       border-radius:0; caret-color:transparent;
     }
     /* The placeholder is a real element rather than ::placeholder, so the
@@ -182,7 +183,6 @@ GATE_STYLE = """
       pointer-events:none; user-select:none;
       font-family:'Cormorant Upright',serif; font-weight:300;
       font-size:15px; letter-spacing:1px; color:#7f214d;
-      padding-right:var(--pw-arrow);
     }
     #gate .pw-ph.hidden { display:none; }
     #gate .error {
@@ -237,7 +237,10 @@ GATE_STYLE = """
          what has to share the bar with the arrow, and on a narrow phone
          holding it at 16 leaves the two almost touching. */
       #gate .pw-input { font-size:16px; }
-      #gate .pw-ph    { font-size:clamp(11px, 4vw, 16px); }
+      /* Centred in the bar AND clear of the arrow means the prompt has to
+         give: at 16px there is only about 5px between the two on a phone.
+         Tuned so the gap lands near 15px at every width. */
+      #gate .pw-ph    { font-size:clamp(10px, 3.5vw, 16px); }
     }
 """
 
