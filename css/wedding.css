@@ -459,17 +459,17 @@ html { scroll-padding-top: var(--hdr-h); }
      hero. filter rather than opacity so it multiplies with the pulse
      keyframes instead of fighting them for the same property. */
   filter: opacity(var(--hdr-cue, 1));
-  /* Same motion and cadence as the Studio Fritz hero cue: a single pulse in
-     the front slice of a 5s cycle, then it holds at rest. Timing copied from
-     that stylesheet unchanged (5s / ease-out / 0.6s delay, keyframes at
-     0 / 14.4% / 36%). Fritz translates -50% because it is absolutely
-     positioned; this one is a flex child, so it scales only. */
-  animation: scrollCuePulse 5s ease-out 0.6s infinite both;
+  /* Started as the Studio Fritz hero cue's motion (a single grow-pulse in a
+     5s cycle). People weren't scrolling past it, so it now shrinks instead of
+     growing — a bar that's about to disappear reads as "look, then go" more
+     than one that swells — and runs twice as often (2.5s cycle, delay halved
+     to match) to catch the eye sooner. Same keyframe shape otherwise. */
+  animation: scrollCuePulse 2.5s ease-out 0.3s infinite both;
 }
 
 @keyframes scrollCuePulse {
   0%    { opacity: 0.75; transform: scaleY(1); }
-  14.4% { opacity: 1;    transform: scaleY(1.25); }
+  14.4% { opacity: 1;    transform: scaleY(0.5); }
   36%   { opacity: 0.75; transform: scaleY(1); }
   100%  { opacity: 0.75; transform: scaleY(1); }
 }
