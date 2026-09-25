@@ -928,12 +928,13 @@ html { scroll-padding-top: var(--hdr-h); }
      holds at any phone width.
        1493 / 402       = 371.4%
        307 / (1493-402) = 28.14%
-     Centred vertically, which is how Figma crops a fill into a strip that
-     shallow — and it is what puts the petal in the band rather than the pale
-     linen from the top of the photograph. */
+     Recovered by matching the frame's render against orchid.jpg rather than
+     read off the node, because the crop lives in Figma's image fill and the
+     node only reports the box. Source rect x374 y144, 340 wide — the tulle
+     fold, with the petal entering at the right. */
   .pageheader__bg {
-    background-size: 371.4% auto;
-    background-position: 28.14% center;
+    background-size: 376.5% auto;
+    background-position: 39.79% 19.81%;
   }
 
   /* The header sets the wordmark's size by calc, which outranks the plain
@@ -942,8 +943,9 @@ html { scroll-padding-top: var(--hdr-h); }
   .pageheader {
     --hdr-word-hi:  3rem;      /* 48px, the mobile frame's hero wordmark */
     --hdr-track-hi: 0.15rem;
-    --hdr-word-lo:  1.75rem;   /* 28px, settled */
-    --hdr-track-lo: 0.0875rem;
+    --hdr-word-lo:  2.5rem;    /* 40px settled — the bar frame (78:248) and
+                                  the footer wordmark are the same size */
+    --hdr-track-lo: 0.125rem;
   }
 
   .pageheader--stdate {
@@ -957,6 +959,10 @@ html { scroll-padding-top: var(--hdr-h); }
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    /* 28px clear of where the nav would be in the hero, nothing in the bar:
+       the mobile bar has no nav, and the frame (78:243) starts the date at
+       24 — which is the header's own padding and nothing more. */
+    margin-top: calc(1.75rem * (1 - var(--hdr-p)));
   }
 
   .pageheader--stdate .pageheader__wordmark > .meta {

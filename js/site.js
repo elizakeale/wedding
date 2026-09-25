@@ -103,8 +103,16 @@
       // assumed, because phase 2 has the nav above it and the save-the-date
       // header does not. offsetTop ignores the transform, which is what we
       // want: this is the flow position, not the travelled one.
+      //
+      // --hdr-p is pinned to 0 for the read: the offset itself now travels
+      // with p on mobile (the wordmark's margin closes up as the bar forms),
+      // so measuring mid-scroll would otherwise read a shrunken one and put
+      // the hero wordmark in the wrong place.
       var word = header.querySelector('.pageheader__wordmark');
+      var heldP = root.style.getPropertyValue('--hdr-p');
+      root.style.setProperty('--hdr-p', '0');
       var flow = word ? word.offsetTop : 0;
+      if (heldP) root.style.setProperty('--hdr-p', heldP);
 
       travel = banner.offsetHeight * frac - flow;
       if (!(travel > 1)) travel = 388;
