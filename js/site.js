@@ -81,7 +81,10 @@
 
       travel = banner.offsetHeight * frac - flow;
       if (!(travel > 1)) travel = 388;
-      root.style.setProperty('--hdr-travel', travel.toFixed(1) + 'px');
+      // On the header, not the root: the stylesheet's own --hdr-travel is
+      // declared there (it needs --hero-frac, which is per variant), and a
+      // value inherited from the root would lose to it.
+      header.style.setProperty('--hdr-travel', travel.toFixed(1) + 'px');
     } else {
       travel = 0;
     }

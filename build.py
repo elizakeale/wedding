@@ -191,6 +191,26 @@ GATE_STYLE = """
       80%{transform:translateX(5px)}
     }
     #gate .shake { animation:shake 0.38s ease; }
+    /* Submit, for anyone who doesn't think to press Enter. Drawn rather than
+       typed so the 0.5 stroke is exactly 0.5 — the viewBox is 1:1 with the
+       rendered size, so nothing scales the line. Full field height, so the
+       tap target is the whole right end of the bar and not just the glyph. */
+    #gate .pw-go {
+      position:absolute; right:4px; top:0; z-index:3;
+      height:100%; padding:0 10px;
+      display:flex; align-items:center;
+      background:none; border:none; cursor:pointer;
+      -webkit-appearance:none; appearance:none;
+    }
+    #gate .pw-go svg { display:block; overflow:visible;
+      transition:transform 0.15s ease; }
+    #gate .pw-go path { fill:none; stroke:#7f214d; stroke-width:0.5; }
+    #gate .pw-go:hover  svg { transform:translateX(2px); }
+    #gate .pw-go:active svg { transform:translateX(3px); }
+    #gate .pw-go:focus-visible { outline:1px solid #7f214d; outline-offset:-3px; }
+    @media (prefers-reduced-motion: reduce) {
+      #gate .pw-go svg { transition:none; }
+    }
     #gate .pw-cursor { display:inline-block; width:1px; height:1em;
       background:#7f214d; margin-left:2px; vertical-align:middle;
       animation:blink 1.1s ease-in-out infinite; }
@@ -217,6 +237,11 @@ def gate_markup(up=""):
         <input id="input" class="pw-input" type="password" aria-label="Password" autocomplete="off"
                autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="text" />
         <span class="pw-ph" id="ph" aria-hidden="true">ENTER PASSWORD<i class="pw-cursor" id="cursor"></i></span>
+        <button type="button" class="pw-go" id="go" aria-label="Enter">
+          <svg width="26" height="12" viewBox="0 0 26 12" aria-hidden="true" focusable="false">
+            <path d="M0 6h25M19.5 0.5L25 6l-5.5 5.5" />
+          </svg>
+        </button>
       </div>
       <p id="error" class="error">Incorrect password &mdash; please try again.</p>
     </div>

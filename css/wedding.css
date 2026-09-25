@@ -164,13 +164,9 @@ img { display: block; max-width: 100%; }
 
   --hdr-h:          9.75rem;     /* 156px */
 
-  /* The hero wordmark sits 46.08% down the hero (464 of 1007), so the travel
-     is measured against the hero's real height, not a fixed rem — see the
-     note on --hero-h above. The 5rem subtrahend is the wordmark's own flow
-     offset inside the header at p=0 (measured: 79.97px), so subtracting it
-     makes the rendered top land exactly on 46.077% of the hero. js/site.js
-     overrides this with a px value, so this calc is the no-JS path. */
-  --hdr-travel:     calc(var(--hero-h) * 0.46077 - 5rem);
+  /* --hdr-travel lives on .pageheader, not here: it is derived per variant
+     from --hero-frac and --hdr-flow, which differ between phase 2 and the
+     save-the-date, and between desktop and mobile. See that rule. */
 
   --hdr-nav-top-hi: 1.0625rem;   /* 17px, hero */
   --hdr-nav-top-lo: 1.5rem;      /* 24px, settled */
@@ -270,16 +266,27 @@ img { display: block; max-width: 100%; }
 
 
 
-/* Where the hero wordmark sits, as a fraction of the hero height. js/site.js
-   reads this so the number lives with the other frame measurements rather
-   than inside the script. */
-.pageheader { --hero-frac: 0.46077; }   /* 464/1007, phase 2 */
+/* Where the hero wordmark sits, as a fraction of the hero height, and the
+   wordmark's own flow offset inside the header. js/site.js reads both so the
+   numbers live with the other frame measurements rather than inside the
+   script — and computes --hdr-travel from them on the header itself.
+
+   This calc is the pre-JS value, and it has to be RIGHT, not merely present:
+   it is what the first paint uses. It used to hardcode phase 2's fraction
+   and flow for every variant, so a phone drew the hero wordmark 84px too
+   high and then dropped it into place once the script ran. */
+.pageheader {
+  --hero-frac:  0.46077;                 /* 464/1007, phase 2 */
+  --hdr-flow:   5rem;                    /* nav above the wordmark */
+  --hdr-travel: calc(var(--hero-h) * var(--hero-frac) - var(--hdr-flow));
+}
 
 /* ---------- Save the date: the same header, without the nav ---------- */
 
 /* No nav above it, so the wordmark is the first thing in the bar and starts
    at the same inset the nav would have had. */
-.pageheader--stdate { --hero-frac: 0.4121; }   /* 415/1007 */
+.pageheader--stdate { --hero-frac: 0.4121;   /* 415/1007 */
+                      --hdr-flow:  2.8125rem; }  /* 45px: no nav above it */
 
 /* Name and date/place share a line so the pair can shrink into the bar as
    one; the label and tagline take a full row each beneath them. */
@@ -830,11 +837,13 @@ html { scroll-padding-top: var(--hdr-h); }
      shorter than its screen once Safari's chrome is on it — an iPhone 17 is
      874 tall and shows about 740. Clamping to svh (the viewport with the
      browser UI expanded, i.e. the smallest it gets) keeps the scroll cue
-     above the fold instead of one bar's-worth below it. */
-  .banner--tall  { min-height: 54.5625rem; }  /* 873px */
-  @supports (height: 100svh) {
-    .banner--tall { min-height: min(54.5625rem, 100svh); }
-  }
+     above the fold instead of one bar's-worth below it.
+
+     Set on --hero-h rather than on .banner--tall, so everything derived from
+     the hero's height agrees with the hero's actual height. Overriding only
+     the banner left the two 27px apart on a tall phone. */
+  :root { --hero-h: 54.5625rem; }  /* 873px */
+  @supports (height: 100svh) { :root { --hero-h: min(54.5625rem, 100svh); } }
   .banner--short { min-height: 11.875rem; }
 
   /* On a 402px-wide frame Figma scales the photo to 1311px and pushes it to

@@ -90,6 +90,14 @@
     if (cursor) cursor.classList.toggle('hidden', realPw.length > 0);
   });
 
+  /* The arrow does what Enter does. mousedown is swallowed so the field keeps
+   * focus and the caret doesn't jump out from under someone mid-correction. */
+  var go = document.getElementById('go');
+  if (go) {
+    go.addEventListener('mousedown', function (e) { e.preventDefault(); });
+    go.addEventListener('click', function (e) { e.preventDefault(); check(); });
+  }
+
   function typed() {
     var v = realPw || input.value || '';
     return v.replace(/•/g, '').trim().toLowerCase();
