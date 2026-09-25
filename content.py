@@ -27,7 +27,7 @@ PHASE = "save-the-date"
 
 # Bump this when css/wedding.css or the favicons change, so browsers don't
 # serve a stale copy.
-ASSET_VERSION = 26
+ASSET_VERSION = 27
 
 # The page the password gate sends people to.
 ENTRY_PAGE = "home.html"
@@ -50,8 +50,10 @@ ENTRY_PAGE = "home.html"
 SITE_URL = "https://lucasandeliza.com"
 
 META = {
-    "title": "Save The Date | E &amp; L Wedding",
-    "description": "10.22.2027 — Kane’ohe, O’ahu, Hawai’i",
+    # What a link preview (iMessage, WhatsApp, Slack) shows: title on the
+    # first line, description underneath.
+    "title": "E &amp; L Wedding, Save The Date",
+    "description": "10.22.2027",
     "image": "og-image.jpg",     # 1200x630, generated from surfing.jpg
     "image_w": "1200",
     "image_h": "630",

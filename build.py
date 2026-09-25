@@ -161,7 +161,18 @@ GATE_STYLE = """
       padding:0 12px; -webkit-appearance:none; appearance:none;
       border-radius:0; caret-color:transparent;
     }
-    #gate .pw-input::placeholder { color:#7f214d; opacity:1; }
+    /* The placeholder is a real element rather than ::placeholder, so the
+       caret can sit at the END of the words instead of at a guessed offset
+       from centre. Same font and size as the input, centred over it, so the
+       two read as one field. */
+    #gate .pw-ph {
+      position:absolute; inset:0; z-index:2;
+      display:flex; align-items:center; justify-content:center;
+      pointer-events:none; user-select:none;
+      font-family:'Cormorant Upright',serif; font-weight:300;
+      font-size:15px; letter-spacing:1px; color:#7f214d;
+    }
+    #gate .pw-ph.hidden { display:none; }
     #gate .error {
       font-family:'Cormorant Infant',serif; font-style:italic;
       font-size:12px; color:#fff; text-align:center;
@@ -176,16 +187,19 @@ GATE_STYLE = """
       80%{transform:translateX(5px)}
     }
     #gate .shake { animation:shake 0.38s ease; }
-    #gate .pw-cursor { position:absolute; top:50%; left:calc(50% + 74px);
-      transform:translateY(-50%); width:1px; height:15px; background:#7f214d;
-      pointer-events:none; animation:blink 1.1s ease-in-out infinite; }
+    #gate .pw-cursor { display:inline-block; width:1px; height:1em;
+      background:#7f214d; margin-left:2px; vertical-align:middle;
+      animation:blink 1.1s ease-in-out infinite; }
     #gate .pw-cursor.hidden { display:none; }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
     @media (max-width:600px) {
       #gate .card { width:61.4vw; align-items:flex-start; }
       #gate #wrap { width:81.8vw !important; margin-top:7.3vh !important;
                     margin-left:calc(-10.1vw) !important; }
-      #gate .pw-cursor { left:calc(50% + 55px); }
+      /* 16px, not 15: iOS Safari zooms the whole page in when you focus a
+         field smaller than that, and never zooms back out — which is how the
+         body copy ended up cut off with the page scrolled sideways. */
+      #gate .pw-input, #gate .pw-ph { font-size:16px; }
     }
 """
 
@@ -196,8 +210,9 @@ def gate_markup(up=""):
     <div class="card">
       <img class="photo" src="{up}surfing.jpg" alt="Eliza and Lucas" />
       <div id="wrap" class="pw-input-wrap" style="margin-top: clamp(30px, 6.3vh, 62px); position:relative; width:100%;">
-        <input id="input" class="pw-input" type="password" placeholder="ENTER PASSWORD" autocomplete="off" />
-        <span class="pw-cursor" id="cursor"></span>
+        <input id="input" class="pw-input" type="password" aria-label="Password" autocomplete="off"
+               autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="text" />
+        <span class="pw-ph" id="ph" aria-hidden="true">ENTER PASSWORD<i class="pw-cursor" id="cursor"></i></span>
       </div>
       <p id="error" class="error">Incorrect password &mdash; please try again.</p>
     </div>
@@ -750,7 +765,7 @@ def build(preview=False):
         page("faqs.html", "FAQs &mdash; E &amp; L Wedding", faq_section())
         live = FULL_PAGES
     else:
-        page("home.html", "E &amp; L Wedding &mdash; Save the Date",
+        page("home.html", C.META["title"],
              faq_section(), tall=True, save_the_date=True)
         live = SAVE_THE_DATE_PAGES
 

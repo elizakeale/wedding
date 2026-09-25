@@ -26,7 +26,10 @@
   var input  = document.getElementById('input');
   var error  = document.getElementById('error');
   var wrap   = document.getElementById('wrap');
-  var cursor = document.getElementById('cursor');
+  /* The placeholder and its caret are one element, so the caret sits at the
+   * end of the words at any font size. Falls back to the bare caret for the
+   * phase-2 gate page, which still has the older markup. */
+  var cursor = document.getElementById('ph') || document.getElementById('cursor');
   if (!input) return;
 
   var CFG = window.ELW || {};
@@ -66,6 +69,7 @@
     e.preventDefault();
     var ch = e.key;
     if (ch.length !== 1) return;
+    ch = ch.toLowerCase();          // codes and the password are all lower case
     realPw += ch;
     input.value = '•'.repeat(realPw.length - 1) + ch;   // reveal the last one briefly
     input.setSelectionRange(input.value.length, input.value.length);
@@ -78,15 +82,17 @@
     if (error) error.classList.remove('show');
     var v = input.value || '';
     if (v && v.indexOf('•') === -1) {       // paste, autofill, mobile IME
-      realPw = v;
+      realPw = v.toLowerCase();
+      input.value = realPw;
       clearTimeout(maskTimer);
       maskTimer = setTimeout(mask, 500);
     }
+    if (cursor) cursor.classList.toggle('hidden', realPw.length > 0);
   });
 
   function typed() {
     var v = realPw || input.value || '';
-    return v.replace(/•/g, '').trim();
+    return v.replace(/•/g, '').trim().toLowerCase();
   }
 
   function reject() {
@@ -104,6 +110,7 @@
     input.value = '';
     realPw = '';
     clearTimeout(maskTimer);
+    if (cursor) cursor.classList.remove('hidden');   // the prompt comes back
   }
 
   /* Two shapes of door. In phase 1 the gate is an overlay on the page it

@@ -805,7 +805,15 @@ html { scroll-padding-top: var(--hdr-h); }
     --measure:   100%;
   }
 
+  /* 873px is the mobile frame's hero, but a phone's visible viewport is
+     shorter than its screen once Safari's chrome is on it — an iPhone 17 is
+     874 tall and shows about 740. Clamping to svh (the viewport with the
+     browser UI expanded, i.e. the smallest it gets) keeps the scroll cue
+     above the fold instead of one bar's-worth below it. */
   .banner--tall  { min-height: 54.5625rem; }  /* 873px */
+  @supports (height: 100svh) {
+    .banner--tall { min-height: min(54.5625rem, 100svh); }
+  }
   .banner--short { min-height: 11.875rem; }
 
   /* On a 402px-wide frame Figma scales the photo to 1311px and pushes it to
@@ -835,6 +843,7 @@ html { scroll-padding-top: var(--hdr-h); }
     align-items: start;
     margin-top: 30vh;
   }
+  @supports (height: 100svh) { .stdate { margin-top: 26svh; } }
 
   .stdate__rest { display: none; }              /* "E & L" only, per the mobile frame */
   .stdate__name { font-size: 3.5rem; letter-spacing: 0.175rem; margin-top: 1.5rem; }
