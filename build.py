@@ -184,7 +184,7 @@ GATE_STYLE = """
     }
     #gate .pw-ph.hidden { display:none; }
     #gate .error {
-      font-family:'Cormorant Infant',serif; font-style:italic;
+      font-family:'Cormorant Upright',serif; font-style:normal;
       font-size:12px; color:#fff; text-align:center;
       margin-top:8px; min-height:18px;
       text-shadow:0 1px 3px rgba(0,0,0,0.5);
@@ -226,6 +226,10 @@ GATE_STYLE = """
       #gate .card { width:61.4vw; align-items:flex-start; }
       #gate #wrap { width:81.8vw !important; margin-top:7.3vh !important;
                     margin-left:calc(-10.1vw) !important; }
+      /* The card is left-aligned here and the bar is wider than it, so the
+         message has to take the bar's box to centre under the bar rather
+         than under the photo. */
+      #gate .error { width:81.8vw; margin-left:calc(-10.1vw); }
       /* 16px, not 15: iOS Safari zooms the whole page in when you focus a
          field smaller than that, and never zooms back out — which is how the
          body copy ended up cut off with the page scrolled sideways. */

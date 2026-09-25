@@ -39,13 +39,13 @@
        the picture carrying on rather than a band across it. js/site.js
        swaps it for the olive once the hero has scrolled away. -->
   <meta name="theme-color" content="#ccb8be" />
-  <link rel="icon" href="favicon.ico?v=59" sizes="any" />
-  <link rel="icon" type="image/png" href="favicon.png?v=59" sizes="180x180" />
-  <link rel="apple-touch-icon" href="favicon.png?v=59" />
+  <link rel="icon" href="favicon.ico?v=61" sizes="any" />
+  <link rel="icon" type="image/png" href="favicon.png?v=61" sizes="180x180" />
+  <link rel="apple-touch-icon" href="favicon.png?v=61" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,300;1,300&family=Cormorant+Upright:wght@300&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/wedding.css?v=59" />
+  <link rel="stylesheet" href="css/wedding.css?v=61" />
   <style>
     #gate, #gate * { margin:0; padding:0; box-sizing:border-box; }
     html:not(.unlocked), html:not(.unlocked) body {
@@ -84,7 +84,7 @@
     }
     #gate .pw-ph.hidden { display:none; }
     #gate .error {
-      font-family:'Cormorant Infant',serif; font-style:italic;
+      font-family:'Cormorant Upright',serif; font-style:normal;
       font-size:12px; color:#fff; text-align:center;
       margin-top:8px; min-height:18px;
       text-shadow:0 1px 3px rgba(0,0,0,0.5);
@@ -126,6 +126,10 @@
       #gate .card { width:61.4vw; align-items:flex-start; }
       #gate #wrap { width:81.8vw !important; margin-top:7.3vh !important;
                     margin-left:calc(-10.1vw) !important; }
+      /* The card is left-aligned here and the bar is wider than it, so the
+         message has to take the bar's box to centre under the bar rather
+         than under the photo. */
+      #gate .error { width:81.8vw; margin-left:calc(-10.1vw); }
       /* 16px, not 15: iOS Safari zooms the whole page in when you focus a
          field smaller than that, and never zooms back out — which is how the
          body copy ended up cut off with the page scrolled sideways. */
@@ -240,8 +244,8 @@
     </div>
   </footer>
   </div>
-  <script src="js/config.js?v=59"></script>
-  <script src="js/site.js?v=59"></script>
-  <script src="js/gate.js?v=59"></script>
+  <script src="js/config.js?v=61"></script>
+  <script src="js/site.js?v=61"></script>
+  <script src="js/gate.js?v=61"></script>
 </body>
 </html>
