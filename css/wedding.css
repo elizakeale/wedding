@@ -58,7 +58,11 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-html { -webkit-text-size-adjust: 100%; }
+/* The hero's own base colour, not the site's green. Mobile Safari fills
+   the strip behind the status bar with the page's background, and green
+   up there read as a band interrupting the photo. body still paints the
+   green over its own box, so only the strip above the page changes. */
+html { -webkit-text-size-adjust: 100%; background: #efe6e6; }
 
 body {
   background: var(--olive);
@@ -811,7 +815,8 @@ html { scroll-padding-top: var(--hdr-h); }
   line-height: 1.6;
 }
 
-.footer__contact-short { display: none; }   /* mobile only */
+/* The full contact block shows at every width. The one-line version it
+   used to collapse to below 860px is gone, and its markup with it. */
 
 .back-to-top { text-align: center; margin-top: 3.5rem; }
 
@@ -977,13 +982,4 @@ html { scroll-padding-top: var(--hdr-h); }
   .footer__contact { font-size: 0.9375rem; }
   .back-to-top a { font-size: 0.9375rem; gap: 1.25rem; }
   .back-to-top__rule { height: 3.75rem; }
-}
-
-/* The short one-line footer is for phones only. 860px catches a laptop
-   window with a side panel open, which is where the full contact block went
-   missing on a desktop. */
-@media (max-width: 600px) {
-  .footer__contact-intro,
-  .footer__details { display: none; }
-  .footer__contact-short { display: block; }
 }

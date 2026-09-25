@@ -116,7 +116,11 @@ def social_meta(page=""):
   <meta name="twitter:title" content="{m['title']}" />
   <meta name="twitter:description" content="{m['description']}" />
   <meta name="twitter:image" content="{base}/{m['image']}" />
-  <meta name="theme-color" content="#bcbc49" />"""
+  <!-- The strip behind the phone's status bar. The orchid's base tone, not
+       the site's green: the photo runs right up to the top of every page —
+       the hero at rest, the bar once you have scrolled — so green up there
+       read as a band cutting across the picture. -->
+  <meta name="theme-color" content="#efe6e6" />"""
 
 
 # ---------------------------------------------------------------------------
@@ -366,7 +370,6 @@ def contact_block():
           <li>Phone: <a href="tel:{c['phone_href']}">{c['phone']}</a></li>
           <li>Website: <a href="#top">{c['website']}</a></li>
         </ul>
-        <p class="footer__contact-short">Contact <a href="mailto:{c['email']}">{c['email']}</a> with questions.</p>
       </div>"""
 
 
@@ -416,15 +419,16 @@ def page(filename, title, main, tall=False, save_the_date=False, scripts=""):
     # standing in front of it as its own URL.
     gated = save_the_date and slug(filename) == ""
 
-    demo_js = f'\n  <script src="{up}js/rsvp-demo.js"></script>' if (FULL and PREVIEW) else ""
-    site_js = ((demo_js + f'\n  <script src="{up}js/config.js"></script>')
+    v = C.ASSET_VERSION            # every script is cache-busted like the CSS
+    demo_js = f'\n  <script src="{up}js/rsvp-demo.js?v={v}"></script>' if (FULL and PREVIEW) else ""
+    site_js = ((demo_js + f'\n  <script src="{up}js/config.js?v={v}"></script>')
                if FULL else "")
     if gated:
-        site_js += f'\n  <script src="{up}js/config.js"></script>'
+        site_js += f'\n  <script src="{up}js/config.js?v={v}"></script>'
     if FULL or save_the_date:
-        site_js += f'\n  <script src="{up}js/site.js"></script>'
+        site_js += f'\n  <script src="{up}js/site.js?v={v}"></script>'
     if gated:
-        site_js += f'\n  <script src="{up}js/gate.js"></script>'
+        site_js += f'\n  <script src="{up}js/gate.js?v={v}"></script>'
 
     body_class = ' class="phase2"' if FULL else ""
     extra_head = f"\n  <style>{GATE_STYLE}  </style>\n{GATE_EARLY}" if gated else ""
@@ -750,7 +754,7 @@ def build(preview=False):
     if FULL:
         # The demo backend loads before rsvp.js and only in the preview, so
         # the real site can never pick it up.
-        rsvp_scripts = '\n  <script src="../js/rsvp.js"></script>'
+        rsvp_scripts = f'\n  <script src="../js/rsvp.js?v={C.ASSET_VERSION}"></script>'
         page("home.html", "E &amp; L Wedding",
              section("RSVP", rsvp_form(),
                      note=f"We kindly ask you to RSVP by {C.WEDDING['rsvp_deadline']}.",
@@ -759,7 +763,7 @@ def build(preview=False):
              scripts=rsvp_scripts)
         page("itinerary.html", "Itinerary &mdash; E &amp; L Wedding",
              section("Itinerary", '      <div class="rows" id="itinerary"></div>'),
-             scripts='\n  <script src="../js/itinerary.js"></script>')
+             scripts=f'\n  <script src="../js/itinerary.js?v={C.ASSET_VERSION}"></script>')
         page("recommendations.html", "Recommendations &mdash; E &amp; L Wedding",
              section("Recommendations", rows(C.RECOMMENDATIONS)))
         page("faqs.html", "FAQs &mdash; E &amp; L Wedding", faq_section())
