@@ -450,10 +450,12 @@ html { scroll-padding-top: var(--hdr-h); }
   background: rgba(255, 255, 255, 0.75);
   margin-top: 5.5rem;
   transform-origin: top center;
-  /* Fades out as the header settles — once the bar has formed there is
-     nothing left to cue. filter rather than opacity so it multiplies with
-     the pulse keyframes instead of fighting them for the same property. */
-  filter: opacity(clamp(0, calc(1 - var(--hdr-p, 0) * 2), 1));
+  /* Fades on scroll, not on the header's progress: that is held flat for the
+     first third of the hero now, which left the cue pulsing away long after
+     you had started moving. js/site.js fades it over the first ~13% of the
+     hero. filter rather than opacity so it multiplies with the pulse
+     keyframes instead of fighting them for the same property. */
+  filter: opacity(var(--hdr-cue, 1));
   /* Same motion and cadence as the Studio Fritz hero cue: a single pulse in
      the front slice of a 5s cycle, then it holds at rest. Timing copied from
      that stylesheet unchanged (5s / ease-out / 0.6s delay, keyframes at

@@ -40,7 +40,7 @@
   var isTall = header.classList.contains('pageheader--tall');
 
   var root = document.documentElement;
-  var travel = 0, settleAt = 0, subEnd = 0, subStart = 0;
+  var travel = 0, settleAt = 0, subEnd = 0, subStart = 0, cueEnd = 120;
 
   /* Whether the hero has ever had a real size to measure. It does not while
    * the gate is up: #site is display:none, so the banner is 0 tall, and a
@@ -133,6 +133,11 @@
     if (!(barH > 0)) barH = 9.75 * rem;
     settleAt = Math.max(0, banner.offsetHeight - barH);
 
+    // The cue has done its job the moment you start scrolling — it says
+    // "there is more below", and by then you know. Gone within a flick,
+    // rather than pulsing away in the corner of a hero you have left.
+    cueEnd = Math.max(80, Math.min(180, banner.offsetHeight * 0.13));
+
     // Where the lines under the wordmark end, at rest. The header is fixed,
     // so this rect is already viewport-relative — but --hdr-p has to be
     // pinned to 0 first or we measure them part-way up their travel. One
@@ -167,6 +172,7 @@
       root.style.setProperty('--hdr-p', '0');
       root.style.setProperty('--hdr-bg', '0');
       root.style.setProperty('--hdr-sub', '1');
+      root.style.setProperty('--hdr-cue', '1');
       header.classList.remove('is-bar');
       return;
     }
@@ -188,6 +194,9 @@
       ? Math.min(1, Math.max(0, 1 - (y - subStart) / (subEnd - subStart)))
       : 1;
     root.style.setProperty('--hdr-sub', sub.toFixed(3));
+
+    var cue = Math.min(1, Math.max(0, 1 - y / cueEnd));
+    root.style.setProperty('--hdr-cue', cue.toFixed(3));
 
     // The bar's own photo strip waits until the hero has gone. While the hero
     // is still behind the bar, the hero's photo IS the bar's background —
