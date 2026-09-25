@@ -27,7 +27,7 @@ PHASE = "save-the-date"
 
 # Bump this when css/wedding.css or the favicons change, so browsers don't
 # serve a stale copy.
-ASSET_VERSION = 40
+ASSET_VERSION = 41
 
 # The page the password gate sends people to.
 ENTRY_PAGE = "home.html"
@@ -73,7 +73,10 @@ WEDDING = {
     # O’ahu rather than name the wrong town.
     "place": "Kane’ohe, O’ahu, Hawai’i",
     "names": "E &amp; L Wedding",           # hero wordmark
-    "names_short": "E&amp;L Wedding",       # footer wordmark
+    # Spaced to match the hero and the bar. Figma has the footer tight
+    # ("E&L WEDDING") on both the desktop and mobile frames; that was the
+    # oversight, not this.
+    "names_short": "E &amp; L Wedding",     # footer wordmark
 
     # From Figma. Only appears when PHASE == "phase-2".
     "rsvp_deadline": "June 1, 2027",
