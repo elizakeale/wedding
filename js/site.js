@@ -1,23 +1,25 @@
-/* E & L Wedding — phase 2 header behaviour.
+/* E & L Wedding — header behaviour.
  *
- * The header is one fixed element holding the nav and the wordmark. On a tall
- * hero the wordmark starts big and low — its hero position — and as you scroll
- * it rides up and shrinks until it settles beside the nav, at which point the
- * header IS the compact bar. Same element throughout, so there is no crossfade
- * and nothing to keep in sync.
+ * Two states, one element, one threshold. On a tall hero the header is part
+ * of the hero and scrolls away with it at full size; when the hero's bottom
+ * reaches the top of the window this adds .is-bar and CSS brings the same
+ * element back as the compact bar.
  *
- * This file publishes just two numbers and lets CSS derive everything else:
+ * It used to interpolate continuously — the wordmark shrinking and riding up
+ * from the first pixel of scroll — which left a half-formed bar sitting over
+ * a hero that was still mostly on screen. A single class change at the hero's
+ * bottom is both what the design asks for and a great deal less work per
+ * frame: no custom properties written on every scroll event, so no style
+ * recalculation until the one moment it matters.
  *
- *   --hdr-p    0 = full hero, 1 = settled. Drives position, size and tracking.
- *   --hdr-bg   opacity of the orchid slice behind the bar, 0..1.
+ * This publishes two numbers, both only on load and resize:
  *
- * Keeping the two states described in CSS (rather than computing pixel values
- * here) means the Figma numbers live in one place, and they keep scaling with
- * the viewport-relative root font size for free.
+ *   --hdr-travel  how far down the hero the wordmark sits, in px.
+ *   settleAt      the scroll position where the bar takes over.
  *
  * Scroll reads are batched into a rAF so scrolling never forces a synchronous
- * layout. With JS off the header renders settled, which is still a correct and
- * readable page.
+ * layout. With JS off a tall hero simply never forms its bar, which leaves a
+ * correct and readable page.
  */
 (function () {
   'use strict';
@@ -32,7 +34,11 @@
 
   var root = document.documentElement;
   var travel = 0, settleAt = 0;
-  var FADE_OVER = 80;   // px of scroll the bar background fades in across
+  var HYST = 6;   // px of slack, so resting on the line doesn't flicker
+
+  // Short-banner pages are the bar from the start — there is no hero for
+  // them to come out of, and the wordmark is a link immediately.
+  if (!isTall) header.classList.add('is-bar');
 
   function measure() {
     // How far the wordmark has to travel. Measured against the hero's real
@@ -67,29 +73,30 @@
       travel = 0;
     }
 
-    // The banner sits behind the header until its bottom reaches the bar's
-    // bottom. Until then the bar background stays off, so the banner's own
-    // photo shows through and the two never show a seam.
-    settleAt = Math.max(0, banner.offsetHeight - header.offsetHeight);
+    // Where the bar takes over: the hero's bottom arriving at the bar's own
+    // bottom edge. Read from the stylesheet rather than the element, because
+    // in its hero state the header has no fixed height to measure.
+    var rootStyle = getComputedStyle(root);
+    var rem  = parseFloat(rootStyle.fontSize) || 16;
+    var barH = parseFloat(rootStyle.getPropertyValue('--hdr-h')) * rem;
+    if (!(barH > 0)) barH = 9.75 * rem;
+    settleAt = Math.max(0, banner.offsetHeight - barH);
   }
 
   var ticking = false;
 
   function apply() {
     ticking = false;
+    if (!isTall) return;
+
     var y = window.pageYOffset || root.scrollTop || 0;
+    var on = header.classList.contains('is-bar');
 
-    // 1:1 with the scroll, so it reads as the words coming to rest rather
-    // than an animation playing at some unrelated rate.
-    var p = travel > 0 ? Math.min(1, Math.max(0, y / travel)) : 1;
-    var bg = Math.min(1, Math.max(0, (y - settleAt) / FADE_OVER));
-
-    root.style.setProperty('--hdr-p', p.toFixed(4));
-
-    // The wordmark is only a link once it has arrived in the bar. Above the
-    // fold it is the page's title and shouldn't behave like navigation.
-    header.classList.toggle('is-bar', p > 0.995);
-    root.style.setProperty('--hdr-bg', bg.toFixed(3));
+    // The bar takes over exactly when the hero's bottom arrives at the top of
+    // the window. The wordmark is a link only in that state: in the hero it
+    // is the page's title and shouldn't behave like navigation.
+    if (!on && y > settleAt) header.classList.add('is-bar');
+    else if (on && y < settleAt - HYST) header.classList.remove('is-bar');
   }
 
   function onScroll() {

@@ -131,12 +131,19 @@ img { display: block; max-width: 100%; }
    so the cue is the only thing left in here. Keep it at the bottom. */
 .banner__inner--cue-only { justify-content: flex-end; }
 
-/* ---------- Page header (phase 2) ----------
-   One fixed element carries the nav and the wordmark for the whole page.
-   There is no second bar that slides in: the wordmark starts big and low, at
-   its hero position, and rides up while shrinking until it settles beside the
-   nav — at which point the header IS the bar. Same element throughout, so
-   there is nothing to hand off and nothing to keep in sync. */
+/* ---------- Page header ----------
+   One element carries the nav and the wordmark for the whole page, in two
+   states rather than a continuous morph between them.
+
+   On a tall hero the header is PART of the hero: it scrolls away with the
+   photo, at full size, exactly as the words would if they sat in the banner.
+   Nothing changes on the way down. Once the hero's bottom reaches the top of
+   the window the same element comes back as the bar, fading in over a
+   quarter of a second.
+
+   It used to interpolate the whole way — shrinking and riding up from the
+   first pixel of scroll — which meant the bar was half-formed over a hero
+   that was still mostly on screen, and read as the hero splitting in two. */
 
 :root {
   /* Everything below is derived from --hdr-p, the scroll progress of the
@@ -249,8 +256,39 @@ img { display: block; max-width: 100%; }
                        (var(--hdr-navtrk-lo) - var(--hdr-navtrk-hi)) * var(--hdr-p));
 }
 
-/* Short-banner pages have nowhere to travel from: they open settled. */
-.pageheader:not(.pageheader--tall) { --hdr-p: 1; }
+/* Short-banner pages have nowhere to travel from: they open settled, and the
+   bar's photo strip is on from the first pixel. */
+.pageheader:not(.pageheader--tall) { --hdr-p: 1; --hdr-bg: 1; }
+
+/* ---- The two states of a tall hero's header ---- */
+
+/* Hero. Absolute rather than fixed, so it leaves with the photo instead of
+   hanging over it. Full size throughout: --hdr-p stays 0. */
+.pageheader--tall {
+  position: absolute;
+  height: auto;
+  --hdr-bg: 0;
+}
+
+/* Bar. Same element, settled sizes, photo strip behind it. */
+.pageheader--tall.is-bar {
+  position: fixed;
+  height: var(--hdr-h);
+  --hdr-p:  1;
+  --hdr-bg: 1;
+  animation: barIn 0.26s ease-out both;
+}
+
+/* Arrives rather than appears — the distance is small on purpose, so it
+   reads as the bar settling into place and not as a panel flying in. */
+@keyframes barIn {
+  from { opacity: 0; transform: translate3d(0, -0.625rem, 0); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pageheader--tall.is-bar { animation: none; }
+}
 
 /* Where the hero wordmark sits, as a fraction of the hero height. js/site.js
    reads this so the number lives with the other frame measurements rather
