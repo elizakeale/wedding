@@ -40,8 +40,14 @@
   var isTall = header.classList.contains('pageheader--tall');
 
   var root = document.documentElement;
-  var travel = 0, settleAt = 0;
-  var EASE = 3;   // how hard the morph is pushed to the end of the hero
+  var travel = 0, settleAt = 0, subEnd = 0, subStart = 0;
+
+  // The hero holds for the first third, then the morph runs on a smoothstep:
+  // no movement at the start, none at the finish, peak rate in the middle.
+  // A plain power curve was back-loaded the same way but arrived at full
+  // speed, which is what read as choppy — the words were still moving fast
+  // at the moment they were supposed to be at rest.
+  var HOLD = 0.35;
 
   // Short-banner pages are the bar from the start — there is no hero for
   // them to come out of, and the wordmark is a link immediately.
@@ -88,6 +94,28 @@
     var barH = parseFloat(rootStyle.getPropertyValue('--hdr-h')) * rem;
     if (!(barH > 0)) barH = 9.75 * rem;
     settleAt = Math.max(0, banner.offsetHeight - barH);
+
+    // Where the lines under the wordmark end, at rest. The header is fixed,
+    // so this rect is already viewport-relative — but --hdr-p has to be
+    // pinned to 0 first or we measure them part-way up their travel. One
+    // forced layout, on load and resize only.
+    var sub = header.querySelector('.stdate__tagline') ||
+              header.querySelector('.stdate__label');
+    if (sub) {
+      var held = root.style.getPropertyValue('--hdr-p');
+      root.style.setProperty('--hdr-p', '0');
+      var bottom = sub.getBoundingClientRect().bottom;
+      if (held) root.style.setProperty('--hdr-p', held);
+
+      // The photo's bottom edge arrives at that line after this much scroll.
+      // Finish a little before it does, so there is clear air rather than a
+      // near-miss.
+      subEnd   = Math.max(80, banner.offsetHeight - bottom - 2 * rem);
+      // Hold briefly first where there is room for it, but never so long
+      // that the fade has to happen in a flick — on a phone the hero is
+      // proportionally shorter and these lines sit close to its bottom.
+      subStart = Math.min(subEnd * 0.4, 5 * rem);
+    }
   }
 
   var ticking = false;
@@ -98,9 +126,21 @@
 
     var y = window.pageYOffset || root.scrollTop || 0;
 
-    // Fraction of the way down the hero, then cubed — see the note up top.
+    // Fraction of the way down the hero, held flat for the first HOLD of it,
+    // then smoothstepped over what's left — see the note up top.
     var t = settleAt > 0 ? Math.min(1, Math.max(0, y / settleAt)) : 1;
-    var p = Math.pow(t, EASE);
+    var u = Math.min(1, Math.max(0, (t - HOLD) / (1 - HOLD)));
+    var p = u * u * (3 - 2 * u);
+
+    // "Save the date" and the tagline hang below the bar's own height, so
+    // once the hero has scrolled past them they would be sitting on green.
+    // They fade on the hero's geometry rather than on p: gone by the time
+    // the photo's bottom edge reaches the line they occupy, whatever the
+    // window size, so the two never meet.
+    var sub = subEnd > subStart
+      ? Math.min(1, Math.max(0, 1 - (y - subStart) / (subEnd - subStart)))
+      : 1;
+    root.style.setProperty('--hdr-sub', sub.toFixed(3));
 
     // The bar's own photo strip waits until the hero has gone. While the hero
     // is still behind the bar, the hero's photo IS the bar's background —

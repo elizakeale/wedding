@@ -298,13 +298,15 @@ img { display: block; max-width: 100%; }
 .pageheader--stdate .wordmark__name a { color: inherit; }
 
 /* "Save the date" and the tagline ride up with the wordmark and are gone
-   before it lands — they have no place in a compact bar. Fading over the
-   first 40% of the travel means the bar is clean well before it settles,
-   rather than text dissolving as it arrives. */
+   before it lands — they have no place in a compact bar. They hang below the
+   bar's own height, though, so fading them on the morph's progress left them
+   sitting on green once the photo had scrolled past. js/site.js fades them on
+   the hero's geometry instead: clear before the photo's bottom edge reaches
+   the line they occupy, at any window size. */
 .pageheader--stdate .stdate__label,
 .pageheader--stdate .stdate__tagline {
   clear: both;
-  opacity: clamp(0, calc(1 - var(--hdr-p) * 2.5), 1);
+  opacity: var(--hdr-sub, 1);
   /* Collapsed at rest so they cannot catch clicks over the page below. */
   visibility: visible;
 }
