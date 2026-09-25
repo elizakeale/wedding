@@ -267,6 +267,11 @@ def head(title, page="", up="../", extra=""):
     return f"""<head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- A reload starts at the top. Browsers otherwise put you back where you
+       were, which on a page whose whole opening is one photograph means
+       reloading drops you into the middle of it. In the head so it is set
+       before the browser gets to restore anything; anchors still work. -->
+  <script>if ('scrollRestoration' in history) history.scrollRestoration = 'manual';</script>
   <title>{title}</title>
   <meta name="description" content="{C.META['description']}" />
   <meta name="robots" content="noindex, nofollow" />
