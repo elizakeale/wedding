@@ -116,7 +116,9 @@ def social_meta(page=""):
   <meta name="twitter:title" content="{m['title']}" />
   <meta name="twitter:description" content="{m['description']}" />
   <meta name="twitter:image" content="{base}/{m['image']}" />
-  <meta name="theme-color" content="#bcbc49" />"""
+  <!-- No theme-color on purpose. With one set, Safari paints the strip
+       behind the status bar that flat colour; without it, it tints from the
+       page, which at the top of every page is the photo. -->"""
 
 
 # ---------------------------------------------------------------------------

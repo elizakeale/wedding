@@ -851,39 +851,31 @@ html { scroll-padding-top: var(--hdr-h); }
      Set on --hero-h rather than on .banner--tall, so everything derived from
      the hero's height agrees with the hero's actual height. Overriding only
      the banner left the two 27px apart on a tall phone. */
-  /* 915px is the frame (15:69), taller than any phone, so on a phone this
-     resolves to the viewport. Three units rather than one because no single
-     one of them can be trusted here:
+  /* Straight off the frame (15:56), no viewport arithmetic. 915px is taller
+     than any phone's viewport, so the photo cannot end above the fold in
+     either toolbar state, and every position below is the frame's own —
+     which is the point: chasing svh/lvh/dvh kept moving things around, and
+     the design already says exactly where they go.
 
-       min(915, 100vh)  the hero at its tallest. 100vh on iOS Safari has
-                        always meant the viewport with the toolbars RETRACTED,
-                        which is the behaviour we want and the one unit that
-                        has always behaved that way. lvh should be identical
-                        and was not — it came up short and left a band of
-                        green between the photo and the toolbar.
-       max(100svh, …)   a floor: never shorter than the viewport with the
-                        toolbars SHOWING. Whatever the first part returns, the
-                        photo cannot end above the fold.
-
-     Mobile only. On a desktop the outer max() would defeat the 1007px cap. */
-  :root { --hero-h: 57.1875rem; }  /* 915px, the mobile frame (15:69) */
+     The floor is the only viewport unit left, and only so a phone taller
+     than 915 could never show a band of green under the photo. */
+  :root { --hero-h: 57.1875rem; }  /* 915px, image 15:69 */
   @supports (height: 100svh) {
-    :root { --hero-h: max(100svh, min(57.1875rem, 100vh)); }
+    :root { --hero-h: max(57.1875rem, 100svh, 100vh); }
   }
+
   .banner--short { min-height: 11.875rem; }
 
   /* On a 402px-wide frame Figma scales the photo to 1311px and pushes it to
      x = -216, so the visible strip starts 216px into 909px of overflow.
-     216 / (1311 - 402) = 23.76%. Centring here would show the wrong flower. */
-  .banner { background-position: 23.76% top; }
+     217 / (1374 - 402) = 22.32%. Centring here would show the wrong flower. */
+  .banner { background-position: 22.32% top; }
 
   .banner__inner { padding-top: 1.5rem; padding-bottom: 1.75rem; }
-  .banner--tall .banner__inner { padding-bottom: 2rem; }
-  @supports (height: 100svh) {
-    .banner--tall .banner__inner {
-      padding-bottom: calc(2rem + max(0px, 100vh - 100svh));
-    }
-  }
+  /* The cue runs y642-720 in a 915 hero, so it sits 195px up from the
+     bottom. Fixed, like everything else here — and it lands at 720, well
+     inside the 742 a phone shows with its toolbars up. */
+  .banner--tall .banner__inner { padding-bottom: 12.1875rem; }
 
   .nav { font-size: 0.875rem; letter-spacing: 0.04375rem; gap: 0.625rem; }
 
@@ -925,7 +917,9 @@ html { scroll-padding-top: var(--hdr-h); }
 
   /* 460/873 in the mobile frame — the hero is shorter, so the wordmark sits
      proportionally lower than it does on desktop. */
-  .pageheader--stdate { --hero-frac: 0.527; }
+  /* 345/915: where the date — the first line of the block — sits in the
+     frame. The wordmark and the two lines under it follow from it. */
+  .pageheader--stdate { --hero-frac: 0.377; }
 
   /* The header sets the wordmark's size by calc, which outranks the plain
      .wordmark__name rule below — so the mobile sizes have to be set as the
@@ -963,7 +957,9 @@ html { scroll-padding-top: var(--hdr-h); }
   .pageheader--stdate .pageheader__wordmark > .meta .meta__date  { order: 2; }
   .pageheader--stdate .pageheader__wordmark > .meta .meta__place { order: 3; flex-basis: 100%; }
 
-  .pageheader--stdate .wordmark__name { order: 2; display: block; margin-top: 0.75rem; }
+  /* 69px: the frame has the place line ending at 389 and E & L starting at
+     460. The label and tagline follow from it. */
+  .pageheader--stdate .wordmark__name { order: 2; display: block; margin-top: 4.3125rem; }
   .pageheader--stdate .stdate__label  { order: 3; }
   .pageheader--stdate .stdate__tagline { order: 4; }
 
