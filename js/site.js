@@ -75,6 +75,24 @@
   // them to come out of, and the wordmark is a link immediately.
   if (!isTall) header.classList.add('is-bar');
 
+  /* An in-app browser — Gmail's, opening the save-the-date straight from the
+   * email — draws its own toolbar OVER the page rather than insetting it, so
+   * the top of the fixed bar ends up behind it and the date line is cut off.
+   * Nothing in CSS can see another app's chrome, and safe-area insets do not
+   * report it either.
+   *
+   * What gives it away is the height. At load a normal mobile browser always
+   * has its toolbars showing, so the page is a good deal shorter than the
+   * screen; a page that believes it has the whole screen at load has
+   * something drawn on top of it. Read once, before any scroll, because
+   * Safari retracting its toolbars later would look identical. */
+  (function () {
+    if (!window.screen || !screen.height) return;
+    if (window.innerWidth >= 600) return;                 // phones only
+    if (window.innerHeight < screen.height - 40) return;  // normal chrome
+    root.style.setProperty('--hdr-inset', '2.75rem');
+  })();
+
   function measure() {
     // How far the wordmark has to travel. Measured against the hero's real
     // height, not a rem constant: rem tracks viewport WIDTH, but the hero is

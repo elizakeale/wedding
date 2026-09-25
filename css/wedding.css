@@ -197,19 +197,19 @@ img { display: block; max-width: 100%; }
   left: 0;
   right: 0;
   z-index: 50;
-  height: var(--hdr-h);
+  /* --hdr-inset is 0 everywhere except an in-app browser that draws its
+     toolbar over the page; js/site.js sets it there. The bar grows by it and
+     pads its contents down by it, so the first line clears the chrome
+     instead of hiding behind it. */
+  height: calc(var(--hdr-h) + var(--hdr-inset, 0px));
   pointer-events: none;       /* the photo below stays selectable */
 }
 
-.pageheader--stdate .pageheader__inner {
-  padding-top: calc(var(--hdr-nav-top-hi) +
-                    (var(--hdr-nav-top-lo) - var(--hdr-nav-top-hi)) * var(--hdr-p));
-}
-
+.pageheader--stdate .pageheader__inner,
 .pageheader__inner {
   position: relative;
   z-index: 1;
-  padding-top: calc(var(--hdr-nav-top-hi) +
+  padding-top: calc(var(--hdr-inset, 0px) + var(--hdr-nav-top-hi) +
                     (var(--hdr-nav-top-lo) - var(--hdr-nav-top-hi)) * var(--hdr-p));
 }
 
@@ -271,7 +271,10 @@ img { display: block; max-width: 100%; }
 
 /* A tall hero's header is fixed like any other, so the wordmark can ride up
    the screen and come to rest as the bar. js/site.js drives --hdr-p. */
-.pageheader--tall { position: fixed; height: var(--hdr-h); }
+.pageheader--tall {
+  position: fixed;
+  height: calc(var(--hdr-h) + var(--hdr-inset, 0px));
+}
 
 
 
