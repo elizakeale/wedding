@@ -937,9 +937,15 @@ html { scroll-padding-top: var(--hdr-h); }
   .footer__photo { width: 15.125rem; max-width: 100%; }
   .footer__cols--stdate .footer__photo { grid-column: auto; margin-top: 0.875rem; }
   .footer__contact { font-size: 0.9375rem; }
-  .footer__contact-intro,
-  .footer__details { display: none; }       /* the frame's mobile footer is the short line */
-  .footer__contact-short { display: block; }
   .back-to-top a { font-size: 0.9375rem; gap: 1.25rem; }
   .back-to-top__rule { height: 3.75rem; }
+}
+
+/* The short one-line footer is for phones only. 860px catches a laptop
+   window with a side panel open, which is where the full contact block went
+   missing on a desktop. */
+@media (max-width: 600px) {
+  .footer__contact-intro,
+  .footer__details { display: none; }
+  .footer__contact-short { display: block; }
 }
