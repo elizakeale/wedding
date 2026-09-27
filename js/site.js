@@ -256,3 +256,51 @@
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(remeasure);
   window.addEventListener('load', remeasure);
 })();
+
+/* Phase 2's mobile nav. The inline nav in the bar has nowhere to go once the
+ * wordmark needs the space it's shrunk into, so under 861px it hides and this
+ * button takes over: a hamburger that turns into an X (the same icon, rotated
+ * — not a second icon swapped in, so there's one thing to keep aligned) and a
+ * panel of the same four links, centred, below the bar.
+ *
+ * Independent of the header-morph script above: it doesn't touch --hdr-p and
+ * doesn't care whether the hero is tall or short, so it runs the same way on
+ * every phase-2 page. */
+(function () {
+  'use strict';
+
+  var toggle = document.getElementById('navToggle');
+  var panel  = document.getElementById('navPanel');
+  if (!toggle || !panel) return;
+
+  var body = document.body;
+
+  function setOpen(open) {
+    body.classList.toggle('nav-open', open);
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    // The panel covers the page, so nothing behind it should scroll or be
+    // reachable by the keyboard while it's up.
+    body.style.overflow = open ? 'hidden' : '';
+  }
+
+  toggle.addEventListener('click', function () {
+    setOpen(!body.classList.contains('nav-open'));
+  });
+
+  // A link picked from the panel should go there, not leave the menu hanging
+  // open behind the new page for the instant before it unloads.
+  panel.addEventListener('click', function (e) {
+    if (e.target.closest('a')) setOpen(false);
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && body.classList.contains('nav-open')) setOpen(false);
+  });
+
+  // Widening past the breakpoint (rotating a tablet, say) shouldn't leave the
+  // panel open with nothing to open it — the inline nav has taken back over.
+  var mq = window.matchMedia('(min-width: 861px)');
+  function onBreakpoint() { if (mq.matches) setOpen(false); }
+  if (mq.addEventListener) mq.addEventListener('change', onBreakpoint);
+  else if (mq.addListener) mq.addListener(onBreakpoint);
+})();

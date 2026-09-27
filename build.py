@@ -386,10 +386,13 @@ def pageheader(current, tall, save_the_date=False):
 """
 
     rows = []
+    panel_rows = []
     for label, href in C.NAV:
         aria = ' aria-current="page"' if href == current else ""
         rows.append(f'        <a href="{link(href)}"{aria}>{label}</a>')
+        panel_rows.append(f'          <a href="{link(href)}"{aria}>{label}</a>')
     links = "\n".join(rows)
+    panel_links = "\n".join(panel_rows)
     mod = " pageheader--tall" if tall else ""
     return f"""  <div class="pageheader{mod}" id="pageheader">
     <div class="pageheader__bg" aria-hidden="true"></div>
@@ -401,6 +404,18 @@ def pageheader(current, tall, save_the_date=False):
         <h1 class="wordmark__name"><a href="{link(C.ENTRY_PAGE)}">{C.WEDDING['names']}</a></h1>
         {meta_line(date_first=True)}
       </div>
+    </div>
+    <button type="button" class="nav-toggle" id="navToggle" aria-expanded="false"
+            aria-controls="navPanel" aria-label="Menu">
+      <span class="nav-toggle__bar"></span>
+      <span class="nav-toggle__bar"></span>
+      <span class="nav-toggle__bar"></span>
+    </button>
+    <div class="nav-panel" id="navPanel">
+      <nav class="nav-panel__links" aria-label="Site, expanded">
+{panel_links}
+      </nav>
+      <div class="nav-panel__photo"><img src="{UP}surfing.jpg" alt="Eliza and Lucas paddling out" /></div>
     </div>
   </div>
 """

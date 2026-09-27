@@ -351,6 +351,54 @@ html { scroll-padding-top: var(--hdr-h); }
 .nav a[aria-current="page"] { border-bottom: 1px solid var(--rule); }
 .nav a:hover { color: var(--hover); opacity: 1; }
 
+/* ---------- Mobile nav: hamburger + panel ----------
+   The inline .nav above has nowhere to go once the bar narrows down to just
+   the wordmark, so under the 860px breakpoint it hides and this button takes
+   over. Hidden here and only switched on inside the media query below, so a
+   page that somehow lacks the toggle markup (there is currently only the one
+   phase-2 header) never shows a dangling button. */
+
+.nav-toggle {
+  display: none;
+  position: absolute;
+  top: 50%;
+  right: var(--gutter);
+  transform: translateY(-50%);
+  /* .nav-panel (a sibling inside .pageheader, needed there so its own
+     background sits under the bar) is z-index 49 — this has to beat that
+     within .pageheader's own stacking context, not just the page's, or the
+     open panel paints over the button that opens/closes it. */
+  z-index: 50;
+  width: 1.5rem;
+  height: 1.0625rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.nav-toggle__bar {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transition: transform 0.25s ease, opacity 0.2s ease, top 0.25s ease;
+}
+.nav-toggle__bar:nth-child(1) { top: 0; }
+.nav-toggle__bar:nth-child(2) { top: 50%; }
+.nav-toggle__bar:nth-child(3) { top: 100%; }
+
+/* Open: the same three bars rotate into an X rather than swapping to a
+   second icon, so there is only ever one shape to keep aligned. The middle
+   bar fades out — two lines make an X, a third through the middle doesn't. */
+body.nav-open .nav-toggle__bar:nth-child(1) { top: 50%; transform: rotate(45deg); }
+body.nav-open .nav-toggle__bar:nth-child(2) { opacity: 0; }
+body.nav-open .nav-toggle__bar:nth-child(3) { top: 50%; transform: rotate(-45deg); }
+
+.nav-panel { display: none; }
+
 /* ---------- Meta (date — rule — place) ---------- */
 
 .meta {
@@ -893,6 +941,43 @@ html { scroll-padding-top: var(--hdr-h); }
      bottom. Fixed, like everything else here — and it lands at 720, well
      inside the 742 a phone shows with its toolbars up. */
   .banner--tall .banner__inner { padding-bottom: 12.1875rem; }
+
+  /* The inline nav hands off to the hamburger under this width — there's no
+     room left beside the wordmark for both. */
+  .pageheader .nav { display: none; }
+  .nav-toggle { display: block; }
+
+  body.nav-open { overflow: hidden; }
+
+  .nav-panel {
+    position: fixed;
+    inset: 0;
+    z-index: 49;   /* under the fixed .pageheader (50), so the bar still reads on top */
+    padding: calc(var(--hdr-h) + var(--hdr-inset, 0px) + 2.5rem) var(--gutter) 2.5rem;
+    background: #efe6e6 url('../orchid.jpg') top center / cover no-repeat;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;
+  }
+
+  /* .nav-panel stays display:none (set outside this media query) until the
+     toggle opens it — this is the only rule that turns it on. */
+  body.nav-open .nav-panel { display: flex; }
+
+  .nav-panel__links {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.75rem;   /* 44px, matching the Figma vertical rhythm */
+    font-size: 1.5rem;
+    letter-spacing: 0.075rem;
+  }
+
+  .nav-panel__links a[aria-current="page"] { border-bottom: 1px solid var(--rule); }
+  .nav-panel__links a:hover { color: var(--hover); opacity: 1; }
+
+  .nav-panel__photo { width: 11rem; margin-top: 3.5rem; }
+  .nav-panel__photo img { width: 100%; height: auto; object-fit: cover; }
 
   .nav { font-size: 0.875rem; letter-spacing: 0.04375rem; gap: 0.625rem; }
 
