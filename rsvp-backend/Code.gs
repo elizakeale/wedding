@@ -37,7 +37,7 @@
  * and you can see at a glance which version is actually deployed — the
  * commonest failure here is editing the script, saving, and never pushing a
  * new version, so the old code keeps serving under the same URL. */
-var SCRIPT_VERSION = 'v3 — test code, itinerary details, Friend Only Events';
+var SCRIPT_VERSION = 'v4 — debug endpoint for Friend Only Events troubleshooting';
 
 var CONTACT_EMAIL = 'elizakeale@gmail.com';
 
@@ -264,6 +264,34 @@ function doGet(e) {
 
     if (action === 'version') {
       return json_({ ok: true, version: SCRIPT_VERSION, testCode: TEST_CODE || null });
+    }
+
+    /* GET ?action=debug&code=XXXX
+     *
+     * Shows exactly what the server read for that code: which guest rows it
+     * grouped together, and which "invited" flags came back true (and would
+     * therefore unlock a friend-only event). Doesn't touch anything. Use this
+     * instead of guessing when a party sees an event it shouldn't — it tells
+     * you straight away whether the guest-list data is the problem or
+     * whether the browser is testing under a different session than you
+     * think (the itinerary page always uses whatever code got you PAST THE
+     * GATE, never a code you've only typed into the RSVP form). */
+    if (action === 'debug') {
+      if (!code) return json_({ ok: false, error: 'Add &code=XXXX to the URL.' });
+      var dbgParty = loadParties_()[key_(code)];
+      if (!dbgParty) return json_({ ok: false, error: 'No party found for that code.' });
+      return json_({
+        ok: true,
+        code: dbgParty.code,
+        leader: dbgParty.leader,
+        guestCount: dbgParty.guests.length,
+        guestNames: dbgParty.guests.map(function (g) { return g.name; }),
+        invited: dbgParty.invited,   // {} means not flagged for anything special
+        note: 'invited being {} means the guest-list data is clean for this ' +
+              'code. If the itinerary still shows friend-only events for it, ' +
+              'the browser went through the gate with a different code (or ' +
+              'the shared password) than the one you’re checking here.'
+      });
     }
 
     /* The front door. Returns only whether the value is good and which kind
