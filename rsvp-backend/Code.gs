@@ -37,7 +37,7 @@
  * and you can see at a glance which version is actually deployed — the
  * commonest failure here is editing the script, saving, and never pushing a
  * new version, so the old code keeps serving under the same URL. */
-var SCRIPT_VERSION = 'v4 — debug endpoint for Friend Only Events troubleshooting';
+var SCRIPT_VERSION = 'v5 — Getting there column rename';
 
 var CONTACT_EMAIL = 'elizakeale@gmail.com';
 
@@ -209,10 +209,21 @@ function loadItinerary_(party) {
 
   var head = values[0].map(key_);
   function col(n) { return head.indexOf(n); }
+  // Accepts either header spelling for this one column, since it's been
+  // renamed on the sheet from "Transportation" to "Getting there" -- this
+  // way neither name nor a future switch back breaks the site.
+  function colAny(names) {
+    for (var i = 0; i < names.length; i++) {
+      var idx = col(names[i]);
+      if (idx >= 0) return idx;
+    }
+    return -1;
+  }
   var cDay = col('day'), cTime = col('time'), cEvent = col('event');
   var cOpt = col('optional'), cAud = col('audience'), cBody = col('body');
   var cLoc = col('location'), cPark = col('parking');
-  var cTrans = col('transportation'), cDir = col('directions'), cAttire = col('attire');
+  var cTrans = colAny(['getting there', 'transportation']);
+  var cDir = col('directions'), cAttire = col('attire');
 
   var out = [];
   for (var r = 1; r < values.length; r++) {
