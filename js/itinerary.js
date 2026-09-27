@@ -61,26 +61,26 @@
 
       if (ev.body) body.appendChild(el('p', 'event__text', ev.body));
 
-      /* Location, parking and the rest print as one labelled block, in a
+      /* Location, getting there and the rest each get their own line, in a
        * fixed order so every event reads the same way — and only the lines
-       * that have something to say appear. */
+       * that have something to say appear. Each is its own <p> (not one
+       * <br>-joined block) so .event__text + .event__text's spacing gives
+       * them the same blank-line-apart rhythm as the rest of the page,
+       * matching the Figma frame. */
       var DETAILS = [
         ['Location:', ev.location],
+        ['Getting there:', ev.transportation],
         ['Parking:', ev.parking],
-        ['Transportation:', ev.transportation],
         ['Directions:', ev.directions],
         ['Attire:', ev.attire]
       ].filter(function (d) { return d[1]; });
 
-      if (DETAILS.length) {
+      DETAILS.forEach(function (d) {
         var p = el('p', 'event__text');
-        DETAILS.forEach(function (d, i) {
-          if (i) p.appendChild(document.createElement('br'));
-          p.appendChild(el('span', 'k', d[0]));
-          p.appendChild(document.createTextNode(' ' + d[1]));
-        });
+        p.appendChild(el('span', 'k', d[0]));
+        p.appendChild(document.createTextNode(' ' + d[1]));
         body.appendChild(p);
-      }
+      });
 
       wrap.appendChild(body);
       mount.appendChild(wrap);
