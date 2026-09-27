@@ -788,6 +788,7 @@ body.nav-open .nav-toggle__bar:nth-child(3) { top: 50%; transform: rotate(-45deg
   padding: 0;
 }
 
+.submit:hover:not(:disabled) { color: var(--hover); }
 .submit:disabled { opacity: 0.45; cursor: default; }
 .submit .arrow { width: 2.375rem; height: 1px; background: currentColor; position: relative; }
 .submit .arrow::after {

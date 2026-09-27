@@ -214,7 +214,7 @@
 
     busy = true;
     submitBtn.disabled = true;
-    say('Sending…');
+    say('One moment, please don’t exit this page…');
 
     request('rsvp', {
       code: party.code,
@@ -235,6 +235,12 @@
         form.classList.add('is-hidden');
         say('');
         if (done) done.classList.remove('is-hidden');
+        // Swapping the form for the (shorter) confirmation shrinks the
+        // section, which without this leaves the page wherever that shift
+        // happens to land — often down by the footer. Put the confirmation
+        // itself in view instead.
+        var rsvpSection = document.querySelector('.rsvp');
+        if (rsvpSection) rsvpSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
       })
       .catch(function () {
         busy = false;
