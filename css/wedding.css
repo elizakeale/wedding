@@ -605,13 +605,15 @@ body.nav-open .nav-toggle__bar:nth-child(3) { top: 50%; transform: rotate(-45deg
 
 /* Bulleted answers (beach and tourism recommendations). */
 .row__list {
-  list-style: disc;
-  padding-left: 1.25rem;
+  list-style: none;
+  padding-left: 0;
   margin-top: var(--gap-body);
   font-size: 1rem;
   letter-spacing: 0.05rem;
   line-height: 1.45;
 }
+.row__list li { position: relative; padding-left: 1.75rem; }
+.row__list li::before { content: '\2014'; position: absolute; left: 0; }
 .row__list li + li { margin-top: 0.375rem; }
 .row__list + .row__text { margin-top: var(--gap-item); }
 .row__list a { border-bottom: 1px solid var(--rule); }
