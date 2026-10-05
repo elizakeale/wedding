@@ -1232,6 +1232,17 @@ html[data-contrast="high"] a:hover { text-decoration: underline; }
 html[data-contrast="high"] .nav a[aria-current="page"],
 html[data-contrast="high"] .nav-panel__links a[aria-current="page"] { border-bottom: 0; }
 
+/* Medium instead of Light: the Light weight is the design's, but it is thin on
+   a white page for tired eyes. The 500 face is fetched by the early script in
+   <head> only for this view; until it arrives the Light face shows. Headings
+   and form controls set their own weight, so they are named here too. */
+html[data-contrast="high"] body,
+html[data-contrast="high"] h1, html[data-contrast="high"] h2,
+html[data-contrast="high"] h3, html[data-contrast="high"] h4,
+html[data-contrast="high"] h5, html[data-contrast="high"] h6,
+html[data-contrast="high"] .field,
+html[data-contrast="high"] button { font-weight: 500; }
+
 /* Dimmed text goes full strength. */
 html[data-contrast="high"] .event__text .k,
 html[data-contrast="high"] .event__name .opt,

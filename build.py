@@ -152,10 +152,12 @@ def social_meta(page=""):
 # It is switched by a link, not a button on the page: open any page with
 # ?view=accessible and the choice is remembered in that browser (so every
 # other page opens the same way); ?view=standard turns it off. Applied in
-# <head> before first paint so nothing flashes olive first. The private-mode /
+# <head> before first paint so nothing flashes olive first. It also loads the
+# Medium (500) weight of the site's faces, only for people in this view, so
+# everyone else's page weight is unchanged. The private-mode /
 # blocked-storage case still works for the page the link opened.
 CONTRAST_EARLY = """
-  <script>(function(){var on=false;try{var q=new URLSearchParams(location.search).get('view');if(q==='accessible'){on=true;localStorage.setItem('elw-contrast','high')}else if(q==='standard'){localStorage.removeItem('elw-contrast')}else{on=localStorage.getItem('elw-contrast')==='high'}}catch(e){}if(on)document.documentElement.setAttribute('data-contrast','high')})()</script>"""
+  <script>(function(){var on=false;try{var q=new URLSearchParams(location.search).get('view');if(q==='accessible'){on=true;localStorage.setItem('elw-contrast','high')}else if(q==='standard'){localStorage.removeItem('elw-contrast')}else{on=localStorage.getItem('elw-contrast')==='high'}}catch(e){}if(on){document.documentElement.setAttribute('data-contrast','high');var l=document.createElement('link');l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,500;1,500&family=Cormorant+Upright:wght@500&display=swap';document.head.appendChild(l)}})()</script>"""
 
 
 GATE_STYLE = """
@@ -262,6 +264,9 @@ GATE_STYLE = """
     html[data-contrast="high"] #gate .pw-go path { stroke:#000; stroke-width:1; }
     html[data-contrast="high"] #gate .pw-go:focus-visible { outline-color:#000; }
     html[data-contrast="high"] #gate .pw-cursor { background:#000; }
+    html[data-contrast="high"] #gate .pw-input,
+    html[data-contrast="high"] #gate .pw-ph,
+    html[data-contrast="high"] #gate .error { font-weight:500; }
     html[data-contrast="high"] #gate .error { font-size:14.4px; }
     @media (max-width:600px) {
       html[data-contrast="high"] #gate .card { width:73.7vw; }
