@@ -318,7 +318,7 @@
   function paint() {
     var on = root.getAttribute('data-contrast') === 'high';
     btn.setAttribute('aria-pressed', on ? 'true' : 'false');
-    btn.textContent = on ? 'Standard view' : 'Accessible view';
+    btn.textContent = on ? 'Standard View' : 'Accessible View';
   }
 
   btn.addEventListener('click', function () {

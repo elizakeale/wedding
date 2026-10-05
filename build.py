@@ -482,7 +482,7 @@ def contrast_button():
     if not FULL:
         return ""
     return """
-  <button type="button" class="a11y-toggle" id="a11yToggle" aria-pressed="false">Accessible view</button>"""
+  <button type="button" class="a11y-toggle" id="a11yToggle" aria-pressed="false">Accessible View</button>"""
 
 
 def page(filename, title, main, tall=False, save_the_date=False, scripts=""):

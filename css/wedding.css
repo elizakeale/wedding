@@ -1210,7 +1210,9 @@ body.nav-open .nav-toggle__bar:nth-child(3) { top: 50%; transform: rotate(-45deg
    Outlines are `outline`, not `border`, so nothing shifts by a pixel.
    ========================================================================== */
 
-/* The button itself: fixed to the window so it needs no room in the layout. */
+/* The button itself: fixed to the window so it needs no room in the layout.
+   Dressed like the nav (caps, tracked, thin white rule) so it belongs to the
+   page rather than looking like a browser widget. */
 .a11y-toggle {
   position: fixed;
   right: 1.25rem;
@@ -1219,15 +1221,16 @@ body.nav-open .nav-toggle__bar:nth-child(3) { top: 50%; transform: rotate(-45deg
   padding: 0.5rem 1rem;
   font: inherit;
   font-size: 1rem;
-  letter-spacing: 0.05rem;
-  color: #1a1a1a;
-  background: #fff;
-  border: 1px solid #1a1a1a;
+  letter-spacing: 0.0625rem;
+  text-transform: uppercase;
+  color: var(--white);
+  background: var(--olive);
+  border: 1px solid var(--white);
   border-radius: 0;
   cursor: pointer;
 }
-.a11y-toggle:hover { background: var(--hover); color: #1a1a1a; }
-.a11y-toggle:focus-visible { outline: 3px solid #1a1a1a; outline-offset: 3px; }
+.a11y-toggle:hover { color: var(--hover); border-color: var(--hover); }
+.a11y-toggle:focus-visible { outline: 2px solid var(--white); outline-offset: 3px; }
 
 html[data-contrast="high"] {
   --olive:   #fff;
@@ -1267,45 +1270,33 @@ html[data-contrast="high"] .event__text .k,
 html[data-contrast="high"] .event__name .opt,
 html[data-contrast="high"] .diet__empty { opacity: 1; }
 
-/* Boxes round everything you can act on, and round each row of content. */
-html[data-contrast="high"] .nav a,
-html[data-contrast="high"] .nav-panel__links a,
-html[data-contrast="high"] .footer__links a,
-html[data-contrast="high"] .visit,
-html[data-contrast="high"] .submit,
-html[data-contrast="high"] .code-entry__go,
-html[data-contrast="high"] .back-to-top a,
-html[data-contrast="high"] .guest__box {
-  outline: 2px solid #000;
-  outline-offset: 0.3rem;
-}
-/* The box goes round the text column only (not the whole grid row), so the
-   rule on the left still points at it and neighbouring boxes never touch. */
-html[data-contrast="high"] .row__body,
-html[data-contrast="high"] .event__body,
-html[data-contrast="high"] .footer__photo img {
-  outline: 2px solid #000;
-  outline-offset: 0.6rem;
-}
+/* Boxes are for places you type or tick, and nothing else: text stays plain. */
+html[data-contrast="high"] .guest__box { outline: 2px solid #000; outline-offset: 0.2rem; }
 html[data-contrast="high"] .field { border: 2px solid #000; }
 html[data-contrast="high"] .field::placeholder { color: #444; }
 html[data-contrast="high"] .field:focus { border-color: #000; outline: 3px solid #000; outline-offset: 2px; }
 html[data-contrast="high"] .nav a[aria-current="page"],
 html[data-contrast="high"] .nav-panel__links a[aria-current="page"] {
-  border-bottom: 0;
-  background: #000;
-  color: #fff;
-  -webkit-text-stroke: 0;
+  border-bottom: 2px solid #000;
 }
 html[data-contrast="high"] a:focus-visible,
 html[data-contrast="high"] button:focus-visible { outline: 3px solid #000; outline-offset: 4px; }
 
-html[data-contrast="high"] .a11y-toggle { border: 2px solid #000; color: #000; background: #fff; -webkit-text-stroke: 0; }
-html[data-contrast="high"] .a11y-toggle:hover { background: #000; color: #fff; }
+html[data-contrast="high"] .a11y-toggle { border: 2px solid #000; -webkit-text-stroke: 0; }
+html[data-contrast="high"] .a11y-toggle:hover { background: #000; color: #fff; border-color: #000; }
 
-/* Form steps already carry their own boxes (fields, checkboxes, buttons), so
-   the RSVP page skips the text-column box rather than nesting boxes in boxes. */
-html[data-contrast="high"] .rsvp .row__body { outline: 0; }
-html[data-contrast="high"] .footer__links { gap: 1.5rem 1.75rem; }
-html[data-contrast="high"] .footer__links a,
-html[data-contrast="high"] .nav a { outline-offset: 0.25rem; }
+/* Everything on the site is sized in rem, so raising the root size 20% scales
+   type, spacing and widths together: the layout is the same, just larger. */
+html[data-contrast="high"] { font-size: max(13.2px, 1.27vw); }
+/* On a phone the fixed header is cut to the pixel for a 402px frame and has no
+   room to grow, so there the 20% is applied to the content (page body, footer,
+   menu links) and the header stays as designed. */
+@media (max-width: 860px) {
+  html[data-contrast="high"] { font-size: clamp(13px, 3.9801vw, 17px); }
+  html[data-contrast="high"] .section,
+  html[data-contrast="high"] .footer,
+  html[data-contrast="high"] .nav-panel__links { zoom: 1.2; }
+  /* RECOMMENDATIONS is the widest word on the site; at +20% it no longer fits
+     a phone, so the page titles sit a notch below the scaled size. */
+  html[data-contrast="high"] .section__title { font-size: 1.65rem; letter-spacing: 0.0625rem; }
+}
