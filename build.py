@@ -685,7 +685,8 @@ def write_itinerary_seed():
 # ---------------------------------------------------------------------------
 
 SAVE_THE_DATE_PAGES = ["home.html"]
-FULL_PAGES = ["home.html", "itinerary.html", "recommendations.html", "faqs.html"]
+FULL_PAGES = ["home.html", "itinerary.html", "faqs.html", "travel.html",
+              "recommendations.html", "registry.html"]
 ALL_PAGES = sorted(set(SAVE_THE_DATE_PAGES + FULL_PAGES) | {"homepage.html"})
 
 
@@ -828,9 +829,13 @@ def build(preview=False):
         page("itinerary.html", "Itinerary &mdash; E &amp; L Wedding",
              section("Itinerary", '      <div class="rows" id="itinerary"></div>'),
              scripts=f'\n  <script src="../js/itinerary.js?v={C.ASSET_VERSION}"></script>')
+        page("faqs.html", "FAQs &mdash; E &amp; L Wedding", faq_section())
+        page("travel.html", "Travel &mdash; E &amp; L Wedding",
+             section("Travel", rows(C.TRAVEL)))
         page("recommendations.html", "Recommendations &mdash; E &amp; L Wedding",
              section("Recommendations", rows(C.RECOMMENDATIONS)))
-        page("faqs.html", "FAQs &mdash; E &amp; L Wedding", faq_section())
+        page("registry.html", "Registry &mdash; E &amp; L Wedding",
+             section("Registry", rows(C.REGISTRY)))
         live = FULL_PAGES
     else:
         page("home.html", C.META["tab_title"],

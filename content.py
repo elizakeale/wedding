@@ -27,7 +27,7 @@ PHASE = "save-the-date"
 
 # Bump this when css/wedding.css or the favicons change, so browsers don't
 # serve a stale copy.
-ASSET_VERSION = 69
+ASSET_VERSION = 70
 
 # The page the password gate sends people to.
 ENTRY_PAGE = "home.html"
@@ -108,7 +108,9 @@ NAV = [
     ("RSVP", "home.html"),
     ("ITINERARY", "itinerary.html"),
     ("FAQs", "faqs.html"),
+    ("TRAVEL", "travel.html"),
     ("RECOMMENDATIONS", "recommendations.html"),
+    ("REGISTRY", "registry.html"),
 ]
 
 # The footer nav uses a different order than the header (matches Figma).
@@ -395,6 +397,31 @@ RECOMMENDATIONS = [
          "sunscreen).",
          "<span class=\"k\">In case you are confused:</span> Honolulu is the main town. Oahu "
          "is the island. Hawaii is the state. Waikiki is an area in Honolulu (not a town)."],
+    ),
+]
+
+
+# --- Travel page (PHASE == "phase-2") ---------------------------------------
+# SOURCE OF TRUTH: the same Google doc as FAQS/RECOMMENDATIONS, a new tab:
+#   docs.google.com/document/d/1D7eX9xFn12uT4U-fPNNcf1_s-rUC_rsKL-V4OuG-mSs (tab t.tdz7w2dumvxd)
+# Placeholder until that doc is pulled.
+TRAVEL = [
+    (
+        "More travel details coming soon",
+        ["Check back shortly — we’re finalizing this page."],
+    ),
+]
+
+# --- Registry page (PHASE == "phase-2") -------------------------------------
+# SOURCE OF TRUTH: Figma, not the Google doc.
+REGISTRY = [
+    (
+        "Do you have a registry?",
+        ["We are beyond grateful that you spent the time, effort, and resources to travel all "
+         "the way to join us in Hawaii – being together is the only gift we need! We are so "
+         "excited about this big group vacation with our friends and family and for you to "
+         "experience Hawaii. If you feel like you must must must contribute, we would "
+         "gratefully accept contributions to our honeymoon fund here. <3"],
     ),
 ]
 

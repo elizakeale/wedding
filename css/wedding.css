@@ -257,12 +257,11 @@ img { display: block; max-width: 100%; }
                        (var(--hdr-track-lo) - var(--hdr-track-hi)) * var(--hdr-p));
 }
 
-/* The nav shrinks with it — 30px/1.5px in the hero down to 20px/1px settled. */
+/* The nav stays a constant 20px/1px, hero or settled — only the wordmark
+   above shrinks as the header morphs. */
 .pageheader .nav {
-  font-size:      calc(var(--hdr-nav-hi) +
-                       (var(--hdr-nav-lo) - var(--hdr-nav-hi)) * var(--hdr-p));
-  letter-spacing: calc(var(--hdr-navtrk-hi) +
-                       (var(--hdr-navtrk-lo) - var(--hdr-navtrk-hi)) * var(--hdr-p));
+  font-size:      var(--hdr-nav-lo);
+  letter-spacing: var(--hdr-navtrk-lo);
 }
 
 /* Short-banner pages have nowhere to travel from: they open settled, and the
