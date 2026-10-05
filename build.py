@@ -525,10 +525,13 @@ def write(filename, html, literal=False):
 # ---------------------------------------------------------------------------
 
 def rows(items):
-    """The label / rule / text row pattern used by FAQs and Recommendations.
+    """The label / rule / text row pattern used by FAQs, Recommendations, Travel
+    and Registry.
 
     A bare string in the list is a group heading ("General", "Wedding Day"),
     styled like the itinerary's day headings because it does the same job.
+    A row's label may be None for a rule + copy with no heading (Registry).
+    A paragraph may be a string, or ("ul", [items]) for a bulleted list.
     """
     out = ['      <div class="rows">']
     for item in items:
@@ -539,9 +542,16 @@ def rows(items):
         out.append('        <div class="row">')
         out.append('          <div class="row__rule"></div>')
         out.append('          <div class="row__body">')
-        out.append(f'            <h3 class="row__label">{label}</h3>')
+        if label:
+            out.append(f'            <h3 class="row__label">{label}</h3>')
         for p in paras:
-            out.append(f'            <p class="row__text">{p}</p>')
+            if isinstance(p, tuple) and p[0] == "ul":
+                out.append('            <ul class="row__list">')
+                for li in p[1]:
+                    out.append(f'              <li>{li}</li>')
+                out.append('            </ul>')
+            else:
+                out.append(f'            <p class="row__text">{p}</p>')
         out.append("          </div>")
         out.append("        </div>")
     out.append("      </div>")
@@ -834,8 +844,12 @@ def build(preview=False):
              section("Travel", rows(C.TRAVEL)))
         page("recommendations.html", "Recommendations &mdash; E &amp; L Wedding",
              section("Recommendations", rows(C.RECOMMENDATIONS)))
+        visit = ('<p class="row__text"><a class="visit" href="'
+                 + (C.REGISTRY_URL or "#") + '"><span>Visit:</span>'
+                 '<span class="arrow" aria-hidden="true"></span></a></p>')
         page("registry.html", "Registry &mdash; E &amp; L Wedding",
-             section("Registry", rows(C.REGISTRY)))
+             section("Registry",
+                     rows(C.REGISTRY).replace('<p class="row__text">VISIT_LINK</p>', visit)))
         live = FULL_PAGES
     else:
         page("home.html", C.META["tab_title"],

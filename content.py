@@ -27,7 +27,7 @@ PHASE = "save-the-date"
 
 # Bump this when css/wedding.css or the favicons change, so browsers don't
 # serve a stale copy.
-ASSET_VERSION = 70
+ASSET_VERSION = 71
 
 # The page the password gate sends people to.
 ENTRY_PAGE = "home.html"
@@ -113,8 +113,9 @@ NAV = [
     ("REGISTRY", "registry.html"),
 ]
 
-# The footer nav uses a different order than the header (matches Figma).
-FOOTER_NAV_ORDER = ["RSVP", "FAQs", "ITINERARY", "RECOMMENDATIONS"]
+# The footer nav uses a different order than the header (matches Figma): it
+# reads across in pairs, RSVP/ITINERARY, TRAVEL/REGISTRY, FAQs/RECOMMENDATIONS.
+FOOTER_NAV_ORDER = ["RSVP", "ITINERARY", "TRAVEL", "REGISTRY", "FAQs", "RECOMMENDATIONS"]
 
 
 # ---------------------------------------------------------------------------
@@ -176,14 +177,33 @@ FAQS_SHORT = [
 
 
 # --- FAQs page (PHASE == "phase-2") ----------------------------------------
+# Mirrors the doc's FAQS tab exactly: General, Wedding Day, Other.
 FAQS = [
-    "Wedding Day",
+    "General",
+    (
+        "When is the RSVP deadline? What if I need to change my RSVP?",
+        ["We kindly ask you to RSVP by June 1, 2027. If you need to change your RSVP, please "
+         "email Eliza and Lucas at "
+         "<a href=\"mailto:elizakeale@gmail.com\">elizakeale@gmail.com</a>."],
+    ),
+    (
+        "Is it safe to book travel now?",
+        ["You can, flights and Airbnbs typically don’t get released until 11 months prior "
+         "so they should be starting to open up now. We suggest setting flight alerts on "
+         "pricing as it fluctuates quite a bit and prices may be higher since it is further "
+         "away. We also will share hotel blocks and Airbnb recommendations soon."],
+    ),
+    (
+        "What if we cannot make it?",
+        ["Hawaii is the most isolated land mass on earth, so we will not be offended if you "
+         "cannot make it!"],
+    ),
     (
         "How can I share my dietary restrictions?",
         ["You can indicate your dietary restrictions in the RSVP form."],
     ),
     (
-        "Am I RSVP\u2019ing for my whole party?",
+        "Am I RSVP’ing for my whole party?",
         ["Yes, we will only send communications to one person per party. You can RSVP for "
          "your entire party here."],
     ),
@@ -193,97 +213,149 @@ FAQS = [
          "your party."],
     ),
     (
-        "Can I bring a plus-one?",
+        "Can I bring a +1?",
         ["After you enter your party code in the RSVP, you can see which guests are in your "
          "party."],
     ),
+
+    "Wedding Day",
     (
-        "What\u2019s the recommended attire?",
+        "What’s the recommended attire?",
         ["Island formal. We suggest lightweight suits and dress shoes for men (ties optional) "
-         "and dresses for women (whatever length is fine). Heels must have caps or be wedges "
-         "due to the grass."],
+         "and dresses for women (whatever length is fine). The venue requires that heels have "
+         "caps or be wedges due to the grass."],
     ),
     (
         "Will there be transportation on the day of?",
         ["<span class=\"k\">Getting there:</span> We recommend either a car with a designated "
          "driver (there will be parking), or scheduling a taxi or Uber in advance. We would "
          "highly suggest not waiting until the event to schedule an Uber as this can sometimes "
-         "be unpredictable and the location is 40\u201360 minutes from Honolulu depending on "
+         "be unpredictable and the location is 40–60 minutes from Honolulu depending on "
          "traffic.",
          "<span class=\"k\">Getting back:</span> An optional shuttle will take guests back to "
          "Waikiki. We will message closer to the date to confirm if you would like to take the "
          "shuttle. You can also take a ride back with a designated driver or pre-schedule an "
-         "Uber or Lyft if you don\u2019t prefer the shuttle or are not staying in Waikiki."],
+         "Uber or Lyft if you don’t prefer the shuttle or are not staying in Waikiki."],
     ),
     (
         "Where are the pickup points, and when does the last shuttle leave?",
         ["The shuttle will leave from the parking lot. There is only one shuttle since the "
-         "event has a hard stop at 10 PM. It will wait until everyone is loaded in."],
+         "event has a hard stop at 10 PM. It will wait until everyone is loaded in!"],
     ),
     (
         "Is it outdoors? What if it rains?",
-        ["The entire event will take place at one venue set against the Ko\u2019olau "
+        ["The entire event will take place at one venue set against the Ko’olau "
          "mountains. There will be a large tent and covered lanai so rain will not affect the "
-         "event. Hawaii rain usually does not last long."],
-    ),
-    (
-        "Is there an after afterparty?",
-        ["The choice is yours after the shuttles return to Honolulu! Waikiki bars will still "
-         "be open and we might join you."],
+         "event. Hawaii rain usually does not last long!"],
     ),
 
-    "General",
+    "Other",
     (
-        "When is the RSVP deadline? What if I need to change my RSVP?",
-        ["We kindly ask you to RSVP by June 1, 2027. If you need to change your RSVP, please "
-         "email Eliza and Lucas at "
-         "<a href=\"mailto:elizakeale@gmail.com\">elizakeale@gmail.com</a>."],
-    ),
-    (
-        "What if we cannot make it?",
-        ["Hawaii is the most isolated land mass on earth, so we will not be offended if you "
-         "cannot make it!"],
-    ),
-    (
-        "Do you have a registry?",
-        ["We are genuinely so grateful that you travelled all the way to join us in Hawaii and "
-         "your presence is the only gift we need! We are so excited about this big group "
-         "vacation and for you to experience the island. If you feel like you absolutely must "
-         "contribute, we have a honeymoon fund you can contribute to here."],
+        "When will more information be shared?",
+        ["This website has the most up to date information. We will send updates over the "
+         "coming year as more information comes in or if we need information from you on "
+         "your preferences post-RSVP."],
     ),
     (
         "Who should guests contact with questions?",
-        ["For friends: Don\u2019t hesitate to contact either Eliza or Lucas directly.",
-         "For family: For Eliza\u2019s family, contact Gala. For Lucas\u2019 family, please "
-         "contact Kathy.",
+        ["For friends: Don’t hesitate to contact either Eliza or Lucas directly.",
+         "For family: For Eliza’s family, contact Gala. For Lucas’ family, please "
+         "contact Kathleen.",
          "On the wedding day, please contact our wedding coordinator (their information will "
          "be shared later).",
-         "<br />".join(_CONTACTS)],
+         "<br />".join(_CONTACTS),
+         "Note: Other trip-related recommendations can be found "
+         "<a href=\"../recommendations/\">here</a>."],
     ),
 ]
 
 # --- Recommendations page (PHASE == "phase-2") -----------------------------
-# Phase 1 questions here intentionally diverge from FAQS_SHORT above: the doc's
-# phase-1 wording (specific dates, "international airport") is meant for this
-# page, once invitations are out. FAQS_SHORT keeps the vaguer save-the-date
-# wording that was deliberately trimmed while that's still the only page live.
+# The doc's "Phase 1" questions now live on the Travel page and in the FAQs, so
+# this page is the doc's Phase 2 set only.
+_MAPS = "We made a shared Google Maps list here that you can bookmark."
+
 RECOMMENDATIONS = [
-    "Phase 1: Save the date",
     (
-        "When will more information be shared?",
-        ["We will send out official invites and more information over the coming weeks."],
+        "Can you share food recommendations?",
+        ["Yes! Hawaii has amazing seafood, poke, and asian food. " + _MAPS,
+         "<span class=\"k\">Our must hit cheap eats are:</span> HanaPa’a Market for "
+         "Poke, Pioneer Saloon for quality plate lunch, Rainbow Inn for the classic plate "
+         "lunch, Leonard’s for Malasadas donuts, fresh poke + rice at Foodland grocery "
+         "stores.",
+         "<span class=\"k\">Our top restaurants in Honolulu are:</span> Akasaka Sushi near "
+         "Waikiki, Pig &amp; The Lady in Chinatown, Izakaya Nonbei off Kapahulu.",
+         "<span class=\"k\">Our top restaurants with views are:</span> Roy’s Hawaii Kai "
+         "and Haleiwa Joe’s Haiku Gardens in Kane’ohe."],
     ),
     (
-        "Is it safe to book travel now?",
-        ["We suggest holding off for now unless you are planning to book a specific "
-         "accommodation that is already opened up for booking (e.g., a larger luxury Airbnb). "
-         "Flights and Airbnbs typically don\u2019t get released until 11 months prior (likely "
-         "late November 2026). We also will share hotel blocks and Airbnb recommendations "
-         "soon."],
+        "Can you share beach recommendations?",
+        [("ul", ["For cool views and bigger waves, Makapu’u Beach Park.",
+                 "For flat calm water and fine sand, Lanikai.",
+                 "For calm water and big stretches of beach, Ke’iki on North Shore.",
+                 "For fun smaller waves and lots of space for big groups, Waimanalo."]),
+         _MAPS],
+    ),
+    (
+        "Other tourism recommendations?",
+        [("ul", [
+            "Day trip to North Shore for Dole whip, garlic shrimp, shave ice, Acai bowls, and "
+            "large stretch beaches",
+            "Day trip to east side and hit Spitting Caves and Makapu’u Tide Pools, the "
+            "drive itself is beautiful and winding",
+            "Hike Wiliwilinui (our favourite hike, can be done in a few hours and easy to "
+            "access, not too dangerous and awesome cliff payoff)",
+            "Surf! We recommend RV’s Ocean Sports for lessons.",
+            "Snorkel, though you’ll mostly see fish and turtles, not reef unless you take "
+            "a boat further out.",
+            "Visit Pearl Harbor",
+            "Take a helicopter tour (list <a href=\"https://www.tripadvisor.com/"
+            "Attraction_Products-g29222-t12026-zfg11864-a_contentId.195810255825+23840390061-"
+            "Oahu_Hawaii.html\">here</a>)",
+            "Go cage-free shark diving on the North Shore (list <a href=\"https://www."
+            "tripadvisor.com/Attraction_Products-g29222-t12061-zfg12023-a_contentId."
+            "195810255585+23840390061-Oahu_Hawaii.html\">here</a>)",
+            "ATV/Jurassic Park tours at Kualoa Ranch",
+            "Airbnb experiences run by locals, like a luau",
+            "Get a sunset drink at a nice hotel",
+            "Brewery in Kaka’ako",
+            "Visit the shops at SALT Kaka’ako",
+            "Trendier local shops and cafes in Kaimuki, in Honolulu",
+            "For a more lowkey activity, we suggest the Thursday and Sunday Kailua "
+            "Farmer’s Market, or the Saturday Kaka’ako Farmer’s Market in "
+            "Honolulu. They have tons of local food vendors, not just produce."]),
+         "Message Eliza &amp; Lucas if you need more recommendations!"],
+    ),
+    (
+        "Other good things to know",
+        ["<span class=\"k\">Sunscreen:</span> Hawaiʻi bans sunscreens containing "
+         "oxybenzone and octinoxate, reef-safe sunscreen is required but easy to find.",
+         "<span class=\"k\">Payment:</span> Major credit cards and tap are widely accepted. "
+         "Standard tip is 15&ndash;20%. Currency is USD.",
+         "<span class=\"k\">Forgot something?</span> Oahu is very developed, so you can buy "
+         "anything you need that you forgot (there’s Costco, Target, etc.). ABC stores "
+         "are all over Waikiki and sell plenty of helpful things as well (e.g., beach towels, "
+         "sunscreen).",
+         "<span class=\"k\">In case you are confused:</span> Honolulu is the main town. Oahu "
+         "is the island. Hawaii is the state. Waikiki is an area in Honolulu (not a town in "
+         "itself).",
+         "Please contact Eliza &amp; Lucas should you have any other questions!"],
+    ),
+]
+
+# --- Travel page (PHASE == "phase-2") ---------------------------------------
+# SOURCE OF TRUTH: the same Google doc, TRAVEL tab (tab t.tdz7w2dumvxd).
+# The doc still has blanks ("____ hotels", "code ___", "email ___") — they are
+# carried over as written so they are impossible to miss; fill them in the doc.
+TRAVEL = [
+    (
+        "How do I get to the island?",
+        ["Fly into Daniel K. Inouye International Airport in Honolulu, Oahu, Hawaii. This is "
+         "the only international airport on Oahu. You could also fly in from another island "
+         "if more affordable and you’d like to island hop."],
     ),
     (
         "What dates do you recommend booking our trip for?",
-        ["If you\u2019re planning to come for about a week (we hope you do if you\u2019re "
+        ["If you’re planning to come for about a week (we hope you do if you’re "
          "flying all the way!), then we recommend aiming to arrive the week before the "
          "wedding, arriving October 15 weekend and flying out Sunday, October 24. We will be "
          "planning completely optional events throughout October 16 through 23, including a "
@@ -292,25 +364,17 @@ RECOMMENDATIONS = [
          "10&ndash;12 nights if you can swing some island hopping as well."],
     ),
     (
-        "How do I get to the island?",
-        ["Fly into Daniel K. Inouye International Airport in Honolulu, Oahu, Hawaii. This is "
-         "the only international airport on Oahu. You could also fly in from another island "
-         "if more affordable and you\u2019d like to island hop."],
-    ),
-
-    "Phase 2",
-    (
         "Where should we stay on island?",
-        ["We recommend staying in Honolulu (\u201cin town\u201d) as it\u2019s a central point "
+        ["We recommend staying in Honolulu (“in town”) as it’s a central point "
          "to shops, dining, transportation, and more importantly, where virtually all the "
          "hotels are located. Within Honolulu, the Waikiki neighborhood is the most "
          "tourist-friendly. This is the only location with proper hotels. This is also where "
          "the wedding day return shuttle will be dropping people back off so this is our "
          "recommendation.",
          "We would not recommend staying on the North Shore (Haleiwa, Pupukea, etc.) as "
-         "it\u2019s very hard to get to and from (limited transportation options). The "
-         "wedding day is mostly on the east (or \u201cWindward\u201d) side, so you could stay "
-         "in an Airbnb in this area (e.g., Kane\u2019ohe or Kailua), but for the rest of your "
+         "it’s very hard to get to and from (limited transportation options). The "
+         "wedding day is mostly on the east (or “Windward”) side, so you could stay "
+         "in an Airbnb in this area (e.g., Kane’ohe or Kailua), but for the rest of your "
          "trip, these areas are less central."],
     ),
     (
@@ -320,18 +384,18 @@ RECOMMENDATIONS = [
          "There are also many Airbnbs on island, we created an Airbnb shared list here.",
          "If you plan to rent a car, we recommend opting for an Airbnb in Honolulu town but "
          "not in Waikiki, as parking is tricky.",
-         "If you don\u2019t plan to rent a car or get daily rentals, then you can opt for a "
+         "If you don’t plan to rent a car or get daily rentals, then you can opt for a "
          "hotel in Waikiki.",
-         "<span class=\"k\">Luxury hotels:</span> The Royal Hawaiian Resort, Prince Waikiki "
-         "Hotel, Hilton Hawaiian Village, Moana Surfrider (A Westin Resort &amp; Spa), Hilton "
-         "Club Ka Haku Honolulu.",
-         "<span class=\"k\">Boutique hotels closer to Diamond Head:</span> Kaimana Beach "
-         "Hotel, Lotus Honolulu, Queen Kapi\u2019olani Hotel."],
+         "<span class=\"k\">Luxury hotels:</span><br />The Royal Hawaiian Resort<br />Prince "
+         "Waikiki Hotel<br />Hilton Hawaiian Village<br />Moana Surfrider, A Westin Resort "
+         "&amp; Spa<br />Hilton Club Ka Haku Honolulu",
+         "<span class=\"k\">Boutique hotels closer to Diamond Head:</span><br />Kaimana "
+         "Beach Hotel<br />Lotus Honolulu<br />Queen Kapi’olani Hotel"],
     ),
     (
         "Do I need a rental car?",
         ["If you want freedom to explore the island, we highly recommend getting a rental car "
-         "or renting daily cars, as public transportation is limited. We\u2019ve arranged a "
+         "or renting daily cars, as public transportation is limited. We’ve arranged a "
          "10% discount on rental cars with Paradise Rent A Car, email ___ and give code: "
          "rockpiles. Uber and Lyft are also prominent for getting around Honolulu but would be "
          "costly for longer distances across the island outside of Honolulu. We would "
@@ -339,21 +403,21 @@ RECOMMENDATIONS = [
     ),
     (
         "How is parking on-island?",
-        ["<span class=\"k\">If you\u2019re staying in Waikiki:</span> You\u2019ll need to pay "
+        ["<span class=\"k\">If you’re staying in Waikiki:</span> You’ll need to pay "
          "for overnight parking at a garage (cheaper than hotel), or try your luck on "
          "Montsarrat Ave. You can usually do a couple laps and eventually find a spot.",
-         "<span class=\"k\">If you\u2019re staying outside Waikiki but still in "
+         "<span class=\"k\">If you’re staying outside Waikiki but still in "
          "Honolulu:</span> Street parking should not be an issue, check with your host.",
-         "<span class=\"k\">If you\u2019re staying outside of Honolulu:</span> Street parking "
+         "<span class=\"k\">If you’re staying outside of Honolulu:</span> Street parking "
          "should not be an issue, check with your host.",
-         "Don\u2019t hesitate to message Eliza &amp; Lucas if you need advice on the parking "
+         "Don’t hesitate to message Eliza &amp; Lucas if you need advice on the parking "
          "situation near a hotel or Airbnb. Please look out for parking signs carefully as "
          "towing is very common on island.",
          "We made a shared Google Maps parking list here that you can bookmark."],
     ),
     (
-        "What\u2019s the weather like, and what should guests pack?",
-        ["October is an ideal time to visit O\u2019ahu because it comes after peak summer "
+        "What’s the weather like, and what should guests pack?",
+        ["October is an ideal time to visit O’ahu because it comes after peak summer "
          "humidity and before winter rainy season. Expect warm and slightly humid with "
          "comfortable daytime highs in the 83&deg;F to 85&deg;F (28&deg;C to 29&deg;C) and "
          "daytime lows of 73&deg;F to 75&deg;F (23&deg;C to 24&deg;C). Water is warm and no "
@@ -361,67 +425,26 @@ RECOMMENDATIONS = [
          "Hawaii has been unpredictable for the past few years so keep this in mind."],
     ),
     (
-        "Food recommendations?",
-        ["We made a shared Google Maps list here that you can bookmark."],
-    ),
-    (
-        "Beach recommendations?",
-        ["For cool views and bigger waves, Makapu\u2019u Beach Park. For flat calm water and "
-         "fine sand, Lanikai. For calm water and big stretches of beach, Ke\u2019iki on North "
-         "Shore. For fun smaller waves and lots of space for big groups, Waimanalo.",
-         "We made a shared Google Maps list here that you can bookmark."],
-    ),
-    (
-        "Other tourism recommendations?",
-        ["Take a helicopter tour or go cageless shark diving on the North Shore.",
-         "ATV/Jurassic Park tours at Kualoa Ranch.",
-         "Luau.",
-         "Polynesian Cultural Center."],
-    ),
-    (
         "What passports or entry documents do international guests need?",
         ["Canadians can enter the USA on a B2 visitor visa, no pre-application required. Just "
          "state this at the border."],
     ),
-    (
-        "Other good things to know",
-        ["<span class=\"k\">Sunscreen:</span> Hawai\u02bbi bans sunscreens containing "
-         "oxybenzone and octinoxate, reef-safe sunscreen is required but easy to find.",
-         "<span class=\"k\">Local etiquette:</span> Keep your distance from sea turtles and "
-         "Hawaiian monk seals.",
-         "<span class=\"k\">Payment:</span> Major credit cards and tap are widely accepted. "
-         "Tip standard is 15&ndash;20%. Currency is USD.",
-         "<span class=\"k\">Forgot something?</span> Oahu is very developed, so you can buy "
-         "anything you need that you forgot (there\u2019s Costco, Target, etc.). ABC stores "
-         "are all over Waikiki and sell plenty of helpful things as well (e.g., beach towels, "
-         "sunscreen).",
-         "<span class=\"k\">In case you are confused:</span> Honolulu is the main town. Oahu "
-         "is the island. Hawaii is the state. Waikiki is an area in Honolulu (not a town)."],
-    ),
-]
-
-
-# --- Travel page (PHASE == "phase-2") ---------------------------------------
-# SOURCE OF TRUTH: the same Google doc as FAQS/RECOMMENDATIONS, a new tab:
-#   docs.google.com/document/d/1D7eX9xFn12uT4U-fPNNcf1_s-rUC_rsKL-V4OuG-mSs (tab t.tdz7w2dumvxd)
-# Placeholder until that doc is pulled.
-TRAVEL = [
-    (
-        "More travel details coming soon",
-        ["Check back shortly — we’re finalizing this page."],
-    ),
 ]
 
 # --- Registry page (PHASE == "phase-2") -------------------------------------
-# SOURCE OF TRUTH: Figma, not the Google doc.
+# SOURCE OF TRUTH: Figma ("Registry" frame), not the Google doc. The row has no
+# heading in the design, just the rule and the copy, then "Visit: ->".
+# REGISTRY_URL is the honeymoon-fund link; it isn't in Figma, so it is blank
+# until Eliza supplies it.
+REGISTRY_URL = ""
 REGISTRY = [
     (
-        "Do you have a registry?",
-        ["We are beyond grateful that you spent the time, effort, and resources to travel all "
-         "the way to join us in Hawaii – being together is the only gift we need! We are so "
-         "excited about this big group vacation with our friends and family and for you to "
-         "experience Hawaii. If you feel like you must must must contribute, we would "
-         "gratefully accept contributions to our honeymoon fund here. <3"],
+        None,
+        ["We are so grateful that you’re taking the time, resources, and effort to "
+         "travel to Hawaii to celebrate with us. Having our friends and family together is "
+         "all we need, and we can’t wait to see you. If you would still like to gift, "
+         "you’re welcome to do so here.",
+         "VISIT_LINK"],
     ),
 ]
 
@@ -467,6 +490,18 @@ ITINERARY = [
                     "beach!",
             "location": "Will be decided closer to depending on conditions.",
             "parking": "Will be shared once break is decided.",
+        },
+    ]),
+    ("Tuesday, October 19", [
+        {
+            "time": "4:00 PM \u2013 10:00 PM",
+            "name": "Tea Ceremony & Dinner",
+            "optional": True,
+            "audience": "Family Only Events",
+            "body": "We'll have a tea ceremony and dinner.",
+            "location": "To be confirmed.",
+            "parking": "Will be shared once location is confirmed.",
+            "transportation": "Will be shared once location is confirmed.",
         },
     ]),
     ("Wednesday, October 20", [
