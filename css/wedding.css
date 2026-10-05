@@ -347,7 +347,7 @@ html { scroll-padding-top: var(--hdr-h); }
 /* The page you're on stays white with a rule under it; yellow is reserved for
    hover, so colour means "you can click this" and never anything else.
    opacity:1 overrides the global a:hover dim — the colour is the signal. */
-.nav a[aria-current="page"] { border-bottom: 1px solid var(--rule); }
+.nav a[aria-current="page"] { border-bottom: 2px solid var(--rule); }
 .nav a:hover { color: var(--hover); opacity: 1; }
 
 /* ---------- Mobile nav: hamburger + panel ----------
@@ -381,7 +381,7 @@ html { scroll-padding-top: var(--hdr-h); }
   position: absolute;
   left: 0;
   width: 100%;
-  height: 1px;
+  height: 2px;
   background: currentColor;
   transition: transform 0.25s ease, opacity 0.2s ease, top 0.25s ease;
 }
@@ -413,7 +413,7 @@ body.nav-open .nav-toggle__bar:nth-child(3) { top: 50%; transform: rotate(-45deg
 .meta__rule {
   display: inline-block;
   width: 4.9375rem;  /* 79px */
-  height: 1px;
+  height: 2px;
   background: currentColor;
   opacity: 0.85;
   flex: none;
@@ -425,7 +425,7 @@ body.nav-open .nav-toggle__bar:nth-child(3) { top: 50%; transform: rotate(-45deg
      eye against the rendered font; in em so it holds at any size the meta
      line is used at. */
   position: relative;
-  top: 0.2em;
+  top: 0.03em;
 }
 
 /* ---------- Interior page wordmark ---------- */
@@ -504,7 +504,7 @@ body.nav-open .nav-toggle__bar:nth-child(3) { top: 50%; transform: rotate(-45deg
 
 .scroll-cue {
   align-self: center;
-  width: 1px;
+  width: 2px;
   height: 6.9375rem;   /* 111px */
   background: rgba(255, 255, 255, 0.75);
   margin-top: 5.5rem;
@@ -582,7 +582,7 @@ body.nav-open .nav-toggle__bar:nth-child(3) { top: 50%; transform: rotate(-45deg
   padding-bottom: var(--gap-row);
 }
 
-.row__rule { height: 1px; background: var(--rule); margin-top: var(--rule-drop); }
+.row__rule { height: 2px; background: var(--rule); margin-top: var(--rule-drop); }
 
 .row__body { max-width: var(--measure); }
 
@@ -601,7 +601,7 @@ body.nav-open .nav-toggle__bar:nth-child(3) { top: 50%; transform: rotate(-45deg
 
 .row__text + .row__text { margin-top: var(--gap-item); }
 .row__body > .row__text:first-child { margin-top: 0; }
-.row__text a { border-bottom: 1px solid var(--rule); }
+.row__text a { border-bottom: 2px solid var(--rule); }
 
 /* Bulleted answers (beach and tourism recommendations). */
 .row__list {
@@ -613,10 +613,10 @@ body.nav-open .nav-toggle__bar:nth-child(3) { top: 50%; transform: rotate(-45deg
   line-height: 1.45;
 }
 .row__list li { position: relative; padding-left: 4rem; }
-.row__list li::before { content: ''; position: absolute; left: 0; top: 0.78em; width: 3rem; height: 1px; background: currentColor; }
+.row__list li::before { content: ''; position: absolute; left: 0; top: calc(0.78em - 1px); width: 3rem; height: 2px; background: currentColor; }
 .row__list li + li { margin-top: 0.375rem; }
 .row__list + .row__text { margin-top: var(--gap-item); }
-.row__list a { border-bottom: 1px solid var(--rule); }
+.row__list a { border-bottom: 2px solid var(--rule); }
 
 /* "Visit: ->" under the registry copy. */
 .row__text a.visit {
@@ -625,16 +625,16 @@ body.nav-open .nav-toggle__bar:nth-child(3) { top: 50%; transform: rotate(-45deg
   gap: 1.25rem;
   border-bottom: 0;
 }
-.visit .arrow { width: 2.375rem; height: 1px; background: currentColor; position: relative; }
+.visit .arrow { width: 2.375rem; height: 2px; background: currentColor; position: relative; }
 .visit .arrow::after {
   content: '';
   position: absolute;
   right: 0;
-  top: -0.25rem;
+  top: calc(-0.25rem + 1px);
   width: 0.5rem;
   height: 0.5rem;
-  border-top: 1px solid currentColor;
-  border-right: 1px solid currentColor;
+  border-top: 2px solid currentColor;
+  border-right: 2px solid currentColor;
   transform: rotate(45deg);
 }
 
@@ -666,7 +666,7 @@ body.nav-open .nav-toggle__bar:nth-child(3) { top: 50%; transform: rotate(-45deg
   white-space: nowrap;
 }
 
-.event__rule { height: 1px; background: var(--rule); margin-top: var(--rule-drop); }
+.event__rule { height: 2px; background: var(--rule); margin-top: var(--rule-drop); }
 
 .event__body { max-width: var(--measure); }
 
@@ -686,7 +686,7 @@ body.nav-open .nav-toggle__bar:nth-child(3) { top: 50%; transform: rotate(-45deg
 }
 
 .event__text + .event__text { margin-top: var(--gap-item); }
-.event__text a { border-bottom: 1px solid var(--rule); }
+.event__text a { border-bottom: 2px solid var(--rule); }
 .event__text .k { opacity: 0.82; }
 
 /* ---------- RSVP form ---------- */
@@ -776,7 +776,7 @@ body.nav-open .nav-toggle__bar:nth-child(3) { top: 50%; transform: rotate(-45deg
 }
 
 .code-entry__go:hover { color: var(--hover); }
-.code-entry__go .arrow { width: 2.375rem; height: 1px; background: currentColor; position: relative; }
+.code-entry__go .arrow { width: 2.375rem; height: 2px; background: currentColor; position: relative; }
 .code-entry__go .arrow::after {
   content: '';
   position: absolute;
@@ -784,8 +784,8 @@ body.nav-open .nav-toggle__bar:nth-child(3) { top: 50%; transform: rotate(-45deg
   top: 50%;
   width: 0.5rem;
   height: 0.5rem;
-  border-top: 1px solid currentColor;
-  border-right: 1px solid currentColor;
+  border-top: 2px solid currentColor;
+  border-right: 2px solid currentColor;
   transform: translateY(-50%) rotate(45deg);
 }
 
@@ -824,16 +824,16 @@ body.nav-open .nav-toggle__bar:nth-child(3) { top: 50%; transform: rotate(-45deg
 
 .submit:hover:not(:disabled) { color: var(--hover); }
 .submit:disabled { opacity: 0.45; cursor: default; }
-.submit .arrow { width: 2.375rem; height: 1px; background: currentColor; position: relative; }
+.submit .arrow { width: 2.375rem; height: 2px; background: currentColor; position: relative; }
 .submit .arrow::after {
   content: '';
   position: absolute;
   right: 0;
-  top: -0.25rem;
+  top: calc(-0.25rem + 1px);
   width: 0.5rem;
   height: 0.5rem;
-  border-top: 1px solid currentColor;
-  border-right: 1px solid currentColor;
+  border-top: 2px solid currentColor;
+  border-right: 2px solid currentColor;
   transform: rotate(45deg);
 }
 
@@ -906,7 +906,7 @@ body.nav-open .nav-toggle__bar:nth-child(3) { top: 50%; transform: rotate(-45deg
   margin-top: 2.125rem;
 }
 
-.footer__contact a { border-bottom: 1px solid var(--rule); }
+.footer__contact a { border-bottom: 2px solid var(--rule); }
 
 .footer__details {
   list-style: none;
@@ -930,7 +930,7 @@ body.nav-open .nav-toggle__bar:nth-child(3) { top: 50%; transform: rotate(-45deg
 }
 
 .back-to-top__rule {
-  width: 1px;
+  width: 2px;
   height: 4.875rem;   /* 78px, mirrors the scroll cue in the hero */
   background: rgba(255, 255, 255, 0.75);
 }
@@ -1013,7 +1013,7 @@ body.nav-open .nav-toggle__bar:nth-child(3) { top: 50%; transform: rotate(-45deg
     letter-spacing: 0.075rem;
   }
 
-  .nav-panel__links a[aria-current="page"] { border-bottom: 1px solid var(--rule); }
+  .nav-panel__links a[aria-current="page"] { border-bottom: 2px solid var(--rule); }
   .nav-panel__links a:hover { color: var(--hover); opacity: 1; }
 
   .nav-panel__photo { width: 11rem; margin-top: 3.5rem; }
