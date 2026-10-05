@@ -146,6 +146,18 @@ def social_meta(page=""):
 # determined reader.
 # ---------------------------------------------------------------------------
 
+# The accessible view: a theme on the existing pages (css: html[data-contrast=high]),
+# not a second site, so the two can never drift apart. Phase 2 only.
+#
+# It is switched by a link, not a button on the page: open any page with
+# ?view=accessible and the choice is remembered in that browser (so every
+# other page opens the same way); ?view=standard turns it off. Applied in
+# <head> before first paint so nothing flashes olive first. The private-mode /
+# blocked-storage case still works for the page the link opened.
+CONTRAST_EARLY = """
+  <script>(function(){var on=false;try{var q=new URLSearchParams(location.search).get('view');if(q==='accessible'){on=true;localStorage.setItem('elw-contrast','high')}else if(q==='standard'){localStorage.removeItem('elw-contrast')}else{on=localStorage.getItem('elw-contrast')==='high'}}catch(e){}if(on)document.documentElement.setAttribute('data-contrast','high')})()</script>"""
+
+
 GATE_STYLE = """
     #gate, #gate * { margin:0; padding:0; box-sizing:border-box; }
     html:not(.unlocked), html:not(.unlocked) body {
@@ -240,7 +252,25 @@ GATE_STYLE = """
       #gate .pw-input { font-size:16px; }
       #gate .pw-ph    { font-size:16px; }
     }
-"""
+
+    /* Accessible view (?view=accessible): Figma "Password - Accessible". Same
+       photo and card; the bar goes white with black type, and everything is
+       20% larger. */
+    html[data-contrast="high"] #gate .card { width:clamp(240px, 26.4%, 395px); }
+    html[data-contrast="high"] #gate .pw-input { height:48px; font-size:18px; background:#fff; color:#000; }
+    html[data-contrast="high"] #gate .pw-ph { font-size:18px; color:#000; }
+    html[data-contrast="high"] #gate .pw-go path { stroke:#000; stroke-width:1; }
+    html[data-contrast="high"] #gate .pw-go:focus-visible { outline-color:#000; }
+    html[data-contrast="high"] #gate .pw-cursor { background:#000; }
+    html[data-contrast="high"] #gate .error { font-size:14.4px; }
+    @media (max-width:600px) {
+      html[data-contrast="high"] #gate .card { width:73.7vw; }
+      html[data-contrast="high"] #gate #wrap { width:92vw !important; margin-left:calc(-9.15vw) !important; }
+      html[data-contrast="high"] #gate .error { width:92vw; margin-left:calc(-9.15vw); }
+      html[data-contrast="high"] #gate .pw-input,
+      html[data-contrast="high"] #gate .pw-ph { font-size:19.2px; }
+    }
+  """
 
 
 def gate_markup(up=""):
@@ -267,7 +297,7 @@ def gate_markup(up=""):
 # Runs before the first paint, so someone already inside never sees the door
 # flash. Deliberately duplicates the TTL from js/config.js: inlining it is what
 # makes it early enough to matter, and both read the same stored value.
-GATE_EARLY = """  <script>
+GATE_EARLY = CONTRAST_EARLY + """  <script>
     try {
       var s = JSON.parse(sessionStorage.getItem('elw.session') || 'null');
       if (s && s.t && (Date.now() - s.t) < 1800000) {
@@ -469,18 +499,6 @@ def footer():
       <p class="back-to-top"><a href="#top"><span class="back-to-top__rule"></span>Back to top</a></p>
     </div>
   </footer>"""
-
-
-# The accessible view: a theme on the existing pages (css: html[data-contrast=high]),
-# not a second site, so the two can never drift apart. Phase 2 only.
-#
-# It is switched by a link, not a button on the page: open any page with
-# ?view=accessible and the choice is remembered in that browser (so every
-# other page opens the same way); ?view=standard turns it off. Applied in
-# <head> before first paint so nothing flashes olive first. The private-mode /
-# blocked-storage case still works for the page the link opened.
-CONTRAST_EARLY = """
-  <script>(function(){var on=false;try{var q=new URLSearchParams(location.search).get('view');if(q==='accessible'){on=true;localStorage.setItem('elw-contrast','high')}else if(q==='standard'){localStorage.removeItem('elw-contrast')}else{on=localStorage.getItem('elw-contrast')==='high'}}catch(e){}if(on)document.documentElement.setAttribute('data-contrast','high')})()</script>"""
 
 
 def page(filename, title, main, tall=False, save_the_date=False, scripts=""):

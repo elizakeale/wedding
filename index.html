@@ -140,7 +140,25 @@
       #gate .pw-input { font-size:16px; }
       #gate .pw-ph    { font-size:16px; }
     }
-  </style>
+    /* Accessible view (?view=accessible): Figma "Password - Accessible". Same
+       photo and card; the bar goes white with black type, and everything is
+       20% larger. */
+    html[data-contrast="high"] #gate .card { width:clamp(240px, 26.4%, 395px); }
+    html[data-contrast="high"] #gate .pw-input { height:48px; font-size:18px; background:#fff; color:#000; }
+    html[data-contrast="high"] #gate .pw-ph { font-size:18px; color:#000; }
+    html[data-contrast="high"] #gate .pw-go path { stroke:#000; stroke-width:1; }
+    html[data-contrast="high"] #gate .pw-go:focus-visible { outline-color:#000; }
+    html[data-contrast="high"] #gate .pw-cursor { background:#000; }
+    html[data-contrast="high"] #gate .error { font-size:14.4px; }
+    @media (max-width:600px) {
+      html[data-contrast="high"] #gate .card { width:73.7vw; }
+      html[data-contrast="high"] #gate #wrap { width:92vw !important; margin-left:calc(-9.15vw) !important; }
+      html[data-contrast="high"] #gate .error { width:92vw; margin-left:calc(-9.15vw); }
+      html[data-contrast="high"] #gate .pw-input,
+      html[data-contrast="high"] #gate .pw-ph { font-size:19.2px; }
+    }
+    </style>
+  <script>(function(){var on=false;try{var q=new URLSearchParams(location.search).get('view');if(q==='accessible'){on=true;localStorage.setItem('elw-contrast','high')}else if(q==='standard'){localStorage.removeItem('elw-contrast')}else{on=localStorage.getItem('elw-contrast')==='high'}}catch(e){}if(on)document.documentElement.setAttribute('data-contrast','high')})()</script>
   <script>
     try {
       var s = JSON.parse(sessionStorage.getItem('elw.session') || 'null');

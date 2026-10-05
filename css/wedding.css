@@ -1205,9 +1205,9 @@ body.nav-open .nav-toggle__bar:nth-child(3) { top: 50%; transform: rotate(-45deg
 /* ==========================================================================
    Accessible view  (html[data-contrast="high"], switched on by ?view=accessible)
 
-   Same layout, same type sizes: only colour and outlines change. White page,
-   black text, black rules, and an outline round everything you can act on.
-   Outlines are `outline`, not `border`, so nothing shifts by a pixel.
+   Figma "Accessible" frames: same layout, white page, black type, thin black
+   rules. Boxes only where you type or tick (the fields and checkboxes already
+   have one); nothing else is outlined. Type is 20% larger, below.
    ========================================================================== */
 
 html[data-contrast="high"] {
@@ -1219,47 +1219,28 @@ html[data-contrast="high"] {
   --rule:    #000;
 }
 
-html[data-contrast="high"] body {
-  /* The face is a Light weight; a hairline stroke thickens it without
-     changing a single metric, so line breaks stay exactly where they were. */
-  -webkit-text-stroke: 0.35px #000;
-}
-
 /* No photography behind text: header, hero, and the mobile menu go white. */
 html[data-contrast="high"] .banner,
 html[data-contrast="high"] .pageheader__bg,
 html[data-contrast="high"] .nav-panel { background: #fff; }
-html[data-contrast="high"] .pageheader__bg { border-bottom: 2px solid #000; }
 
 html[data-contrast="high"] .scroll-cue,
 html[data-contrast="high"] .back-to-top__rule { background: #000; }
 
-/* Every rule and underline is a solid, heavier black line. */
-html[data-contrast="high"] .row__rule,
-html[data-contrast="high"] .event__rule { height: 2px; }
-html[data-contrast="high"] .row__text a,
-html[data-contrast="high"] .row__list a,
-html[data-contrast="high"] .event__text a,
-html[data-contrast="high"] .footer__contact a { border-bottom: 2px solid #000; }
 html[data-contrast="high"] a:hover { text-decoration: underline; }
+/* Figma "Accessible" shows the nav with no current-page underline. */
+html[data-contrast="high"] .nav a[aria-current="page"],
+html[data-contrast="high"] .nav-panel__links a[aria-current="page"] { border-bottom: 0; }
 
-/* The yellow date/place line and any dimmed text go full strength. */
+/* Dimmed text goes full strength. */
 html[data-contrast="high"] .event__text .k,
 html[data-contrast="high"] .event__name .opt,
 html[data-contrast="high"] .diet__empty { opacity: 1; }
 
-/* Boxes are for places you type or tick, and nothing else: text stays plain. */
-html[data-contrast="high"] .guest__box { outline: 2px solid #000; outline-offset: 0.2rem; }
-html[data-contrast="high"] .field { border: 2px solid #000; }
 html[data-contrast="high"] .field::placeholder { color: #444; }
-html[data-contrast="high"] .field:focus { border-color: #000; outline: 3px solid #000; outline-offset: 2px; }
-html[data-contrast="high"] .nav a[aria-current="page"],
-html[data-contrast="high"] .nav-panel__links a[aria-current="page"] {
-  border-bottom: 2px solid #000;
-}
 html[data-contrast="high"] a:focus-visible,
-html[data-contrast="high"] button:focus-visible { outline: 3px solid #000; outline-offset: 4px; }
-
+html[data-contrast="high"] button:focus-visible,
+html[data-contrast="high"] .field:focus { outline: 2px solid #000; outline-offset: 3px; }
 
 /* Everything on the site is sized in rem, so raising the root size 20% scales
    type, spacing and widths together: the layout is the same, just larger. */
