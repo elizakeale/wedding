@@ -1201,3 +1201,111 @@ body.nav-open .nav-toggle__bar:nth-child(3) { top: 50%; transform: rotate(-45deg
 
   .back-to-top a { gap: 1.25rem; font-size: 1rem; }
 }
+
+/* ==========================================================================
+   Accessible view  (html[data-contrast="high"], toggled by #a11yToggle)
+
+   Same layout, same type sizes: only colour and outlines change. White page,
+   black text, black rules, and an outline round everything you can act on.
+   Outlines are `outline`, not `border`, so nothing shifts by a pixel.
+   ========================================================================== */
+
+/* The button itself: fixed to the window so it needs no room in the layout. */
+.a11y-toggle {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 60;
+  padding: 0.5rem 1rem;
+  font: inherit;
+  font-size: 1rem;
+  letter-spacing: 0.05rem;
+  color: #1a1a1a;
+  background: #fff;
+  border: 1px solid #1a1a1a;
+  border-radius: 0;
+  cursor: pointer;
+}
+.a11y-toggle:hover { background: var(--hover); color: #1a1a1a; }
+.a11y-toggle:focus-visible { outline: 3px solid #1a1a1a; outline-offset: 3px; }
+
+html[data-contrast="high"] {
+  --olive:   #fff;
+  --white:   #000;
+  --yellow:  #000;
+  --pink:    #000;
+  --hover:   #000;
+  --rule:    #000;
+}
+
+html[data-contrast="high"] body {
+  /* The face is a Light weight; a hairline stroke thickens it without
+     changing a single metric, so line breaks stay exactly where they were. */
+  -webkit-text-stroke: 0.35px #000;
+}
+
+/* No photography behind text: header, hero, and the mobile menu go white. */
+html[data-contrast="high"] .banner,
+html[data-contrast="high"] .pageheader__bg,
+html[data-contrast="high"] .nav-panel { background: #fff; }
+html[data-contrast="high"] .pageheader__bg { border-bottom: 2px solid #000; }
+
+html[data-contrast="high"] .scroll-cue,
+html[data-contrast="high"] .back-to-top__rule { background: #000; }
+
+/* Every rule and underline is a solid, heavier black line. */
+html[data-contrast="high"] .row__rule,
+html[data-contrast="high"] .event__rule { height: 2px; }
+html[data-contrast="high"] .row__text a,
+html[data-contrast="high"] .row__list a,
+html[data-contrast="high"] .event__text a,
+html[data-contrast="high"] .footer__contact a { border-bottom: 2px solid #000; }
+html[data-contrast="high"] a:hover { text-decoration: underline; }
+
+/* The yellow date/place line and any dimmed text go full strength. */
+html[data-contrast="high"] .event__text .k,
+html[data-contrast="high"] .event__name .opt,
+html[data-contrast="high"] .diet__empty { opacity: 1; }
+
+/* Boxes round everything you can act on, and round each row of content. */
+html[data-contrast="high"] .nav a,
+html[data-contrast="high"] .nav-panel__links a,
+html[data-contrast="high"] .footer__links a,
+html[data-contrast="high"] .visit,
+html[data-contrast="high"] .submit,
+html[data-contrast="high"] .code-entry__go,
+html[data-contrast="high"] .back-to-top a,
+html[data-contrast="high"] .guest__box {
+  outline: 2px solid #000;
+  outline-offset: 0.3rem;
+}
+/* The box goes round the text column only (not the whole grid row), so the
+   rule on the left still points at it and neighbouring boxes never touch. */
+html[data-contrast="high"] .row__body,
+html[data-contrast="high"] .event__body,
+html[data-contrast="high"] .footer__photo img {
+  outline: 2px solid #000;
+  outline-offset: 0.6rem;
+}
+html[data-contrast="high"] .field { border: 2px solid #000; }
+html[data-contrast="high"] .field::placeholder { color: #444; }
+html[data-contrast="high"] .field:focus { border-color: #000; outline: 3px solid #000; outline-offset: 2px; }
+html[data-contrast="high"] .nav a[aria-current="page"],
+html[data-contrast="high"] .nav-panel__links a[aria-current="page"] {
+  border-bottom: 0;
+  background: #000;
+  color: #fff;
+  -webkit-text-stroke: 0;
+}
+html[data-contrast="high"] a:focus-visible,
+html[data-contrast="high"] button:focus-visible { outline: 3px solid #000; outline-offset: 4px; }
+
+html[data-contrast="high"] .a11y-toggle { border: 2px solid #000; color: #000; background: #fff; -webkit-text-stroke: 0; }
+html[data-contrast="high"] .a11y-toggle:hover { background: #000; color: #fff; }
+
+/* Form steps already carry their own boxes (fields, checkboxes, buttons), so
+   the RSVP page skips the text-column box rather than nesting boxes in boxes. */
+html[data-contrast="high"] .rsvp .row__body { outline: 0; }
+html[data-contrast="high"] .footer__links { gap: 1.5rem 1.75rem; }
+html[data-contrast="high"] .footer__links a,
+html[data-contrast="high"] .nav a { outline-offset: 0.25rem; }

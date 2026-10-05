@@ -471,6 +471,20 @@ def footer():
   </footer>"""
 
 
+# The accessible view: one button, same layout, white page, black text, boxed
+# controls. It is a theme on the existing pages (css: html[data-contrast=high]),
+# not a second site, so the two can never drift apart. Phase 2 only.
+CONTRAST_EARLY = """
+  <script>try{if(localStorage.getItem('elw-contrast')==='high')document.documentElement.setAttribute('data-contrast','high')}catch(e){}</script>"""
+
+
+def contrast_button():
+    if not FULL:
+        return ""
+    return """
+  <button type="button" class="a11y-toggle" id="a11yToggle" aria-pressed="false">Accessible view</button>"""
+
+
 def page(filename, title, main, tall=False, save_the_date=False, scripts=""):
     global UP
     up = UP = prefix(filename)
@@ -492,11 +506,15 @@ def page(filename, title, main, tall=False, save_the_date=False, scripts=""):
 
     body_class = ' class="phase2"' if FULL else ""
     extra_head = f"\n  <style>{GATE_STYLE}  </style>\n{GATE_EARLY}" if gated else ""
+    if FULL:
+        # Applied before first paint so a saved accessible view never flashes
+        # the olive page first. Wrapped in try: storage can be blocked.
+        extra_head += CONTRAST_EARLY
     body = f"""{pageheader(filename, tall, save_the_date)}{banner(filename, tall, save_the_date)}
 
 {main}
 
-{footer()}"""
+{footer()}{contrast_button()}"""
     if gated:
         body = gate_markup(up) + '  <div id="site">\n' + body + "\n  </div>"
 
