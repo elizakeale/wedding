@@ -471,18 +471,16 @@ def footer():
   </footer>"""
 
 
-# The accessible view: one button, same layout, white page, black text, boxed
-# controls. It is a theme on the existing pages (css: html[data-contrast=high]),
+# The accessible view: a theme on the existing pages (css: html[data-contrast=high]),
 # not a second site, so the two can never drift apart. Phase 2 only.
+#
+# It is switched by a link, not a button on the page: open any page with
+# ?view=accessible and the choice is remembered in that browser (so every
+# other page opens the same way); ?view=standard turns it off. Applied in
+# <head> before first paint so nothing flashes olive first. The private-mode /
+# blocked-storage case still works for the page the link opened.
 CONTRAST_EARLY = """
-  <script>try{if(localStorage.getItem('elw-contrast')==='high')document.documentElement.setAttribute('data-contrast','high')}catch(e){}</script>"""
-
-
-def contrast_button():
-    if not FULL:
-        return ""
-    return """
-  <button type="button" class="a11y-toggle" id="a11yToggle" aria-pressed="false">Accessible View</button>"""
+  <script>(function(){var on=false;try{var q=new URLSearchParams(location.search).get('view');if(q==='accessible'){on=true;localStorage.setItem('elw-contrast','high')}else if(q==='standard'){localStorage.removeItem('elw-contrast')}else{on=localStorage.getItem('elw-contrast')==='high'}}catch(e){}if(on)document.documentElement.setAttribute('data-contrast','high')})()</script>"""
 
 
 def page(filename, title, main, tall=False, save_the_date=False, scripts=""):
@@ -514,7 +512,7 @@ def page(filename, title, main, tall=False, save_the_date=False, scripts=""):
 
 {main}
 
-{footer()}{contrast_button()}"""
+{footer()}"""
     if gated:
         body = gate_markup(up) + '  <div id="site">\n' + body + "\n  </div>"
 

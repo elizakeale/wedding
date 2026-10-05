@@ -304,30 +304,3 @@
   if (mq.addEventListener) mq.addEventListener('change', onBreakpoint);
   else if (mq.addListener) mq.addListener(onBreakpoint);
 })();
-
-/* Accessible view: one button flips <html data-contrast="high">, which the
-   stylesheet turns into white page / black text / boxed controls on the same
-   layout. The choice is remembered; the early script in <head> re-applies it
-   before first paint. */
-(function () {
-  'use strict';
-  var btn = document.getElementById('a11yToggle');
-  if (!btn) return;
-  var root = document.documentElement;
-
-  function paint() {
-    var on = root.getAttribute('data-contrast') === 'high';
-    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
-    btn.textContent = on ? 'Standard View' : 'Accessible View';
-  }
-
-  btn.addEventListener('click', function () {
-    var on = root.getAttribute('data-contrast') === 'high';
-    if (on) root.removeAttribute('data-contrast');
-    else root.setAttribute('data-contrast', 'high');
-    try { localStorage.setItem('elw-contrast', on ? 'standard' : 'high'); } catch (e) {}
-    paint();
-  });
-
-  paint();
-})();

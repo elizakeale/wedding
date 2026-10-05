@@ -1203,34 +1203,12 @@ body.nav-open .nav-toggle__bar:nth-child(3) { top: 50%; transform: rotate(-45deg
 }
 
 /* ==========================================================================
-   Accessible view  (html[data-contrast="high"], toggled by #a11yToggle)
+   Accessible view  (html[data-contrast="high"], switched on by ?view=accessible)
 
    Same layout, same type sizes: only colour and outlines change. White page,
    black text, black rules, and an outline round everything you can act on.
    Outlines are `outline`, not `border`, so nothing shifts by a pixel.
    ========================================================================== */
-
-/* The button itself: fixed to the window so it needs no room in the layout.
-   Dressed like the nav (caps, tracked, thin white rule) so it belongs to the
-   page rather than looking like a browser widget. */
-.a11y-toggle {
-  position: fixed;
-  right: 1.25rem;
-  bottom: 1.25rem;
-  z-index: 60;
-  padding: 0.5rem 1rem;
-  font: inherit;
-  font-size: 1rem;
-  letter-spacing: 0.0625rem;
-  text-transform: uppercase;
-  color: var(--white);
-  background: var(--olive);
-  border: 1px solid var(--white);
-  border-radius: 0;
-  cursor: pointer;
-}
-.a11y-toggle:hover { color: var(--hover); border-color: var(--hover); }
-.a11y-toggle:focus-visible { outline: 2px solid var(--white); outline-offset: 3px; }
 
 html[data-contrast="high"] {
   --olive:   #fff;
@@ -1282,8 +1260,6 @@ html[data-contrast="high"] .nav-panel__links a[aria-current="page"] {
 html[data-contrast="high"] a:focus-visible,
 html[data-contrast="high"] button:focus-visible { outline: 3px solid #000; outline-offset: 4px; }
 
-html[data-contrast="high"] .a11y-toggle { border: 2px solid #000; -webkit-text-stroke: 0; }
-html[data-contrast="high"] .a11y-toggle:hover { background: #000; color: #fff; border-color: #000; }
 
 /* Everything on the site is sized in rem, so raising the root size 20% scales
    type, spacing and widths together: the layout is the same, just larger. */
