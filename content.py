@@ -27,7 +27,7 @@ PHASE = "save-the-date"
 
 # Bump this when css/wedding.css or the favicons change, so browsers don't
 # serve a stale copy.
-ASSET_VERSION = 86
+ASSET_VERSION = 87
 
 # The page the password gate sends people to.
 ENTRY_PAGE = "home.html"
@@ -188,15 +188,9 @@ FAQS = [
     ),
     (
         "Is it safe to book travel now?",
-        ["You can, flights and Airbnbs typically don’t get released until 11 months prior "
-         "so they should be starting to open up now. We suggest setting flight alerts on "
-         "pricing as it fluctuates quite a bit and prices may be higher since it is further "
-         "away. We also will share hotel blocks and Airbnb recommendations soon."],
-    ),
-    (
-        "What if we cannot make it?",
-        ["Hawaii is the most isolated land mass on earth, so we will not be offended if you "
-         "cannot make it!"],
+        ["Yes. We suggest setting flight alerts on pricing as it fluctuates quite a bit and "
+         "prices may be higher since the date is further away. We’ve arranged hotel blocks "
+         "and Airbnb recommendations <a href=\"../travel/\">here</a>."],
     ),
     (
         "How can I share my dietary restrictions?",
@@ -221,9 +215,10 @@ FAQS = [
     "Wedding Day",
     (
         "What’s the recommended attire?",
-        ["Island formal. We suggest lightweight suits and dress shoes for men (ties optional) "
-         "and dresses for women (whatever length is fine). The venue requires that heels have "
-         "caps or be wedges due to the grass."],
+        ["Island formal. We suggest lightweight suits and dress shoes for men (ties "
+         "optional). For women, any length dress is totally fine. Ultimately wear what you "
+         "feel most confident in! PS: the venue requires that heels are wedge-style or have "
+         "heel caps (we will provide) due to the real grass."],
     ),
     (
         "Will there be transportation on the day of?",
@@ -240,7 +235,8 @@ FAQS = [
     (
         "Where are the pickup points, and when does the last shuttle leave?",
         ["The shuttle will leave from the parking lot. There is only one shuttle since the "
-         "event has a hard stop at 10 PM. It will wait until everyone is loaded in!"],
+         "event has a hard stop at 10 PM. It will arrive at 9:45 PM and leave once everyone is "
+         "loaded in!"],
     ),
     (
         "Is it outdoors? What if it rains?",
@@ -252,8 +248,8 @@ FAQS = [
     "Other",
     (
         "When will more information be shared?",
-        ["This website has the most up to date information. We will send updates over the "
-         "coming year as more information comes in or if we need information from you on "
+        ["This website has the most up to date information. We will send updates as more "
+         "information comes in or if we need information from you on "
          "your preferences post-RSVP."],
     ),
     (
@@ -314,21 +310,20 @@ RECOMMENDATIONS = [
             "Go cage-free shark diving on the North Shore (list <a href=\"https://www."
             "tripadvisor.com/Attraction_Products-g29222-t12061-zfg12023-a_contentId."
             "195810255585+23840390061-Oahu_Hawaii.html\">here</a>)",
-            "ATV/Jurassic Park tours at Kualoa Ranch",
+            "ATV Jurassic Park tours at Kualoa Ranch",
             "Airbnb experiences run by locals, like a luau",
             "Get a sunset drink at a nice hotel",
-            "Brewery in Kaka’ako",
+            "Brewery hopping in Kaka’ako",
             "Visit the shops at SALT Kaka’ako",
             "Trendier local shops and cafes in Kaimuki, in Honolulu",
             "For a more lowkey activity, we suggest the Thursday and Sunday Kailua "
             "Farmer’s Market, or the Saturday Kaka’ako Farmer’s Market in "
-            "Honolulu. They have tons of local food vendors, not just produce."]),
-         "Message Eliza &amp; Lucas if you need more recommendations!"],
+            "Honolulu. They have tons of local food vendors, not just produce."])],
     ),
     (
         "Other good things to know",
         ["<span class=\"k\">Sunscreen:</span> Hawaiʻi bans sunscreens containing "
-         "oxybenzone and octinoxate, reef-safe sunscreen is required but easy to find.",
+         "oxybenzone and octinoxate, reef-safe sunscreen is required and easy to find.",
          "<span class=\"k\">Payment:</span> Major credit cards and tap are widely accepted. "
          "Standard tip is 15&ndash;20%. Currency is USD.",
          "<span class=\"k\">Forgot something?</span> Oahu is very developed, so you can buy "
@@ -338,7 +333,8 @@ RECOMMENDATIONS = [
          "<span class=\"k\">In case you are confused:</span> Honolulu is the main town. Oahu "
          "is the island. Hawaii is the state. Waikiki is an area in Honolulu (not a town in "
          "itself).",
-         "Please contact Eliza &amp; Lucas should you have any other questions!"],
+         "Please contact Eliza &amp; Lucas should you have any other questions or need more "
+         "recommendations!"],
     ),
 ]
 
@@ -356,12 +352,12 @@ TRAVEL = [
     (
         "What dates do you recommend booking our trip for?",
         ["If you’re planning to come for about a week (we hope you do if you’re "
-         "flying all the way!), then we recommend aiming to arrive the week before the "
-         "wedding, arriving October 15 weekend and flying out Sunday, October 24. We will be "
-         "planning completely optional events throughout October 16 through 23, including a "
-         "Welcome BBQ on Wednesday, October 20 and the wedding on Friday, October 22. We "
-         "recommend visiting the island for at least 6 nights, but the sweet spot is "
-         "10&ndash;12 nights if you can swing some island hopping as well."],
+         "flying all the way!), then we recommend arriving the week before the "
+         "wedding: arriving October 15 weekend and flying out Sunday, October 24. We will be "
+         "planning completely optional events throughout the week including a Welcome BBQ on "
+         "Wednesday, October 20 and the wedding on Friday, October 22. We recommend visiting "
+         "the island for at least 6 nights, but the sweet spot is 10&ndash;12 nights "
+         "especially if you plan to island hop."],
     ),
     (
         "Where should we stay on island?",
@@ -369,27 +365,24 @@ TRAVEL = [
          "to shops, dining, transportation, and more importantly, where virtually all the "
          "hotels are located. Within Honolulu, the Waikiki neighborhood is the most "
          "tourist-friendly. This is the only location with proper hotels. This is also where "
-         "the wedding day return shuttle will be dropping people back off so this is our "
-         "recommendation.",
+         "the wedding day return shuttle will be dropping people back off.",
          "We would not recommend staying on the North Shore (Haleiwa, Pupukea, etc.) as "
-         "it’s very hard to get to and from (limited transportation options). The "
-         "wedding day is mostly on the east (or “Windward”) side, so you could stay "
-         "in an Airbnb in this area (e.g., Kane’ohe or Kailua), but for the rest of your "
+         "it’s very isolated to get to and from and requires a car. The "
+         "wedding day is mostly on the east (or “Windward”) side, so you could also "
+         "consider an Airbnb in this area (e.g., Kane’ohe or Kailua), but for the rest of your "
          "trip, these areas are less central."],
     ),
     (
         "What accommodations should we stay at?",
         ["We have arranged for a 10% discount at ____ hotels, you can book here with code "
-         "___. Hotels are often cheaper than Airbnbs.",
+         "___.",
          "There are also many Airbnbs on island, we created an Airbnb shared list here.",
          "If you plan to rent a car, we recommend opting for an Airbnb in Honolulu town but "
-         "not in Waikiki, as parking is tricky.",
-         "If you don’t plan to rent a car or get daily rentals, then you can opt for a "
-         "hotel in Waikiki.",
-         "<span class=\"k\">Luxury hotels:</span><br />The Royal Hawaiian Resort<br />Prince "
+         "not in the Waikiki area, as parking is tricky.",
+         "<span class=\"k\">Luxury Hotels:</span><br />The Royal Hawaiian Resort<br />Prince "
          "Waikiki Hotel<br />Hilton Hawaiian Village<br />Moana Surfrider, A Westin Resort "
          "&amp; Spa<br />Hilton Club Ka Haku Honolulu",
-         "<span class=\"k\">Boutique hotels closer to Diamond Head:</span><br />Kaimana "
+         "<span class=\"k\">Boutique Hotels closer to Diamond Head:</span><br />Kaimana "
          "Beach Hotel<br />Lotus Honolulu<br />Queen Kapi’olani Hotel"],
     ),
     (
@@ -406,8 +399,8 @@ TRAVEL = [
         ["<span class=\"k\">If you’re staying in Waikiki:</span> You’ll need to pay "
          "for overnight parking at a garage (cheaper than hotel), or try your luck on "
          "Montsarrat Ave. You can usually do a couple laps and eventually find a spot.",
-         "<span class=\"k\">If you’re staying outside Waikiki but still in "
-         "Honolulu:</span> Street parking should not be an issue, check with your host.",
+         "<span class=\"k\">If you’re staying in Honolulu but not in "
+         "Waikiki:</span> Street parking is Airbnb-dependent, check with your host.",
          "<span class=\"k\">If you’re staying outside of Honolulu:</span> Street parking "
          "should not be an issue, check with your host.",
          "Don’t hesitate to message Eliza &amp; Lucas if you need advice on the parking "
@@ -417,17 +410,11 @@ TRAVEL = [
     ),
     (
         "What’s the weather like, and what should guests pack?",
-        ["October is an ideal time to visit O’ahu because it comes after peak summer "
-         "humidity and before winter rainy season. Expect warm and slightly humid with "
+        ["October is after peak summer humidity and before winter rainy season. Expect warm and slightly humid with "
          "comfortable daytime highs in the 83&deg;F to 85&deg;F (28&deg;C to 29&deg;C) and "
          "daytime lows of 73&deg;F to 75&deg;F (23&deg;C to 24&deg;C). Water is warm and no "
          "wet suit is required. Rain is often brief and passing, but overall weather in "
          "Hawaii has been unpredictable for the past few years so keep this in mind."],
-    ),
-    (
-        "What passports or entry documents do international guests need?",
-        ["Canadians can enter the USA on a B2 visitor visa, no pre-application required. Just "
-         "state this at the border."],
     ),
 ]
 
