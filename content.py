@@ -27,7 +27,7 @@ PHASE = "save-the-date"
 
 # Bump this when css/wedding.css or the favicons change, so browsers don't
 # serve a stale copy.
-ASSET_VERSION = 85
+ASSET_VERSION = 86
 
 # The page the password gate sends people to.
 ENTRY_PAGE = "home.html"
@@ -110,12 +110,12 @@ NAV = [
     ("FAQs", "faqs.html"),
     ("TRAVEL", "travel.html"),
     ("RECOMMENDATIONS", "recommendations.html"),
-    ("REGISTRY", "registry.html"),
+    # ("REGISTRY", "registry.html"),  # hidden for now; page still builds at /registry/
 ]
 
 # The footer nav uses a different order than the header (matches Figma): it
 # reads across in pairs, RSVP/ITINERARY, TRAVEL/REGISTRY, FAQs/RECOMMENDATIONS.
-FOOTER_NAV_ORDER = ["RSVP", "ITINERARY", "TRAVEL", "REGISTRY", "FAQs", "RECOMMENDATIONS"]
+FOOTER_NAV_ORDER = ["RSVP", "ITINERARY", "TRAVEL", "REGISTRY", "FAQs", "RECOMMENDATIONS"]  # labels missing from NAV are skipped
 
 
 # ---------------------------------------------------------------------------

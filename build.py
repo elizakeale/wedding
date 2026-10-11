@@ -484,7 +484,7 @@ def footer():
         by_label = {label: href for label, href in C.NAV}
         rows = "\n".join(
             f'          <a href="{link(by_label[label])}">{label}</a>'
-            for label in C.FOOTER_NAV_ORDER
+            for label in C.FOOTER_NAV_ORDER if label in by_label
         )
         links = f"""      <nav class="footer__links">
 {rows}
