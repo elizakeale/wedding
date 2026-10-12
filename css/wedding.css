@@ -678,7 +678,7 @@ body.nav-open .nav-toggle__bar:nth-child(3) { top: 50%; transform: rotate(-45deg
   text-transform: uppercase;
 }
 
-.event__name .opt { text-transform: none; font-style: italic; opacity: 0.9; }
+.event__name .opt { text-transform: none; font-style: normal; opacity: 0.9; }
 
 .event__text {
   font-size: 1rem;
