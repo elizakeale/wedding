@@ -27,7 +27,7 @@ PHASE = "save-the-date"
 
 # Bump this when css/wedding.css or the favicons change, so browsers don't
 # serve a stale copy.
-ASSET_VERSION = 88
+ASSET_VERSION = 89
 
 # The page the password gate sends people to.
 ENTRY_PAGE = "home.html"
@@ -233,10 +233,9 @@ FAQS = [
          "Uber or Lyft if you don’t prefer the shuttle or are not staying in Waikiki."],
     ),
     (
-        "Where are the pickup points, and when does the last shuttle leave?",
+        "Where are the pickup points and when does the last shuttle leave?",
         ["The shuttle will leave from the parking lot. There is only one shuttle since the "
-         "event has a hard stop at 10 PM. It will arrive at 9:45 PM and leave once everyone is "
-         "loaded in!"],
+         "event has a hard stop at 10 PM. It will arrive at 10:15 PM and leave at 10:30 PM!"],
     ),
     (
         "Is it outdoors? What if it rains?",
@@ -321,7 +320,7 @@ RECOMMENDATIONS = [
             "Honolulu. They have tons of local food vendors, not just produce."])],
     ),
     (
-        "Other good things to know",
+        "Good things to know",
         ["<span class=\"k\">Sunscreen:</span> Hawaiʻi bans sunscreens containing "
          "oxybenzone and octinoxate, reef-safe sunscreen is required and easy to find.",
          "<span class=\"k\">Payment:</span> Major credit cards and tap are widely accepted. "
@@ -409,12 +408,14 @@ TRAVEL = [
          "We made a shared Google Maps parking list here that you can bookmark."],
     ),
     (
-        "What’s the weather like, and what should guests pack?",
+        "What’s the weather like and what should guests pack?",
         ["October is after peak summer humidity and before winter rainy season. Expect warm and slightly humid with "
          "comfortable daytime highs in the 83&deg;F to 85&deg;F (28&deg;C to 29&deg;C) and "
          "daytime lows of 73&deg;F to 75&deg;F (23&deg;C to 24&deg;C). Water is warm and no "
          "wet suit is required. Rain is often brief and passing, but overall weather in "
-         "Hawaii has been unpredictable for the past few years so keep this in mind."],
+         "Hawaii has been unpredictable for the past few years so keep this in mind.",
+         "Please contact Eliza &amp; Lucas should you have any other questions or need more "
+         "recommendations!"],
     ),
 ]
 
