@@ -884,7 +884,7 @@ def build(preview=False):
         page("recommendations.html", "Recommendations &mdash; E &amp; L Wedding",
              section("Recommendations", rows(C.RECOMMENDATIONS)))
         visit = ('<p class="row__text"><a class="visit" href="'
-                 + (C.REGISTRY_URL or "#") + '"><span>Visit:</span>'
+                 + (C.REGISTRY_URL or "#") + '"><span>Visit</span>'
                  '<span class="arrow" aria-hidden="true"></span></a></p>')
         page("registry.html", "Registry &mdash; E &amp; L Wedding",
              section("Registry",

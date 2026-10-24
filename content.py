@@ -27,7 +27,7 @@ PHASE = "save-the-date"
 
 # Bump this when css/wedding.css or the favicons change, so browsers don't
 # serve a stale copy.
-ASSET_VERSION = 90
+ASSET_VERSION = 91
 
 # The page the password gate sends people to.
 ENTRY_PAGE = "home.html"
@@ -421,7 +421,7 @@ TRAVEL = [
 
 # --- Registry page (PHASE == "phase-2") -------------------------------------
 # SOURCE OF TRUTH: Figma ("Registry" frame), not the Google doc. The row has no
-# heading in the design, just the rule and the copy, then "Visit: ->".
+# heading in the design, just the rule and the copy, then "Visit ->".
 # REGISTRY_URL is the honeymoon-fund link; it isn't in Figma, so it is blank
 # until Eliza supplies it.
 REGISTRY_URL = ""

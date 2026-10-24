@@ -1392,9 +1392,9 @@ html[data-contrast="high"] a:focus-visible,
 html[data-contrast="high"] button:focus-visible,
 html[data-contrast="high"] .field:focus { outline: 2px solid #000; outline-offset: 3px; }
 
-/* Everything on the site is sized in rem, so raising the root size 20% scales
-   type, spacing and widths together: the layout is the same, just larger. */
-html[data-contrast="high"] { font-size: max(13.2px, 1.27vw); }
+/* Desktop: the accessible view uses exactly the standard view's sizes. The
+   standard type was raised to 30px body / 64px titles from the updated Figma,
+   which already covers the +20% this view used to add, so no root override. */
 /* On a phone the fixed header is cut to the pixel for a 402px frame and has no
    room to grow, so there the 20% is applied to the content (page body, footer,
    menu links) and the header stays as designed. */
