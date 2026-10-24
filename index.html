@@ -39,13 +39,13 @@
        the picture carrying on rather than a band across it. js/site.js
        swaps it for the olive once the hero has scrolled away. -->
   <meta name="theme-color" content="#ccb8be" />
-  <link rel="icon" href="favicon.ico?v=66" sizes="any" />
-  <link rel="icon" type="image/png" href="favicon.png?v=66" sizes="180x180" />
-  <link rel="apple-touch-icon" href="favicon.png?v=66" />
+  <link rel="icon" href="favicon.ico?v=95" sizes="any" />
+  <link rel="icon" type="image/png" href="favicon.png?v=95" sizes="180x180" />
+  <link rel="apple-touch-icon" href="favicon.png?v=95" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,300;1,300&family=Cormorant+Upright:wght@300&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/wedding.css?v=66" />
+  <link rel="stylesheet" href="css/wedding.css?v=95" />
   <style>
     #gate, #gate * { margin:0; padding:0; box-sizing:border-box; }
     html:not(.unlocked), html:not(.unlocked) body {
@@ -140,6 +140,7 @@
       #gate .pw-input { font-size:16px; }
       #gate .pw-ph    { font-size:16px; }
     }
+
     /* Accessible view (?view=accessible): Figma "Password - Accessible". Same
        photo and card; the bar goes white with black type, and everything is
        20% larger. */
@@ -161,8 +162,8 @@
       html[data-contrast="high"] #gate .pw-ph { font-size:19.2px; }
     }
     </style>
-  <script>(function(){var on=false;try{var q=new URLSearchParams(location.search).get('view');if(q==='accessible'){on=true;localStorage.setItem('elw-contrast','high')}else if(q==='standard'){localStorage.removeItem('elw-contrast')}else{on=localStorage.getItem('elw-contrast')==='high'}}catch(e){}if(on){document.documentElement.setAttribute('data-contrast','high');var l=document.createElement('link');l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,500;1,500&family=Cormorant+Upright:wght@500&display=swap';document.head.appendChild(l)}})()</script>
-  <script>
+
+  <script>(function(){var on=false;try{var q=new URLSearchParams(location.search).get('view');if(q==='accessible'){on=true;localStorage.setItem('elw-contrast','high')}else if(q==='standard'){localStorage.removeItem('elw-contrast')}else{on=localStorage.getItem('elw-contrast')==='high'}}catch(e){}if(on){document.documentElement.setAttribute('data-contrast','high');var l=document.createElement('link');l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,500;1,500&family=Cormorant+Upright:wght@500&display=swap';document.head.appendChild(l)}})()</script>  <script>
     try {
       var s = JSON.parse(sessionStorage.getItem('elw.session') || 'null');
       if (s && s.t && (Date.now() - s.t) < 1800000) {
@@ -265,8 +266,8 @@
     </div>
   </footer>
   </div>
-  <script src="js/config.js?v=66"></script>
-  <script src="js/site.js?v=66"></script>
-  <script src="js/gate.js?v=66"></script>
+  <script src="js/config.js?v=95"></script>
+  <script src="js/site.js?v=95"></script>
+  <script src="js/gate.js?v=95"></script>
 </body>
 </html>
