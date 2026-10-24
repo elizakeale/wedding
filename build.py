@@ -302,6 +302,11 @@ def gate_markup(up=""):
 # Runs before the first paint, so someone already inside never sees the door
 # flash. Deliberately duplicates the TTL from js/config.js: inlining it is what
 # makes it early enough to matter, and both read the same stored value.
+NAV_AWAY_OTHER = """
+  <script>try{sessionStorage.setItem('elw-away','1')}catch(e){}</script>"""
+NAV_AWAY_HOME = """
+  <script>try{if(sessionStorage.getItem('elw-away'))document.documentElement.classList.add('visited-away')}catch(e){}</script>"""
+
 GATE_EARLY = CONTRAST_EARLY + """  <script>
     try {
       var s = JSON.parse(sessionStorage.getItem('elw.session') || 'null');
@@ -424,6 +429,8 @@ def pageheader(current, tall, save_the_date=False):
     panel_rows = []
     for label, href in C.NAV:
         aria = ' aria-current="page"' if href == current else ""
+        if href == C.ENTRY_PAGE:
+            aria += " data-home"
         rows.append(f'        <a href="{link(href)}"{aria}>{label}</a>')
         panel_rows.append(f'          <a href="{link(href)}"{aria}>{label}</a>')
     links = "\n".join(rows)
@@ -531,6 +538,10 @@ def page(filename, title, main, tall=False, save_the_date=False, scripts=""):
         # Applied before first paint so a saved accessible view never flashes
         # the olive page first. Wrapped in try: storage can be blocked.
         extra_head += CONTRAST_EARLY
+        # The nav marks the page you're on in yellow, but not the landing page
+        # on first arrival: RSVP only lights up once you've been elsewhere and
+        # come back. Set before first paint so it never flashes.
+        extra_head += NAV_AWAY_HOME if filename == C.ENTRY_PAGE else NAV_AWAY_OTHER
     body = f"""{pageheader(filename, tall, save_the_date)}{banner(filename, tall, save_the_date)}
 
 {main}

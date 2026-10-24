@@ -347,7 +347,11 @@ html { scroll-padding-top: var(--hdr-h); }
 /* The page you're on stays white with a rule under it; yellow is reserved for
    hover, so colour means "you can click this" and never anything else.
    opacity:1 overrides the global a:hover dim — the colour is the signal. */
-.nav a[aria-current="page"] { border-bottom: 2px solid var(--rule); }
+/* Current page: yellow, no underline. The landing page's own link (RSVP) stays
+   plain on first arrival and only turns yellow once you've visited another
+   page and come back (html.visited-away, set by an inline script). */
+.nav a[aria-current="page"]:not([data-home]),
+html.visited-away .nav a[aria-current="page"][data-home] { color: var(--yellow); }
 .nav a:hover { color: var(--hover); opacity: 1; }
 
 /* ---------- Mobile nav: hamburger + panel ----------
@@ -908,7 +912,7 @@ body.nav-open .nav-toggle__bar:nth-child(3) { top: 50%; transform: rotate(-45deg
   margin-top: 2.125rem;
 }
 
-.footer__contact a { border-bottom: 2px solid var(--rule); }
+
 
 .footer__details {
   list-style: none;
@@ -1015,7 +1019,8 @@ body.nav-open .nav-toggle__bar:nth-child(3) { top: 50%; transform: rotate(-45deg
     letter-spacing: 0.075rem;
   }
 
-  .nav-panel__links a[aria-current="page"] { border-bottom: 2px solid var(--rule); }
+  .nav-panel__links a[aria-current="page"]:not([data-home]),
+  html.visited-away .nav-panel__links a[aria-current="page"][data-home] { color: var(--yellow); }
   .nav-panel__links a:hover { color: var(--hover); opacity: 1; }
 
   .nav-panel__photo { width: 11rem; margin-top: 3.5rem; }
