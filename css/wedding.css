@@ -1207,6 +1207,141 @@ body.nav-open .nav-toggle__bar:nth-child(3) { top: 50%; transform: rotate(-45deg
 }
 
 /* ==========================================================================
+   Phase 2 desktop sizing, from the updated Figma Homepage frame (6:29).
+   Desktop only (the mobile frames are unchanged) and scoped to .phase2 so the
+   live save-the-date keeps its own scale.
+
+     margins 49px both sides · page title 64px · body, labels, nav 30px
+     checkboxes 36px · fields 530 x 48 · footer wordmark 64px, footer date 40px
+   ========================================================================== */
+@media (min-width: 861px) {
+  :root {
+    --gutter:    3.0625rem;   /* 49px */
+    --measure:   51.1875rem;  /* 819px */
+    --col-time:  17rem;       /* itinerary time column, fits 30px "4:00 PM – 10:00 PM" */
+
+    --rule-drop:   1.125rem;  /* 18px: rule meets the middle of a 30px line */
+    --gap-tight:   1.3125rem; /* 21px */
+    --gap-body:    2rem;
+    --gap-item:    1.75rem;
+    --gap-group:   3rem;
+    --gap-row:     5.125rem;  /* 82px, Figma row to row */
+    --gap-section: 4.25rem;
+
+    --hdr-nav-top-hi: 1.5rem;     /* nav sits at y=24 in the hero too */
+    --hdr-nav-lo:     1.875rem;   /* 30px, hero and settled */
+    --hdr-navtrk-lo:  0.09375rem; /* 1.5px */
+  }
+
+  /* Header: nav is 30px, so the wordmark's clearance under it shrinks to land
+     the settled wordmark where the frame has it (y=76). */
+  .phase2 .pageheader__wordmark { margin-top: 1rem; }
+
+  /* Page title and the line under it. */
+  .phase2 .section__title {
+    font-size: 4rem;           /* 64px */
+    letter-spacing: 0.2rem;    /* 3.2px */
+    margin-bottom: 0.6875rem;
+  }
+  .phase2 .banner--tall + .section { padding-top: 3.5625rem; }  /* 57px: 1007 -> 1064 */
+  .phase2 .section__note { font-size: 1.875rem; letter-spacing: 0.09375rem; }
+
+  /* Body copy, labels, times: all 30px. */
+  .phase2 .row__label,
+  .phase2 .event__name,
+  .phase2 .event__time { font-size: 1.875rem; letter-spacing: 0.09375rem; }
+  .phase2 .row__text,
+  .phase2 .row__list,
+  .phase2 .event__text,
+  .phase2 .form-msg { font-size: 1.875rem; letter-spacing: 0.09375rem; }
+  .phase2 .row__list li { padding-left: 4.5rem; }
+  .phase2 .row__list li::before { top: calc(0.78em - 1px); width: 3rem; }
+
+  .phase2 .day,
+  .phase2 .group { font-size: 2.5rem; letter-spacing: 0.125rem; }
+
+  /* Form: 36px boxes, 530 x 48 fields. */
+  .phase2 .field {
+    font-size: 1.875rem;
+    letter-spacing: 0.09375rem;
+    height: 3rem;                 /* 48px */
+    padding: 0 0.9375rem;
+  }
+  .phase2 .code-entry { max-width: 33.125rem; margin-top: 2.6875rem; }
+  .phase2 .code-entry__field { padding-right: 4.5rem; }
+  .phase2 .code-entry__go { right: 1.125rem; }
+  .phase2 .guest-list { margin-top: 1.375rem; }
+  .phase2 .guest { font-size: 1.875rem; letter-spacing: 0.09375rem; gap: 1.3125rem; }
+  .phase2 .diet-list { margin-top: 1.8125rem; gap: 1.1875rem; }
+  .phase2 .diet {
+    grid-template-columns: 15rem 1fr;   /* labels at 306, fields at 546 */
+    font-size: 1.875rem;
+    letter-spacing: 0.09375rem;
+  }
+  .phase2 .diet .field { width: 33.125rem; }
+  .phase2 .submit {
+    font-size: 1.875rem;
+    letter-spacing: 0.09375rem;
+    gap: 2rem;
+    margin-top: 5.25rem;
+  }
+  .phase2 .visit .arrow,
+  .phase2 .code-entry__go .arrow,
+  .phase2 .submit .arrow { width: 1.9375rem; }   /* 31px */
+  .phase2 .visit .arrow::after,
+  .phase2 .code-entry__go .arrow::after,
+  .phase2 .submit .arrow::after { width: 0.4375rem; height: 0.4375rem; }
+  .phase2 .row__text a.visit { gap: 2rem; }
+
+  /* Footer. One grid: wordmark across the top, links and contact down the
+     left, the photo tucked up at the right beside them. */
+  .phase2 .footer { padding-bottom: 5rem; }
+  .phase2 .footer .wrap {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    column-gap: 2rem;
+    align-items: start;
+  }
+  .phase2 .footer__top { grid-column: 1 / -1; flex-wrap: nowrap; align-items: center; }
+  .phase2 .footer__name { font-size: 4rem; letter-spacing: 0.2rem; white-space: nowrap; }
+  .phase2 .footer__top .meta { font-size: 2.5rem; letter-spacing: 0.125rem; white-space: nowrap; }
+
+  .phase2 .footer__links {
+    grid-column: 1;
+    grid-row: 2;
+    width: 28.0625rem;               /* 449px: 48 -> 497 */
+    grid-template-columns: auto auto;
+    justify-content: space-between;
+    gap: 0.4375rem 2rem;
+    font-size: 1.875rem;
+    letter-spacing: 0.09375rem;
+    margin-top: 0.875rem;
+  }
+  /* An odd link out (Registry is hidden for now) takes the whole last row. */
+  .phase2 .footer__links a:last-child:nth-child(odd) { grid-column: 1 / -1; }
+
+  .phase2 .footer__cols { display: contents; }
+  .phase2 .footer__contact {
+    grid-column: 1;
+    grid-row: 3;
+    font-size: 1.875rem;
+    letter-spacing: 0.09375rem;
+    margin-top: 4.5rem;
+  }
+  .phase2 .footer__details { margin-top: 0.375rem; line-height: normal; }
+  .phase2 .footer__photo {
+    grid-column: 2;
+    grid-row: 2 / span 2;
+    width: 15.125rem;                /* 242px */
+    height: 9.875rem;                /* 158px */
+    overflow: hidden;
+  }
+  .phase2 .footer__photo img { height: 100%; }
+  .phase2 .back-to-top { grid-column: 1 / -1; margin-top: 0; }
+  .phase2 .back-to-top a { gap: 0.8125rem; }
+}
+
+/* ==========================================================================
    Accessible view  (html[data-contrast="high"], switched on by ?view=accessible)
 
    Figma "Accessible" frames: same layout, white page, black type, thin black
