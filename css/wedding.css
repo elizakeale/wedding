@@ -668,8 +668,7 @@ body.nav-open .nav-toggle__bar:nth-child(3) { top: 50%; transform: rotate(-45deg
 .event__time {
   font-size: 1.25rem;
   letter-spacing: 0.05rem;
-  text-transform: uppercase;
-  white-space: nowrap;
+  white-space: nowrap;   /* as typed in the sheet: "5:00 PM – late" keeps its lowercase */
 }
 
 .event__rule { height: 2px; background: var(--rule); margin-top: var(--rule-drop); }
