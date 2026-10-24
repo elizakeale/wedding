@@ -21,7 +21,7 @@
   --white:     #ffffff;
   --pink:      #d8bcc3;    /* kept: the RSVP confirmation message */
   --hover:     #ffe993;    /* every clickable thing, on hover */
-  --rule:      rgba(255, 255, 255, 0.55);
+  --rule:      #ffffff;
 
   /* ---- Spacing scale -------------------------------------------------
      Every vertical gap on the site is one of these. They are the values
